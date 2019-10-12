@@ -1,10 +1,7 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
-use App\Models\ActividadUsuario;
-use App\Models\Dependencia;
-use App\Models\Rol;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -27,14 +24,14 @@ use Illuminate\Notifications\Notifiable;
  * @property Rol $role
  * @property ActividadUsuario[] $actividadesUsuarios
  */
-class User extends Authenticatable
+class Usuario extends Authenticatable
 {
 
     use Notifiable;
 
     /**
      * The table associated with the model.
-     *
+     * 
      * @var string
      */
     protected $table = 'users';
