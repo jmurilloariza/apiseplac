@@ -14,6 +14,14 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Indicador extends Model
 {
+
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'indicadores';
+
     /**
      * @var array
      */

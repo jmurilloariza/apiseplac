@@ -11,12 +11,6 @@
 |
 */
 
-use App\Models\Usuario;
-
 Route::get('/', function () {
     return view('welcome');
-});
-
-Route::get('/s', function() {
-    return Usuario::all();
 });

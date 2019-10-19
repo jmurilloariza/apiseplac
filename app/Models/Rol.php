@@ -15,6 +15,13 @@ use Illuminate\Database\Eloquent\Model;
 class Rol extends Model
 {
     /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'roles';
+
+    /**
      * @var array
      */
     protected $fillable = ['id', 'nombre', 'deleted_at', 'created_at', 'updated_at'];

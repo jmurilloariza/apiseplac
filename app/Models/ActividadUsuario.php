@@ -16,6 +16,14 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ActividadUsuario extends Model
 {
+
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'actividades_usuarios';
+
     /**
      * @var array
      */
