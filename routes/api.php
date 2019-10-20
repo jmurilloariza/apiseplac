@@ -23,4 +23,9 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function () {
     })->name('error');
 });
 
-Route::apiResources(['eje' => 'EjeController']);
+Route::apiResources([
+    'eje' => 'EjeController',
+    'linea' => 'LineaController',
+    'programa' => 'ProgramaController',
+    'dependencia' => 'DependenciaController'
+]);

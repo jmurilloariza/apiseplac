@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Eje;
+use App\Models\Linea;
 use Illuminate\Http\Request;
 
-class EjeController extends Controller
+class LineaController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,7 +17,7 @@ class EjeController extends Controller
     {
         return response()->json([
             'message' => 'Consulta exitosa',
-            'data' => Eje::with(['lineas.programas'])->get()->toArray(),
+            'data' => Linea::with(['eje', 'programas'])->get()->toArray(),
             'status' => 'ok'
         ], 200);
     }
@@ -24,24 +25,33 @@ class EjeController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        if (!$request->has('nombre'))
+        if (!$request->has('nombre') OR !$request->has('eje_id'))
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
                 'status' => 'errror'
             ], 400);
 
-        $eje = new Eje(['nombre' => $request->get('nombre')]);
+        $eje = Eje::where(['id' => $request->get('eje_id')])->get()->toArray();
 
-        if ($eje->save())
+        if(count($eje) != 1)
             return response()->json([
-                'message' => 'Eje creado',
-                'data' => [$eje->toArray()],
+                'message' => 'Eje no encontrado',
+                'data' => $request->toArray(),
+                'status' => 'errror'
+            ], 404);
+
+        $linea = new Linea(['nombre' => $request->get('nombre'), 'eje_id' => $request->get('eje_id')]);
+
+        if ($linea->save())
+            return response()->json([
+                'message' => 'Linea creada',
+                'data' => [$linea->toArray()],
                 'status' => 'ok'
             ], 201);
         else
@@ -55,12 +65,12 @@ class EjeController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param int $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        $eje = Eje::where(['id' => $id])->with(['lineas.programas'])->get()->toArray();
+        $eje = Linea::where(['id' => $id])->with(['programas', 'eje'])->get()->toArray();
 
         if (count($eje) > 0)
             return response()->json([
@@ -79,8 +89,8 @@ class EjeController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param int $id
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -92,21 +102,21 @@ class EjeController extends Controller
                 'status' => 'errror'
             ], 400);
 
-        $eje = Eje::where(['id' => $id]);
+        $linea = Linea::where(['id' => $id]);
 
-        if (count($eje->get()->toArray()) == 0)
+        if (count($linea->get()->toArray()) == 0)
             return response()->json([
                 'message' => 'No existen registros',
                 'data' => [],
                 'status' => 'error'
             ], 404);
-        else if ($eje->update(['nombre' => $request->get('nombre')]))
+        else if ($linea->update(['nombre' => $request->get('nombre')]))
             return response()->json([
                 'message' => 'Actualización exitosa',
                 'data' => [],
                 'status' => 'ok'
             ], 200);
-        else return response()->json([
+        return response()->json([
             'message' => 'Ha ocurido un error',
             'data' => [],
             'status' => 'error'
@@ -116,14 +126,14 @@ class EjeController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param int $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        if (Eje::find($id)->delete())
+        if (Linea::find($id)->delete())
             return response()->json([
-                'message' => 'Eje eliminado',
+                'message' => 'Linea eliminado',
                 'data' => [],
                 'status' => 'ok'
             ], 200);
