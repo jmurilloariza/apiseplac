@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Usuario;
 use Illuminate\Http\Request;
 
 /*
@@ -27,5 +28,10 @@ Route::apiResources([
     'eje' => 'EjeController',
     'linea' => 'LineaController',
     'programa' => 'ProgramaController',
-    'dependencia' => 'DependenciaController'
+    'dependencia' => 'DependenciaController', 
+    'users' => 'UserController'
 ]);
+
+Route::group(['prefix' => 'rol'], function () {
+    Route::get('', 'UserController@getRoles');
+});
