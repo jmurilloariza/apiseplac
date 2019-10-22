@@ -7,6 +7,12 @@ use Illuminate\Http\Request;
 
 class EjeController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -33,7 +39,7 @@ class EjeController extends Controller
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
-                'status' => 'errror'
+                'status' => 'error'
             ], 400);
 
         $eje = new Eje(['nombre' => $request->get('nombre')]);
@@ -89,7 +95,7 @@ class EjeController extends Controller
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
-                'status' => 'errror'
+                'status' => 'error'
             ], 400);
 
         $eje = Eje::where(['id' => $id]);
