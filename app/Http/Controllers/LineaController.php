@@ -8,12 +8,6 @@ use Illuminate\Http\Request;
 
 class LineaController extends Controller
 {
-
-    public function __construct()
-    {
-        $this->middleware('auth:api');
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -40,7 +34,7 @@ class LineaController extends Controller
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
-                'status' => 'error'
+                'status' => 'errror'
             ], 400);
 
         $eje = Eje::where(['id' => $request->get('eje_id')])->get()->toArray();
@@ -49,7 +43,7 @@ class LineaController extends Controller
             return response()->json([
                 'message' => 'Eje no encontrado',
                 'data' => $request->toArray(),
-                'status' => 'error'
+                'status' => 'errror'
             ], 404);
 
         $linea = new Linea(['nombre' => $request->get('nombre'), 'eje_id' => $request->get('eje_id')]);
@@ -105,7 +99,7 @@ class LineaController extends Controller
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
-                'status' => 'error'
+                'status' => 'errror'
             ], 400);
 
         $linea = Linea::where(['id' => $id]);
