@@ -29,7 +29,9 @@ Route::apiResources([
     'linea' => 'LineaController',
     'programa' => 'ProgramaController',
     'dependencia' => 'DependenciaController', 
-    'users' => 'UserController'
+    'users' => 'UserController',
+    'recurso' => 'RecursoController',
+    'indicador' => 'IndicadorController'
 ]);
 
 Route::group(['prefix' => 'rol'], function () {
