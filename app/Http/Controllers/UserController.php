@@ -13,7 +13,7 @@ class UserController extends Controller
 
     public function __construct()
     {
-        /*$this->middleware('auth:api');*/
+        $this->middleware('auth:api');
     }
 
     /**
@@ -23,11 +23,6 @@ class UserController extends Controller
      */
     public function index()
     {
-        return response()->json([
-            'message' => 'Consulta exitosa',
-            'data' => Usuario::all()->toArray(),
-            'status' => 'ok'
-        ], 200);
     }
 
     /**

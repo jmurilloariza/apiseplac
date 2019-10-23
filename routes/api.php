@@ -1,8 +1,5 @@
 <?php
 
-use App\Models\Usuario;
-use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -28,7 +25,7 @@ Route::apiResources([
     'eje' => 'EjeController',
     'linea' => 'LineaController',
     'programa' => 'ProgramaController',
-    'dependencia' => 'DependenciaController', 
+    'dependencia' => 'DependenciaController',
     'users' => 'UserController',
     'recurso' => 'RecursoController',
     'indicador' => 'IndicadorController'
