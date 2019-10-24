@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $created_at
  * @property string $updated_at
  * @property Linea[] $lineas
- * @property PlanEjeLineaPrograma[] $planEjeLineaProgramas
+ * @property ProyectoPrograma[] $planEjeLineaProgramas
  */
 class Eje extends Model
 {
@@ -44,6 +44,6 @@ class Eje extends Model
      */
     public function planEjeLineaProgramas()
     {
-        return $this->hasMany(PlanEjeLineaPrograma::class, 'eje_id');
+        return $this->hasMany(ProyectoPrograma::class, 'eje_id');
     }
 }

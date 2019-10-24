@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $created_at
  * @property string $updated_at
  * @property Eje $eje
- * @property PlanEjeLineaPrograma[] $planEjeLineaProgramas
+ * @property ProyectoPrograma[] $planEjeLineaProgramas
  * @property Programa[] $programas
  */
 class Linea extends Model
@@ -43,7 +43,7 @@ class Linea extends Model
      */
     public function planEjeLineaProgramas()
     {
-        return $this->hasMany(PlanEjeLineaPrograma::class, 'linea_id');
+        return $this->hasMany(ProyectoPrograma::class, 'linea_id');
     }
 
     /**

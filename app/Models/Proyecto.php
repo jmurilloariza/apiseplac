@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
@@ -10,11 +11,14 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $deleted_at
  * @property string $created_at
  * @property string $updated_at
- * @property PlanEjeLineaPrograma $planEjeLineaPrograma
+ * @property ProyectoPrograma $planEjeLineaPrograma
  * @property Actividad[] $actividades
  */
 class Proyecto extends Model
 {
+
+    use SoftDeletes;
+
 
     /**
      * The table associated with the model.
@@ -26,14 +30,14 @@ class Proyecto extends Model
     /**
      * @var array
      */
-    protected $fillable = ['id', 'planaccion_id', 'deleted_at', 'created_at', 'updated_at'];
+    protected $fillable = ['id', 'plan_id', 'deleted_at', 'created_at', 'updated_at'];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function planEjeLineaPrograma()
+    public function programas()
     {
-        return $this->belongsTo(PlanEjeLineaPrograma::class, 'planaccion_id');
+        return $this->hasMany(ProyectoPrograma::class, 'proyecto_id');
     }
 
     /**

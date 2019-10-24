@@ -3,14 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Eje;
+use App\Models\Linea;
 use Illuminate\Http\Request;
+use SebastianBergmann\Diff\Line;
 
 class EjeController extends Controller
 {
 
     public function __construct()
     {
-        $this->middleware('auth:api');
+        /*$this->middleware('auth:api');*/
     }
 
     /**
@@ -35,27 +37,33 @@ class EjeController extends Controller
      */
     public function store(Request $request)
     {
-        if (!$request->has('nombre'))
+        if (!$request->has('ejes'))
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
                 'status' => 'error'
             ], 400);
 
-        $eje = new Eje(['nombre' => $request->get('nombre')]);
+        $ejes = $request->get('ejes');
 
-        if ($eje->save())
-            return response()->json([
-                'message' => 'Eje creado',
-                'data' => [$eje->toArray()],
-                'status' => 'ok'
-            ], 201);
-        else
-            return response()->json([
-                'message' => 'Ha ocurido un error',
-                'data' => [],
-                'status' => 'error'
-            ], 500);
+        for ($i = 0, $long = count($ejes); $i < $long; $i++) {
+            $nombre = $ejes[$i];
+
+            $eje = new Eje(['nombre' => $nombre]);
+
+            if (!$eje->save())
+                response()->json([
+                    'message' => 'Ha ocurido un error',
+                    'data' => [],
+                    'status' => 'error'
+                ], 500);
+        }
+
+        return response()->json([
+            'message' => 'Eje creado',
+            'data' => [],
+            'status' => 'ok'
+        ], 201);
     }
 
     /**

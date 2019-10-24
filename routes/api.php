@@ -31,6 +31,18 @@ Route::apiResources([
     'indicador' => 'IndicadorController'
 ]);
 
+Route::group(['prefix' => 'proyecto'], function () {
+    Route::get('', 'PlanController@indexProyecto');
+    Route::get('{proyecto}', 'PlanController@showProyecto');
+    Route::post('', 'PlanController@storeProyecto');
+    Route::put('{proyecto}', 'PlanController@updateProyecto');
+    Route::delete('{proyecto}', 'PlanController@destroyProyecto');
+});
+
+Route::group(['prefix' => 'plan'], function () {
+    Route::get('', 'PlanController@index');
+});
+
 Route::group(['prefix' => 'rol'], function () {
     Route::get('', 'UserController@getRoles');
 });

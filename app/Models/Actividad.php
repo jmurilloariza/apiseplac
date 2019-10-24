@@ -40,7 +40,7 @@ class Actividad extends Model
     /**
      * @var array
      */
-    protected $fillable = ['id', 'proyecto_id', 'indicador_id', 'acciones', 'descripcion', 'fecha_inicio', 'fecha_fin', 'costo', 'unidad_medida', 'peso', 'deleted_at', 'created_at', 'updated_at'];
+    protected $fillable = ['id', 'proyecto_id', 'indicador_id', 'nombre', 'descripcion', 'fecha_inicio', 'fecha_fin', 'costo', 'unidad_medida', 'peso', 'deleted_at', 'created_at', 'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

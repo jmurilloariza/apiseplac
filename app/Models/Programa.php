@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
@@ -12,10 +13,13 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $updated_at
  * @property string $deleted_at
  * @property Linea $linea
- * @property PlanEjeLineaPrograma[] $planEjeLineaProgramas
+ * @property ProyectoPrograma[] $planEjeLineaProgramas
  */
 class Programa extends Model
 {
+
+    use SoftDeletes;
+
 
     /**
      * The table associated with the model.
@@ -40,8 +44,8 @@ class Programa extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function planEjeLineaProgramas()
+    public function proyectos()
     {
-        return $this->hasMany(PlanEjeLineaPrograma::class, 'programa_id');
+        return $this->hasMany(ProyectoPrograma::class, 'programa_id');
     }
 }

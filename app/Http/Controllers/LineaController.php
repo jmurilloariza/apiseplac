@@ -11,7 +11,7 @@ class LineaController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api');
+        /*$this->middleware('auth:api');*/
     }
 
     /**
@@ -31,12 +31,13 @@ class LineaController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        if (!$request->has('nombre') OR !$request->has('eje_id'))
+
+        if (!$request->has('lineas') OR !$request->has('eje_id'))
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
@@ -45,33 +46,36 @@ class LineaController extends Controller
 
         $eje = Eje::where(['id' => $request->get('eje_id')])->get()->toArray();
 
-        if(count($eje) != 1)
+        if (count($eje) != 1)
             return response()->json([
                 'message' => 'Eje no encontrado',
                 'data' => $request->toArray(),
                 'status' => 'error'
             ], 404);
 
-        $linea = new Linea(['nombre' => $request->get('nombre'), 'eje_id' => $request->get('eje_id')]);
+        $lineas = $request->get('lineas');
 
-        if ($linea->save())
-            return response()->json([
-                'message' => 'Linea creada',
-                'data' => [$linea->toArray()],
-                'status' => 'ok'
-            ], 201);
-        else
-            return response()->json([
-                'message' => 'Ha ocurido un error',
-                'data' => [],
-                'status' => 'error'
-            ], 500);
+        for ($i = 0, $long = count($lineas); $i < $long; $i++) {
+            $linea = new Linea(['nombre' => $lineas[$i], 'eje_id' => $request->get('eje_id')]);
+            if (!$linea->save())
+                return response()->json([
+                    'message' => 'Ha ocurido un error',
+                    'data' => [],
+                    'status' => 'error'
+                ], 500);
+        }
+
+        return response()->json([
+            'message' => 'Linea creada',
+            'data' => [],
+            'status' => 'ok'
+        ], 201);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -95,8 +99,8 @@ class LineaController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request $request
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -132,7 +136,7 @@ class LineaController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)

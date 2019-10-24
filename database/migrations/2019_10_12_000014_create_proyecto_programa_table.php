@@ -4,17 +4,17 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateProyectosTable extends Migration
+class CreateProyectoProgramaTable extends Migration
 {
     /**
      * Schema table name to migrate
      * @var string
      */
-    public $tableName = 'proyectos';
+    public $tableName = 'proyecto_programa';
 
     /**
      * Run the migrations.
-     * @table proyectos
+     * @table plan_eje_linea_programa
      *
      * @return void
      */
@@ -23,18 +23,24 @@ class CreateProyectosTable extends Migration
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->string('nombre', 250);
-            $table->string('descripcion', 500);
-            $table->integer('plan_id')->unsigned();
+            $table->integer('programa_id')->unsigned();
+            $table->integer('proyecto_id')->unsigned();
 
             $table->softDeletes();
             $table->timestamps();
 
-            $table->index(["plan_id"], 'fk_plan_id');
+            $table->index(["programa_id"], 'fk_programa_id');
 
-            $table->foreign('plan_id', 'plan_id')
-                ->references('id')->on('plan')
-                ->onDelete('no action')
+            $table->index(["proyecto_id"], 'fk_proyecto_id');
+
+            $table->foreign('programa_id', 'fk_programa_id')
+                ->references('id')->on('programas')
+                ->onDelete('cascade')
+                ->onUpdate('no action');
+
+            $table->foreign('proyecto_id', 'fk_proyecto_id')
+                ->references('id')->on('proyectos')
+                ->onDelete('cascade')
                 ->onUpdate('no action');
         });
     }

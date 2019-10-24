@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $updated_at
  * @property string $deleted_at
  * @property Dependencia $dependencium
- * @property PlanEjeLineaPrograma[] $planEjeLineaProgramas
+ * @property ProyectoPrograma[] $planEjeLineaProgramas
  */
 class Plan extends Model
 {
@@ -40,8 +40,8 @@ class Plan extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function planEjeLineaProgramas()
+    public function proyectos()
     {
-        return $this->hasMany(PlanEjeLineaPrograma::class, 'plan_id');
+        return $this->hasMany(Proyecto::class, 'plan_id');
     }
 }
