@@ -122,7 +122,7 @@ class EjeController extends Controller
                 'data' => [],
                 'status' => 'error'
             ], 200);
-        else if ($eje->update(['nombre' => $request->get('nombre'), 'descripcion' => $request->has('descripcion'), 'codigo' => $request->has('codigo')]))
+        else if ($eje->update(['nombre' => $request->get('nombre'), 'descripcion' => $request->get('descripcion'), 'codigo' => $request->get('codigo')]))
             return response()->json([
                 'message' => 'Actualización exitosa',
                 'data' => [],
