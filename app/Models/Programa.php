@@ -31,7 +31,7 @@ class Programa extends Model
     /**
      * @var array
      */
-    protected $fillable = ['id', 'linea_id', 'nombre', 'created_at', 'updated_at', 'deleted_at'];
+    protected $fillable = ['id', 'linea_id', 'nombre', 'descripcion', 'codigo', 'created_at', 'updated_at', 'deleted_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

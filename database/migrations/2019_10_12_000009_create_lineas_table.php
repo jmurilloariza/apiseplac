@@ -25,11 +25,14 @@ class CreateLineasTable extends Migration
             $table->increments('id');
             $table->integer('eje_id')->unsigned();;
             $table->string('nombre', 45);
+            $table->string('descripcion', 250);
+            $table->string('codigo', 8);
             $table->softDeletes();
             $table->timestamps();
 
-            $table->index(["eje_id"], 'fk_lineas_ejes1_idx');
+            $table->unique(["codigo"], 'unique_codigo');
 
+            $table->index(["eje_id"], 'fk_lineas_ejes1_idx');
 
             $table->foreign('eje_id', 'fk_lineas_ejes1_idx')
                 ->references('id')->on('ejes')
@@ -43,8 +46,8 @@ class CreateLineasTable extends Migration
      *
      * @return void
      */
-     public function down()
-     {
-       Schema::dropIfExists($this->tableName);
-     }
+    public function down()
+    {
+        Schema::dropIfExists($this->tableName);
+    }
 }

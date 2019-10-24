@@ -25,10 +25,13 @@ class CreateProgramasTable extends Migration
             $table->increments('id');
             $table->integer('linea_id')->unsigned();
             $table->string('nombre', 45);
+            $table->string('descripcion', 250);
+            $table->string('codigo', 8);
             $table->timestamps();
 
             $table->softDeletes();
 
+            $table->unique(["codigo"], 'unique_codigo');
             $table->index(["linea_id"], 'fk_programas_lineas_idx');
 
 
@@ -44,8 +47,8 @@ class CreateProgramasTable extends Migration
      *
      * @return void
      */
-     public function down()
-     {
-       Schema::dropIfExists($this->tableName);
-     }
+    public function down()
+    {
+        Schema::dropIfExists($this->tableName);
+    }
 }

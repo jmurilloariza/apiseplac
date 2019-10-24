@@ -28,7 +28,7 @@ class Linea extends Model
     /**
      * @var array
      */
-    protected $fillable = ['id', 'eje_id', 'nombre', 'deleted_at', 'created_at', 'updated_at'];
+    protected $fillable = ['id', 'eje_id', 'nombre', 'descripcion', 'codigo', 'deleted_at', 'created_at', 'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

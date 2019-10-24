@@ -12,8 +12,7 @@ class ProgramaController extends Controller
 
     public function __construct()
     {
-        /*$this->middleware('auth:api');*/
-    }
+        /*$this->middleware('auth:api');*/ }
 
     /**
      * Display a listing of the resource.
@@ -37,7 +36,7 @@ class ProgramaController extends Controller
      */
     public function store(Request $request)
     {
-        if (!$request->has('linea_id') OR !$request->has('programas'))
+        if (!$request->has('linea_id') or !$request->has('programas'))
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
@@ -56,7 +55,28 @@ class ProgramaController extends Controller
         $programas = $request->get('programas');
 
         for ($i = 0, $long = count($programas); $i < $long; $i++) {
-            $programa = new Programa(['nombre' => $programas[$i], 'linea_id' => $request->get('linea_id')]);
+            if (!isset($programas[$i]['codigo']) or !isset($programas[$i]['nombre']) or !isset($programas[$i]['descripcion']))
+                return response()->json([
+                    'message' => 'Faltan datos',
+                    'data' => $request->toArray(),
+                    'status' => 'error'
+                ], 400);
+
+            $program = Programa::where(['codigo' => $programas[$i]['codigo']])->get()->toArray();
+
+            if (count($program) > 0)
+                return response()->json([
+                    'message' => 'Ya existe un programa con ese código',
+                    'data' => $program,
+                    'status' => 'error'
+                ], 400);
+
+            $programa = new Programa([
+                'nombre' => $programas[$i]['nombre'],
+                'linea_id' => $request->get('linea_id'), 
+                'codigo' => $programas[$i]['codigo'], 
+                'descripcion' => $programas[$i]['descripcion']
+            ]);
             if (!$programa->save())
                 return response()->json([
                     'message' => 'Ha ocurido un error',
@@ -105,14 +125,14 @@ class ProgramaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!$request->has('nombre'))
+        if (!$request->has('nombre') OR !$request->has('codigo') OR !$request->has('descripcion'))
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
                 'status' => 'error'
             ], 400);
 
-        $programa = Programa::where(['id' => $id]);
+        $programa = Programa::orWhere(['id' => $id, 'codigo' => $request->has('codigo')]);
 
         if (count($programa->get()->toArray()) == 0)
             return response()->json([
@@ -120,7 +140,7 @@ class ProgramaController extends Controller
                 'data' => [],
                 'status' => 'error'
             ], 404);
-        else if ($programa->update(['nombre' => $request->get('nombre')]))
+        else if ($programa->update(['nombre' => $request->get('nombre'), 'codigo' => $request->get('codigo'), 'descripcion' => $request->get('descripcion')]))
             return response()->json([
                 'message' => 'Actualización exitosa',
                 'data' => [],

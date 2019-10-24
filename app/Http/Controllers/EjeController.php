@@ -107,14 +107,14 @@ class EjeController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!$request->has('nombre') or !$request->has('descripcion'))
+        if (!$request->has('nombre') or !$request->has('descripcion') or !$request->has('codigo'))
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
                 'status' => 'error'
             ], 400);
 
-        $eje = Eje::where(['id' => $id]);
+        $eje = Eje::orWhere(['id' => $id, 'codigo' => $request->has('codigo')]);
 
         if (count($eje->get()->toArray()) == 0)
             return response()->json([
@@ -122,7 +122,7 @@ class EjeController extends Controller
                 'data' => [],
                 'status' => 'error'
             ], 404);
-        else if ($eje->update(['nombre' => $request->get('nombre'), 'descripcion' => $request->has('descripcion')]))
+        else if ($eje->update(['nombre' => $request->get('nombre'), 'descripcion' => $request->has('descripcion'), 'codigo' => $request->has('codigo')]))
             return response()->json([
                 'message' => 'Actualización exitosa',
                 'data' => [],
