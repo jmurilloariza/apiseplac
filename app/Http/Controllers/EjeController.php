@@ -12,8 +12,7 @@ class EjeController extends Controller
 
     public function __construct()
     {
-        /*$this->middleware('auth:api');*/
-    }
+        /*$this->middleware('auth:api');*/ }
 
     /**
      * Display a listing of the resource.
@@ -47,9 +46,18 @@ class EjeController extends Controller
         $ejes = $request->get('ejes');
 
         for ($i = 0, $long = count($ejes); $i < $long; $i++) {
-            $nombre = $ejes[$i];
+            $ej = $ejes[$i];
 
-            $eje = new Eje(['nombre' => $nombre]);
+            $eje = Eje::where(['codigo' => $ej['codigo']])->get()->toArray();
+
+            if (count($eje) > 0)
+                return response()->json([
+                    'message' => 'Ya existe un eje con ese código',
+                    'data' => $eje,
+                    'status' => 'error'
+                ], 400);
+
+            $eje = new Eje(['nombre' => $ej['nombre'], 'descripcion' => $ej['descripcion'], 'codigo' => $ej['codigo']]);
 
             if (!$eje->save())
                 response()->json([
@@ -99,7 +107,7 @@ class EjeController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!$request->has('nombre'))
+        if (!$request->has('nombre') or !$request->has('descripcion'))
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
@@ -114,7 +122,7 @@ class EjeController extends Controller
                 'data' => [],
                 'status' => 'error'
             ], 404);
-        else if ($eje->update(['nombre' => $request->get('nombre')]))
+        else if ($eje->update(['nombre' => $request->get('nombre'), 'descripcion' => $request->has('descripcion')]))
             return response()->json([
                 'message' => 'Actualización exitosa',
                 'data' => [],

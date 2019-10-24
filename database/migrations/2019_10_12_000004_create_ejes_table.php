@@ -24,8 +24,13 @@ class CreateEjesTable extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->string('nombre', 45);
+            $table->string('descripcion', 250);
+            $table->string('codigo', 8);
+
             $table->softDeletes();
             $table->timestamps();
+
+            $table->unique(["codigo"], 'unique_codigo');
         });
     }
 
@@ -34,8 +39,8 @@ class CreateEjesTable extends Migration
      *
      * @return void
      */
-     public function down()
-     {
-       Schema::dropIfExists($this->tableName);
-     }
+    public function down()
+    {
+        Schema::dropIfExists($this->tableName);
+    }
 }
