@@ -41,7 +41,7 @@ class LineaController extends Controller
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
                 'status' => 'error'
-            ], 400);
+            ], 200);
 
         $eje = Eje::where(['id' => $request->get('eje_id')])->get()->toArray();
 
@@ -50,7 +50,7 @@ class LineaController extends Controller
                 'message' => 'Eje no encontrado',
                 'data' => $request->toArray(),
                 'status' => 'error'
-            ], 404);
+            ], 200);
 
         $lineas = $request->get('lineas');
 
@@ -60,7 +60,7 @@ class LineaController extends Controller
                     'message' => 'Faltan datos',
                     'data' => $request->toArray(),
                     'status' => 'error'
-                ], 400);
+                ], 200);
 
             $line = Linea::where(['codigo' => $lineas[$i]['codigo']])->get()->toArray();
 
@@ -69,7 +69,7 @@ class LineaController extends Controller
                     'message' => 'Ya existe una linea con ese código',
                     'data' => $line,
                     'status' => 'error'
-                ], 400);
+                ], 200);
 
             $linea = new Linea([
                 'nombre' => $lineas[$i]['nombre'],
@@ -82,7 +82,7 @@ class LineaController extends Controller
                     'message' => 'Ha ocurido un error',
                     'data' => [],
                     'status' => 'error'
-                ], 500);
+                ], 200);
         }
 
         return response()->json([
@@ -113,7 +113,7 @@ class LineaController extends Controller
                 'message' => 'No existen registros',
                 'data' => [],
                 'status' => 'error'
-            ], 404);
+            ], 200);
     }
 
     /**
@@ -130,7 +130,7 @@ class LineaController extends Controller
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
                 'status' => 'error'
-            ], 400);
+            ], 200);
 
         $linea = Linea::orWhere(['id' => $id, 'codigo' => $request->has('codigo')]);
 
@@ -139,7 +139,7 @@ class LineaController extends Controller
                 'message' => 'No existen registros',
                 'data' => [],
                 'status' => 'error'
-            ], 404);
+            ], 200);
         else if ($linea->update(['nombre' => $request->get('nombre'), 'codigo' => $request->get('codigo'), 'descripcion' => $request->get('descripcion')]))
             return response()->json([
                 'message' => 'Actualización exitosa',
@@ -150,7 +150,7 @@ class LineaController extends Controller
             'message' => 'Ha ocurido un error',
             'data' => [],
             'status' => 'error'
-        ], 500);
+        ], 200);
     }
 
     /**
@@ -172,6 +172,6 @@ class LineaController extends Controller
                 'message' => 'Ocurrió un error',
                 'data' => [],
                 'status' => 'error'
-            ], 500);
+            ], 200);
     }
 }

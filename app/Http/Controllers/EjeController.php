@@ -41,7 +41,7 @@ class EjeController extends Controller
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
                 'status' => 'error'
-            ], 400);
+            ], 200);
 
         $ejes = $request->get('ejes');
 
@@ -55,7 +55,7 @@ class EjeController extends Controller
                     'message' => 'Ya existe un eje con ese código',
                     'data' => $eje,
                     'status' => 'error'
-                ], 400);
+                ], 200);
 
             $eje = new Eje(['nombre' => $ej['nombre'], 'descripcion' => $ej['descripcion'], 'codigo' => $ej['codigo']]);
 
@@ -64,7 +64,7 @@ class EjeController extends Controller
                     'message' => 'Ha ocurido un error',
                     'data' => [],
                     'status' => 'error'
-                ], 500);
+                ], 200);
         }
 
         return response()->json([
@@ -95,7 +95,7 @@ class EjeController extends Controller
                 'message' => 'No existen registros',
                 'data' => [],
                 'status' => 'error'
-            ], 404);
+            ], 200);
     }
 
     /**
@@ -112,7 +112,7 @@ class EjeController extends Controller
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
                 'status' => 'error'
-            ], 400);
+            ], 200);
 
         $eje = Eje::orWhere(['id' => $id, 'codigo' => $request->has('codigo')]);
 
@@ -121,7 +121,7 @@ class EjeController extends Controller
                 'message' => 'No existen registros',
                 'data' => [],
                 'status' => 'error'
-            ], 404);
+            ], 200);
         else if ($eje->update(['nombre' => $request->get('nombre'), 'descripcion' => $request->has('descripcion'), 'codigo' => $request->has('codigo')]))
             return response()->json([
                 'message' => 'Actualización exitosa',
@@ -132,7 +132,7 @@ class EjeController extends Controller
             'message' => 'Ha ocurido un error',
             'data' => [],
             'status' => 'error'
-        ], 500);
+        ], 200);
     }
 
     /**
@@ -154,6 +154,6 @@ class EjeController extends Controller
                 'message' => 'Ocurrió un error',
                 'data' => [],
                 'status' => 'error'
-            ], 500);
+            ], 200);
     }
 }

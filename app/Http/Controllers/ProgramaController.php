@@ -41,7 +41,7 @@ class ProgramaController extends Controller
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
                 'status' => 'error'
-            ], 400);
+            ], 200);
 
         $linea = Linea::where(['id' => $request->get('linea_id')])->get()->toArray();
 
@@ -50,7 +50,7 @@ class ProgramaController extends Controller
                 'message' => 'Linea no encontrada',
                 'data' => $request->toArray(),
                 'status' => 'error'
-            ], 404);
+            ], 200);
 
         $programas = $request->get('programas');
 
@@ -60,7 +60,7 @@ class ProgramaController extends Controller
                     'message' => 'Faltan datos',
                     'data' => $request->toArray(),
                     'status' => 'error'
-                ], 400);
+                ], 200);
 
             $program = Programa::where(['codigo' => $programas[$i]['codigo']])->get()->toArray();
 
@@ -69,7 +69,7 @@ class ProgramaController extends Controller
                     'message' => 'Ya existe un programa con ese código',
                     'data' => $program,
                     'status' => 'error'
-                ], 400);
+                ], 200);
 
             $programa = new Programa([
                 'nombre' => $programas[$i]['nombre'],
@@ -82,7 +82,7 @@ class ProgramaController extends Controller
                     'message' => 'Ha ocurido un error',
                     'data' => [],
                     'status' => 'error'
-                ], 500);
+                ], 200);
         }
 
         return response()->json([
@@ -113,7 +113,7 @@ class ProgramaController extends Controller
                 'message' => 'No existen registros',
                 'data' => [],
                 'status' => 'error'
-            ], 404);
+            ], 200);
     }
 
     /**
@@ -130,7 +130,7 @@ class ProgramaController extends Controller
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
                 'status' => 'error'
-            ], 400);
+            ], 200);
 
         $programa = Programa::orWhere(['id' => $id, 'codigo' => $request->has('codigo')]);
 
@@ -139,7 +139,7 @@ class ProgramaController extends Controller
                 'message' => 'No existen registros',
                 'data' => [],
                 'status' => 'error'
-            ], 404);
+            ], 200);
         else if ($programa->update(['nombre' => $request->get('nombre'), 'codigo' => $request->get('codigo'), 'descripcion' => $request->get('descripcion')]))
             return response()->json([
                 'message' => 'Actualización exitosa',
@@ -150,7 +150,7 @@ class ProgramaController extends Controller
             'message' => 'Ha ocurido un error',
             'data' => [],
             'status' => 'error'
-        ], 500);
+        ], 200);
     }
 
     /**
@@ -168,6 +168,6 @@ class ProgramaController extends Controller
             'message' => 'Ocurrió un error',
             'data' => [],
             'status' => 'error'
-        ], 500);
+        ], 200);
     }
 }
