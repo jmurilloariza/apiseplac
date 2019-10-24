@@ -12,7 +12,8 @@ class ProgramaController extends Controller
 
     public function __construct()
     {
-        /*$this->middleware('auth:api');*/ }
+        $this->middleware('auth:api');
+     }
 
     /**
      * Display a listing of the resource.
@@ -77,6 +78,7 @@ class ProgramaController extends Controller
                 'codigo' => $programas[$i]['codigo'], 
                 'descripcion' => $programas[$i]['descripcion']
             ]);
+            
             if (!$programa->save())
                 return response()->json([
                     'message' => 'Ha ocurido un error',
