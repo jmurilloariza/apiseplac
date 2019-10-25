@@ -25,11 +25,17 @@ Route::apiResources([
     'eje' => 'EjeController',
     'linea' => 'LineaController',
     'programa' => 'ProgramaController',
-    'dependencia' => 'DependenciaController',
+    'facultad' => 'FacultadController',
     'users' => 'UserController',
     'recurso' => 'RecursoController',
     'indicador' => 'IndicadorController'
 ]);
+
+Route::group(['prefix' => 'departamento'], function () {
+    Route::get('', 'FacultadController@indexDepartamento');
+    Route::post('', 'FacultadController@storeDepartamento');
+    Route::put('{departamento}', 'FacultadController@storeDepartamento');
+});
 
 Route::group(['prefix' => 'proyecto'], function () {
     Route::get('', 'PlanController@indexProyecto');

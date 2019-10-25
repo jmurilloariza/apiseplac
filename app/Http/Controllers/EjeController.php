@@ -12,7 +12,7 @@ class EjeController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api');
-     }
+    }
 
     /**
      * Display a listing of the resource.
@@ -57,7 +57,7 @@ class EjeController extends Controller
                     'status' => 'error'
                 ], 200);
 
-            $eje = new Eje(['nombre' => $ej['nombre'], 'descripcion' => $ej['descripcion'], 'codigo' => $ej['codigo']]);
+            $eje = new Eje(['nombre' => $ej['nombre'], 'descripcion' => $ej['descripcion'], 'codigo' => $ej['codigo'], 'estado' => 'ACTIVO']);
 
             if (!$eje->save())
                 response()->json([
@@ -108,9 +108,7 @@ class EjeController extends Controller
     public function update(Request $request, $id)
     {
 
-        // return response()->json([$request->toArray(), intval($id)]);
-
-        if (!$request->has('nombre') or !$request->has('descripcion') or !$request->has('codigo'))
+        if (!$request->has('nombre') or !$request->has('descripcion') or !$request->has('codigo') or !$request->has('estado'))
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
@@ -125,13 +123,22 @@ class EjeController extends Controller
                 'data' => [],
                 'status' => 'error'
             ], 200);
-        else if ($eje->update(['nombre' => $request->get('nombre'), 'descripcion' => $request->get('descripcion'), 'codigo' => $request->get('codigo')]))
+
+        $values = [
+            'nombre' => $request->get('nombre'),
+            'descripcion' => $request->get('descripcion'),
+            'codigo' => $request->get('codigo'),
+            'estado' => $request->get('estado')
+        ];
+
+        if ($eje->update($values))
             return response()->json([
                 'message' => 'Actualización exitosa',
                 'data' => [],
                 'status' => 'ok'
             ], 200);
-        else return response()->json([
+
+        return response()->json([
             'message' => 'Ha ocurido un error',
             'data' => [],
             'status' => 'error'
