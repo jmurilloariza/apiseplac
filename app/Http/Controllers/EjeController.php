@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Eje;
 use App\Models\Linea;
 use Illuminate\Http\Request;
-use SebastianBergmann\Diff\Line;
 
 class EjeController extends Controller
 {
@@ -108,6 +107,9 @@ class EjeController extends Controller
      */
     public function update(Request $request, $id)
     {
+
+        // return response()->json([$request->toArray(), intval($id)]);
+
         if (!$request->has('nombre') or !$request->has('descripcion') or !$request->has('codigo'))
             return response()->json([
                 'message' => 'Faltan datos',
@@ -115,7 +117,7 @@ class EjeController extends Controller
                 'status' => 'error'
             ], 200);
 
-        $eje = Eje::orWhere(['id' => $id, 'codigo' => $request->has('codigo')]);
+        $eje = Eje::where('id', '=', intval($id));
 
         if (count($eje->get()->toArray()) == 0)
             return response()->json([

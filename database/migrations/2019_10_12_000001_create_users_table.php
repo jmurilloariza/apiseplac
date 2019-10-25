@@ -17,7 +17,7 @@ class CreateUsersTable extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->integer('rol_id')->unsigned();
-            $table->integer('dependencia_id')->unsigned();
+            $table->integer('programa_academico_id')->unsigned();
             $table->string('name', 80);
             $table->string('apellidos', 80);
             $table->string('codigo', 8);
@@ -31,7 +31,7 @@ class CreateUsersTable extends Migration
 
             $table->index(["rol_id"], 'fk_usuarios_roles1_idx');
 
-            $table->index(["dependencia_id"], 'fk_usuarios_dependencia1_idx');
+            $table->index(["programa_academico_id"], 'fk_programa_academico_idx');
 
             $table->unique(["codigo"], 'unique_codigo');
 
@@ -42,8 +42,8 @@ class CreateUsersTable extends Migration
                 ->onDelete('no action')
                 ->onUpdate('no action');
 
-            $table->foreign('dependencia_id', 'fk_usuarios_dependencia1_idx')
-                ->references('id')->on('dependencia')
+            $table->foreign('programa_academico_id', 'fk_programa_academico_idx')
+                ->references('id')->on('programa_academico')
                 ->onDelete('no action')
                 ->onUpdate('no action');
         });

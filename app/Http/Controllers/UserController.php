@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Dependencia;
+use App\Models\ProgramaAcademico;
 use App\Models\Rol;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
@@ -22,8 +22,7 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
-    }
+    { }
 
     /**
      * Store a newly created resource in storage.
@@ -33,13 +32,15 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        if (!$request->has('rol_id') OR !$request->has('name') OR !$request->has('apellidos')
-            or !$request->has('codigo') OR !$request->has('email') OR !$request->has('dependencia_id')) {
+        if (
+            !$request->has('rol_id') or !$request->has('name') or !$request->has('apellidos')
+            or !$request->has('codigo') or !$request->has('email') or !$request->has('programa_academico_id')
+        ) {
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
                 'status' => 'errror'
-            ], 400);
+            ], 200);
         }
 
         $rol = Rol::where(['id' => $request->get('rol_id')])->first();
@@ -51,11 +52,11 @@ class UserController extends Controller
                 'status' => 'errror'
             ], 404);
 
-        $dependencia = Dependencia::where(['id' => $request->get('dependencia_id')])->first();
+        $programaAcademico = ProgramaAcademico::where(['id' => $request->get('programa_academico_id')])->first();
 
-        if (is_null($dependencia))
+        if (is_null($programaAcademico))
             return response()->json([
-                'message' => 'Dependencia no encontrada',
+                'message' => 'Programa no encontrado',
                 'data' => $request->toArray(),
                 'status' => 'errror'
             ], 404);
@@ -78,7 +79,7 @@ class UserController extends Controller
             'codigo' => $request->get('codigo'),
             'email' => $request->get('email'),
             'password' => Hash::make($request->get('codigo')),
-            'dependencia_id' => $request->get('dependencia_id')
+            'programa_academico_id' => $request->get('programa_academico_id')
         ]);
 
         if ($usuario->save())
@@ -103,7 +104,7 @@ class UserController extends Controller
      */
     public function show($codigo)
     {
-        $eje = Usuario::where(['codigo' => $codigo])->with(['dependencia', 'rol', 'actividadesUsuarios'])->get()->toArray();
+        $eje = Usuario::where(['codigo' => $codigo])->with(['programaAcademico', 'rol', 'actividadesUsuarios'])->get()->toArray();
 
         if (count($eje) > 0)
             return response()->json([
@@ -128,6 +129,18 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
+
+        if (
+            !$request->has('rol_id') or !$request->has('name') or !$request->has('apellidos')
+            or !$request->has('codigo') or !$request->has('email') or !$request->has('programa_academico_id')
+        ) {
+            return response()->json([
+                'message' => 'Faltan datos',
+                'data' => $request->toArray(),
+                'status' => 'errror'
+            ], 400);
+        }
+
         $user = Usuario::where('id', $id)->first();
 
         if (is_null($user))
@@ -135,7 +148,7 @@ class UserController extends Controller
                 'message' => 'No existe el usuario',
                 'data' => [],
                 'status' => 'error'
-            ], 404);
+            ], 200);
 
         $rol = Rol::where(['id' => $request->get('rol_id')])->first();
 
@@ -144,20 +157,18 @@ class UserController extends Controller
                 'message' => 'Rol no encontrado',
                 'data' => $request->toArray(),
                 'status' => 'errror'
-            ], 404);
+            ], 200);
 
-        $dependencia = Dependencia::where(['id' => $request->get('dependencia_id')])->first();
+        $programaAcademico = ProgramaAcademico::where(['id' => $request->get('programa_academico_id')])->first();
 
-        if (is_null($dependencia))
+        if (is_null($programaAcademico))
             return response()->json([
-                'message' => 'Dependencia no encontrada',
+                'message' => 'Programa no encontrado',
                 'data' => $request->toArray(),
                 'status' => 'errror'
-            ], 404);
+            ], 200);
 
-        $usuario = Usuario::orWhere([
-            'codigo' => $request->get('codigo'), 'email' => $request->get('email')
-        ])->first();
+        $usuario = Usuario::orWhere(['codigo' => $request->get('codigo'), 'email' => $request->get('email')])->first();
 
         if (!is_null($usuario))
             return response()->json([
@@ -169,7 +180,7 @@ class UserController extends Controller
         $columnas = [];
 
         if ($request->has('rol_id')) $columnas['rol_id'] = $request->get('rol_id');
-        if ($request->has('dependencia_id')) $columnas['dependencia_id'] = $request->get('dependencia_id');
+        if ($request->has('programa_academico_id')) $columnas['programa_academico_id'] = $request->get('programa_academico_id');
         if ($request->has('name')) $columnas['name'] = $request->get('name');
         if ($request->has('apellidos')) $columnas['apellidos'] = $request->get('apellidos');
         if ($request->has('codigo')) $columnas['codigo'] = $request->get('codigo');

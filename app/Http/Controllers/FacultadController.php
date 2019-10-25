@@ -2,18 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Dependencia;
+use App\Models\Facultad;
 use Illuminate\Http\Request;
 
-class DependenciaController extends Controller
+class FacultadController extends Controller
 {
     /**
-     * DependenciaController constructor.
+     * FacultadController constructor.
      */
     public function __construct()
     {
-        /*$this->middleware('auth:api');*/
-    }
+        /*$this->middleware('auth:api');*/ }
 
     /**
      * Display a listing of the resource.
@@ -24,7 +23,7 @@ class DependenciaController extends Controller
     {
         return response()->json([
             'message' => 'Consulta exitosa',
-            'data' => Dependencia::with(['planes', 'usuarios'])->get()->toArray(),
+            'data' => Facultad::with(['departamento'])->get()->toArray(),
             'status' => 'ok'
         ], 200);
     }
@@ -37,21 +36,26 @@ class DependenciaController extends Controller
      */
     public function store(Request $request)
     {
-        if (!$request->has('dependencias'))
+        if (!$request->has('facultades'))
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
                 'status' => 'error'
-            ], 400);
+            ], 200);
 
-        $dependencias = $request->get('dependencias');
+        $facultad = $request->get('facultades');
 
-        for ($i = 0, $long = count($dependencias); $i < $long; $i++) {
-            $nombre = $dependencias[$i];
+        for ($i = 0, $long = count($facultad); $i < $long; $i++) {
+            if (!isset($facultad[$i]['nombre']) or !isset($facultad[$i]['nombre']))
+                return response()->json([
+                    'message' => 'Faltan datos',
+                    'data' => $request->toArray(),
+                    'status' => 'error'
+                ], 200);
 
-            $dependencia = new Dependencia(['nombre' => $nombre]);
+            $facultad = new Facultad(['nombre' =>  $facultad[$i]['nombre'], 'codigo' =>  $facultad[$i]['codigo']]);
 
-            if (!$dependencia->save())
+            if (!$facultad->save())
                 response()->json([
                     'message' => 'Ha ocurido un error',
                     'data' => [],
@@ -74,12 +78,12 @@ class DependenciaController extends Controller
      */
     public function show($id)
     {
-        $dependencia = Dependencia::where(['id' => $id])->with(['planes', 'usuarios'])->get()->toArray();
+        $facultad = Facultad::where(['id' => $id])->with(['departamentos'])->get()->toArray();
 
-        if (count($dependencia) > 0)
+        if (count($facultad) > 0)
             return response()->json([
                 'message' => 'Consulta exitosa',
-                'data' => $dependencia[0],
+                'data' => $facultad[0],
                 'status' => 'ok'
             ], 200);
         else
@@ -106,15 +110,15 @@ class DependenciaController extends Controller
                 'status' => 'error'
             ], 400);
 
-        $dependencia = Dependencia::where(['id' => $id]);
+        $facultad = Facultad::where(['id' => $id]);
 
-        if (count($dependencia->get()->toArray()) == 0)
+        if (count($facultad->get()->toArray()) == 0)
             return response()->json([
                 'message' => 'No existen registros',
                 'data' => [],
                 'status' => 'error'
             ], 404);
-        else if ($dependencia->update(['nombre' => $request->get('nombre')]))
+        else if ($facultad->update(['nombre' => $request->get('nombre')]))
             return response()->json([
                 'message' => 'Actualización exitosa',
                 'data' => [],
@@ -135,7 +139,7 @@ class DependenciaController extends Controller
      */
     public function destroy($id)
     {
-        if (Dependencia::find($id)->delete())
+        if (Facultad::find($id)->delete())
             return response()->json([
                 'message' => 'Dependencia eliminada',
                 'data' => [],

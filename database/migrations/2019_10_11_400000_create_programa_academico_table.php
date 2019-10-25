@@ -4,17 +4,17 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePlanTable extends Migration
+class CreateProgramaAcademicoTable extends Migration
 {
     /**
      * Schema table name to migrate
      * @var string
      */
-    public $tableName = 'plan';
+    public $tableName = 'programa_academico';
 
     /**
      * Run the migrations.
-     * @table plan
+     * @table dependencia
      *
      * @return void
      */
@@ -23,18 +23,17 @@ class CreatePlanTable extends Migration
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->integer('programa_academico_id')->unsigned();
-            $table->date('fecha_inicio');
-            $table->date('fecha_fin');
+            $table->string('nombre', 100);
+            $table->string('codigo', 8);
+            $table->integer('departamento_id')->unsigned();
             $table->timestamps();
-
             $table->softDeletes();
 
-            $table->index(["programa_academico_id"], 'fk_programa_academico_id_idx');
+            $table->unique(["codigo"], 'unique_codigo');
+            $table->index(["departamento_id"], 'fk_departamento_idx');
 
-
-            $table->foreign('programa_academico_id', 'fk_programa_academico_id_idx')
-                ->references('id')->on('programa_academico')
+            $table->foreign('departamento_id', 'fk_departamento_idx')
+                ->references('id')->on('departamento')
                 ->onDelete('no action')
                 ->onUpdate('no action');
         });
@@ -45,8 +44,8 @@ class CreatePlanTable extends Migration
      *
      * @return void
      */
-     public function down()
-     {
-       Schema::dropIfExists($this->tableName);
-     }
+    public function down()
+    {
+        Schema::dropIfExists($this->tableName);
+    }
 }

@@ -19,7 +19,7 @@ class UsersTableSeeder extends Seeder
             'apellidos' => 'Murillo Ariza',
             'codigo' => '1151222',
             'rol_id' => 1,
-            'dependencia_id' => 1
+            'programa_academico_id' => 1
         ]);
     }
 }

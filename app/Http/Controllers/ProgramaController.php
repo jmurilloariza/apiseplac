@@ -134,7 +134,7 @@ class ProgramaController extends Controller
                 'status' => 'error'
             ], 200);
 
-        $programa = Programa::orWhere(['id' => $id, 'codigo' => $request->has('codigo')]);
+        $programa = Programa::where(['id' => $id]);
 
         if (count($programa->get()->toArray()) == 0)
             return response()->json([

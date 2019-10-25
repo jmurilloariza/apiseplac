@@ -133,7 +133,7 @@ class LineaController extends Controller
                 'status' => 'error'
             ], 200);
 
-        $linea = Linea::orWhere(['id' => $id, 'codigo' => $request->has('codigo')]);
+        $linea = Linea::where(['id' => $id]);
 
         if (count($linea->get()->toArray()) == 0)
             return response()->json([

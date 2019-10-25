@@ -13,26 +13,34 @@ use Illuminate\Database\Eloquent\Model;
  * @property Plan[] $plans
  * @property Usuario[] $users
  */
-class Dependencia extends Model
+class ProgramaAcademico extends Model
 {
     /**
      * The table associated with the model.
      * 
      * @var string
      */
-    protected $table = 'dependencia';
+    protected $table = 'programa_academico';
 
     /**
      * @var array
      */
-    protected $fillable = ['id', 'nombre', 'deleted_at', 'created_at', 'updated_at'];
+    protected $fillable = ['id', 'nombre', 'codigo', 'departamento_id', 'deleted_at', 'created_at', 'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function planes()
     {
-        return $this->hasMany(Plan::class, 'dependencia_id');
+        return $this->hasMan(Departamento::class, 'programa_academico_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function departamento()
+    {
+        return $this->belongsTo(Departamento::class, 'departamento_id');
     }
 
     /**
@@ -40,6 +48,6 @@ class Dependencia extends Model
      */
     public function usuarios()
     {
-        return $this->hasMany(Usuario::class, 'dependencia_id');
+        return $this->hasMany(Usuario::class, 'programa_academico_id');
     }
 }

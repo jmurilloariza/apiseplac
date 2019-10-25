@@ -40,7 +40,7 @@ class Usuario extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'id', 'rol_id', 'dependencia_id', 'name', 'apellidos', 'codigo', 'email', 'password', 'email_verified_at',
+        'id', 'rol_id', 'programa_academico_id', 'name', 'apellidos', 'codigo', 'email', 'password', 'email_verified_at',
         'remember_token', 'created_at', 'updated_at', 'deleted_at'
     ];
 
@@ -65,9 +65,9 @@ class Usuario extends Authenticatable
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function dependencia()
+    public function programaAcademico()
     {
-        return $this->belongsTo(Dependencia::class, 'dependencia_id');
+        return $this->belongsTo(ProgramaAcademico::class, 'programa_academico_id');
     }
 
     /**

@@ -27,14 +27,14 @@ class Plan extends Model
     /**
      * @var array
      */
-    protected $fillable = ['id', 'dependencia_id', 'fecha_inicio', 'fecha_fin', 'created_at', 'updated_at', 'deleted_at'];
+    protected $fillable = ['id', 'programa_id', 'fecha_inicio', 'fecha_fin', 'created_at', 'updated_at', 'deleted_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function dependencia()
     {
-        return $this->belongsTo(Dependencia::class, 'dependencia_id');
+        return $this->belongsTo(ProgramaAcademico::class, 'programa_id');
     }
 
     /**

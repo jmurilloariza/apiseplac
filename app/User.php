@@ -3,9 +3,8 @@
 namespace App;
 
 use App\Models\ActividadUsuario;
-use App\Models\Dependencia;
+use App\Models\ProgramaAcademico;
 use App\Models\Rol;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -44,7 +43,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'id', 'rol_id', 'dependencia_id', 'name', 'apellidos', 'codigo', 'email', 'password', 'email_verified_at',
+        'id', 'rol_id', 'programa_academico_id', 'name', 'apellidos', 'codigo', 'email', 'password', 'email_verified_at',
         'remember_token', 'created_at', 'updated_at', 'deleted_at'
     ];
 
@@ -91,9 +90,9 @@ class User extends Authenticatable implements JWTSubject
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function dependencia()
+    public function programaAcademico()
     {
-        return $this->belongsTo(Dependencia::class, 'dependencia_id');
+        return $this->belongsTo(ProgramaAcademico::class, 'programa_academico_id');
     }
 
     /**
