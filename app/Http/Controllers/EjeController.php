@@ -11,7 +11,7 @@ class EjeController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api');
+        // $this->middleware('auth:api');
     }
 
     /**
@@ -123,6 +123,16 @@ class EjeController extends Controller
                 'data' => [],
                 'status' => 'error'
             ], 200);
+
+        if ($eje->get()->toArray()[0]['codigo'] != $request->get('codigo')) {
+            $existencias = Eje::where(['codigo' => $request->get('codigo')])->get()->toArray();
+            if (count($existencias) >= 1)
+                return response()->json([
+                    'message' => 'Ya existe el codigo',
+                    'data' => [],
+                    'status' => 'error'
+                ], 200);
+        }
 
         $values = [
             'nombre' => $request->get('nombre'),

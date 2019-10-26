@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $created_at
  * @property string $updated_at
  * @property string $deleted_at
- * @property Dependencia $dependencium
+ * @property ProgramaAcademico $dependencium
  * @property ProyectoPrograma[] $planEjeLineaProgramas
  */
 class Plan extends Model
@@ -27,14 +27,14 @@ class Plan extends Model
     /**
      * @var array
      */
-    protected $fillable = ['id', 'programa_id', 'fecha_inicio', 'fecha_fin', 'created_at', 'updated_at', 'deleted_at'];
+    protected $fillable = ['id', 'programa_academico_id', 'url_documento', 'fecha_inicio', 'fecha_fin', 'created_at', 'updated_at', 'deleted_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function dependencia()
+    public function programaAcademico()
     {
-        return $this->belongsTo(ProgramaAcademico::class, 'programa_id');
+        return $this->belongsTo(ProgramaAcademico::class, 'programa_academico_id');
     }
 
     /**

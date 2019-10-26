@@ -11,7 +11,7 @@ class RecursoController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api');
-     }
+    }
 
     /**
      * Display a listing of the resource.
@@ -106,13 +106,15 @@ class RecursoController extends Controller
                 'data' => [],
                 'status' => 'error'
             ], 404);
-        else if ($eje->update(['nombre' => $request->get('nombre')]))
+
+        if ($eje->update(['nombre' => $request->get('nombre')]))
             return response()->json([
                 'message' => 'Actualización exitosa',
                 'data' => [],
                 'status' => 'ok'
             ], 200);
-        else return response()->json([
+
+        return response()->json([
             'message' => 'Ha ocurido un error',
             'data' => [],
             'status' => 'error'

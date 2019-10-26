@@ -112,13 +112,15 @@ class IndicadorController extends Controller
                 'data' => [],
                 'status' => 'error'
             ], 404);
-        else if ($indicador->update(['nombre' => $request->get('nombre')]))
+
+        if ($indicador->update(['nombre' => $request->get('nombre')]))
             return response()->json([
                 'message' => 'Actualización exitosa',
                 'data' => [],
                 'status' => 'ok'
             ], 200);
-        else return response()->json([
+
+        return response()->json([
             'message' => 'Ha ocurido un error',
             'data' => [],
             'status' => 'error'

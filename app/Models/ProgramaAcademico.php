@@ -32,7 +32,7 @@ class ProgramaAcademico extends Model
      */
     public function planes()
     {
-        return $this->hasMan(Departamento::class, 'programa_academico_id');
+        return $this->hasMany(Plan::class, 'programa_academico_id');
     }
 
     /**

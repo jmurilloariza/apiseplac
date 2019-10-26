@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Plan;
+use App\Models\ProgramaAcademico;
 use Illuminate\Http\Request;
 
 class PlanController extends Controller
@@ -13,7 +15,11 @@ class PlanController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json([
+            'message' => 'Consulta exitosa',
+            'data' => Plan::with(['programaAcademico', 'proyectos'])->get()->toArray(),
+            'status' => 'ok'
+        ], 200);
     }
 
     /**
@@ -24,7 +30,45 @@ class PlanController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        if (!$request->has('fecha_inicio') or !$request->has('fecha_fin') or !$request->has('programa_academico_id') or !$request->hasFile('documento'))
+            return response()->json([
+                'message' => 'Faltan datos',
+                'data' => $request->toArray(),
+                'status' => 'error'
+            ], 200);
+
+        $programaAcademico = ProgramaAcademico::where(['id' => $request->get('programa_academico_id')]);
+
+        if (count($programaAcademico->get()->toArray()) != 1)
+            return response()->json([
+                'message' => 'No existen registros del programa academico',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        $file = $request->file('documento');
+        $time = time();
+        $file->storeAs('public', $time . '-' . $file->getClientOriginalName());
+
+        $plan = new Plan([
+            'fecha_inicio' => $request->get('fecha_inicio'),
+            'fecha_fin' => $request->get('fecha_fin'),
+            'programa_academico_id' => $request->get('programa_academico_id'),
+            'url_documento' => 'storage/' . $time . '-' . $file->getClientOriginalName()
+        ]);
+
+        if (!$plan->save())
+            response()->json([
+                'message' => 'Ha ocurido un error',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        return response()->json([
+            'message' => 'Plan creado',
+            'data' => [],
+            'status' => 'ok'
+        ], 201);
     }
 
     /**

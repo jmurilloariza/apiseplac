@@ -11,6 +11,8 @@
 |
 */
 
+use Illuminate\Http\Request;
+
 Route::group(['middleware' => 'api', 'prefix' => 'auth'], function () {
     Route::post('login', 'AuthController@login')->name('login');
     Route::post('logout', 'AuthController@logout');
@@ -34,7 +36,22 @@ Route::apiResources([
 Route::group(['prefix' => 'departamento'], function () {
     Route::get('', 'FacultadController@indexDepartamento');
     Route::post('', 'FacultadController@storeDepartamento');
-    Route::put('{departamento}', 'FacultadController@storeDepartamento');
+    Route::put('{departamento}', 'FacultadController@updateDepartamento');
+    Route::get('{departamento}', 'FacultadController@showDepartamento');
+    Route::delete('{departamento}', 'FacultadController@destroyDepartamento');
+});
+
+Route::group(['prefix' => 'programa_academico'], function () {
+    Route::get('', 'FacultadController@indexProgramaAcademico');
+    Route::post('', 'FacultadController@storeProgramaAcademico');
+    Route::put('{programa_academico}', 'FacultadController@updateProgramaAcademico');
+    Route::get('{programa_academico}', 'FacultadController@showProgramaAcademico');
+    Route::delete('{programa_academico}', 'FacultadController@destroyProgramaAcademico');
+});
+
+Route::group(['prefix' => 'plan'], function () {
+    Route::get('', 'PlanController@index');
+    Route::post('', 'PlanController@store');
 });
 
 Route::group(['prefix' => 'proyecto'], function () {
@@ -45,10 +62,12 @@ Route::group(['prefix' => 'proyecto'], function () {
     Route::delete('{proyecto}', 'PlanController@destroyProyecto');
 });
 
-Route::group(['prefix' => 'plan'], function () {
-    Route::get('', 'PlanController@index');
-});
-
 Route::group(['prefix' => 'rol'], function () {
     Route::get('', 'UserController@getRoles');
+});
+
+Route::post('app', function(Request $request){
+    $anexofile = $request->file('file');
+    $url = $anexofile->storeAs('public', $anexofile->getClientOriginalName());
+    if($request->hasFile('file')) return response()->json([$anexofile->getClientOriginalName(), $url]);
 });

@@ -24,6 +24,7 @@ class CreatePlanTable extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->integer('programa_academico_id')->unsigned();
+            $table->string('url_documento', 256);
             $table->date('fecha_inicio');
             $table->date('fecha_fin');
             $table->timestamps();
@@ -31,7 +32,6 @@ class CreatePlanTable extends Migration
             $table->softDeletes();
 
             $table->index(["programa_academico_id"], 'fk_programa_academico_id_idx');
-
 
             $table->foreign('programa_academico_id', 'fk_programa_academico_id_idx')
                 ->references('id')->on('programa_academico')

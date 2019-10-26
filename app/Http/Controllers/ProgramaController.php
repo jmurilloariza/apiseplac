@@ -13,7 +13,7 @@ class ProgramaController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api');
-     }
+    }
 
     /**
      * Display a listing of the resource.
@@ -74,11 +74,11 @@ class ProgramaController extends Controller
 
             $programa = new Programa([
                 'nombre' => $programas[$i]['nombre'],
-                'linea_id' => $request->get('linea_id'), 
-                'codigo' => $programas[$i]['codigo'], 
+                'linea_id' => $request->get('linea_id'),
+                'codigo' => $programas[$i]['codigo'],
                 'descripcion' => $programas[$i]['descripcion']
             ]);
-            
+
             if (!$programa->save())
                 return response()->json([
                     'message' => 'Ha ocurido un error',
@@ -127,7 +127,7 @@ class ProgramaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!$request->has('nombre') OR !$request->has('codigo') OR !$request->has('descripcion'))
+        if (!$request->has('nombre') or !$request->has('codigo') or !$request->has('descripcion'))
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
@@ -142,12 +142,26 @@ class ProgramaController extends Controller
                 'data' => [],
                 'status' => 'error'
             ], 200);
-        else if ($programa->update(['nombre' => $request->get('nombre'), 'codigo' => $request->get('codigo'), 'descripcion' => $request->get('descripcion')]))
+
+        if ($programa->get()->toArray()[0]['codigo'] != $request->get('codigo')) {
+            $existencias = Programa::where(['codigo' => $request->get('codigo')])->get()->toArray();
+            if (count($existencias) >= 1)
+                return response()->json([
+                    'message' => 'Ya existe el codigo',
+                    'data' => [],
+                    'status' => 'error'
+                ], 200);
+        }
+
+        $values = ['nombre' => $request->get('nombre'), 'codigo' => $request->get('codigo'), 'descripcion' => $request->get('descripcion')];
+
+        if ($programa->update($values))
             return response()->json([
                 'message' => 'Actualización exitosa',
                 'data' => [],
                 'status' => 'ok'
             ], 200);
+
         return response()->json([
             'message' => 'Ha ocurido un error',
             'data' => [],

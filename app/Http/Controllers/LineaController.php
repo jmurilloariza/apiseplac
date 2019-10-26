@@ -126,7 +126,7 @@ class LineaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!$request->has('nombre') OR !$request->has('codigo') OR !$request->has('descripcion'))
+        if (!$request->has('nombre') or !$request->has('codigo') or !$request->has('descripcion'))
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
@@ -141,7 +141,18 @@ class LineaController extends Controller
                 'data' => [],
                 'status' => 'error'
             ], 200);
-        else if ($linea->update(['nombre' => $request->get('nombre'), 'codigo' => $request->get('codigo'), 'descripcion' => $request->get('descripcion')]))
+
+        if ($linea->get()->toArray()[0]['codigo'] != $request->get('codigo')) {
+            $existencias = Linea::where(['codigo' => $request->get('codigo')])->get()->toArray();
+            if (count($existencias) >= 1)
+                return response()->json([
+                    'message' => 'Ya existe el codigo',
+                    'data' => [],
+                    'status' => 'error'
+                ], 200);
+        }
+
+        if ($linea->update(['nombre' => $request->get('nombre'), 'codigo' => $request->get('codigo'), 'descripcion' => $request->get('descripcion')]))
             return response()->json([
                 'message' => 'Actualización exitosa',
                 'data' => [],
