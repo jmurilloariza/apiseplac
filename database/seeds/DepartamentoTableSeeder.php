@@ -12,6 +12,7 @@ class DepartamentoTableSeeder extends Seeder
      */
     public function run()
     {
+        Departamento::truncate();
         Departamento::create(['id' => 1, 'nombre' => 'Sistemas', 'codigo' => '1', 'facultad_id' => 1]);
     }
 }

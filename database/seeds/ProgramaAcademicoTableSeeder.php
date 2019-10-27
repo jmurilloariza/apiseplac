@@ -12,6 +12,7 @@ class ProgramaAcademicoTableSeeder extends Seeder
      */
     public function run()
     {
+        ProgramaAcademico::truncate();
         ProgramaAcademico::create(['id' => 1, 'nombre' => 'Sistemas', 'codigo' => '1', 'departamento_id' => 1]);
     }
 }

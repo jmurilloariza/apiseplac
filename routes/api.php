@@ -52,6 +52,7 @@ Route::group(['prefix' => 'programa_academico'], function () {
 Route::group(['prefix' => 'plan'], function () {
     Route::get('', 'PlanController@index');
     Route::post('', 'PlanController@store');
+    Route::get('{plan}', 'PlanController@show');
 });
 
 Route::group(['prefix' => 'proyecto'], function () {
@@ -66,8 +67,8 @@ Route::group(['prefix' => 'rol'], function () {
     Route::get('', 'UserController@getRoles');
 });
 
-Route::post('app', function(Request $request){
+Route::post('app', function (Request $request) {
     $anexofile = $request->file('file');
     $url = $anexofile->storeAs('public', $anexofile->getClientOriginalName());
-    if($request->hasFile('file')) return response()->json([$anexofile->getClientOriginalName(), $url]);
+    if ($request->hasFile('file')) return response()->json([$anexofile->getClientOriginalName(), $url]);
 });

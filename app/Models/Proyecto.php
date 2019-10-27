@@ -20,7 +20,7 @@ class Proyecto extends Model
     use SoftDeletes;
 
 
-    /**
+    /** 
      * The table associated with the model.
      *
      * @var string
@@ -30,7 +30,7 @@ class Proyecto extends Model
     /**
      * @var array
      */
-    protected $fillable = ['id', 'plan_id', 'deleted_at', 'created_at', 'updated_at'];
+    protected $fillable = ['id', 'plan_id', 'nombre', 'descripcion', 'objetivo', 'codigo',  'deleted_at', 'created_at', 'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

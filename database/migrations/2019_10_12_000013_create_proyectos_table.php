@@ -23,14 +23,17 @@ class CreateProyectosTable extends Migration
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->string('nombre', 250);
-            $table->string('descripcion', 500);
             $table->integer('plan_id')->unsigned();
+            $table->string('nombre', 250);
+            $table->string('codigo', 10);
+            $table->string('objetivo', 200);
+            $table->string('descripcion', 500);
 
             $table->softDeletes();
             $table->timestamps();
 
             $table->index(["plan_id"], 'fk_plan_id');
+            $table->unique(["codigo"], 'unique_codigo');
 
             $table->foreign('plan_id', 'plan_id')
                 ->references('id')->on('plan')

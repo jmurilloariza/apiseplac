@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Plan;
 use App\Models\ProgramaAcademico;
+use App\Models\Proyecto;
+use App\Models\ProyectoPrograma;
 use Illuminate\Http\Request;
 
 class PlanController extends Controller
@@ -79,7 +81,21 @@ class PlanController extends Controller
      */
     public function show($id)
     {
-        //
+        $plan = Plan::where(['id' => $id])->with(['programaAcademico', 'proyectos.programas.linea.eje', 'proyectos.actividades'])
+            ->get()->toArray();
+
+        if (count($plan) > 0)
+            return response()->json([
+                'message' => 'Consulta exitosa',
+                'data' => $plan[0],
+                'status' => 'ok'
+            ], 200);
+        else
+            return response()->json([
+                'message' => 'No existen registros',
+                'data' => [],
+                'status' => 'error'
+            ], 404);
     }
 
     /**
@@ -123,8 +139,75 @@ class PlanController extends Controller
      */
     public function storeProyecto(Request $request)
     {
-        //
-    }
+        if (!$request->has('nombre') or !$request->has('plan_id') or !$request->has('descripcion') or
+            !$request->has('objetivo') or !$request->has('codigo') or !$request->has('programas')) 
+            return response()->json([
+                'message' => 'Faltan datos',
+                'data' => $request->toArray(),
+                'status' => 'error'
+            ], 200);
+
+        $plan = Plan::where(['id' => $request->get('plan_id')])->exists();
+
+        if(!$plan) 
+            return response()->json([
+                'message' => 'No existe el plan asociado',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        $proyecto = Proyecto::where(['codigo' => $request->get('codigo')])->exists();
+
+        if($proyecto) 
+            return response()->json([
+                'message' => 'Ya existe un proyecto con ese codigo',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        $proyecto = new Proyecto([
+            'nombre' => $request->get('nombre'), 
+            'descripcion' => $request->get('descripcion'), 
+            'objetivo' => $request->get('objetivo'), 
+            'codigo' => $request->get('codigo')
+        ]);
+
+        if(!$proyecto->save())
+            return response()->json([
+                'message' => 'Ha ocurrido un error inesperado',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        $programas = $request->get('programas');
+
+        for($i = 0, $long = count($programas); $i < $long; $i++){
+            if(!ProyectoPrograma::where(['id' => $programas[$i]])->exists())
+                return response()->json([
+                    'message' => 'No existe un programa asociado a el id: '.$programas[$i],
+                    'data' => [],
+                    'status' => 'error'
+                ], 200);
+
+            $proyecto_programa = new ProyectoPrograma([
+                'programa_id' => $programas[$i], 
+                'proyecto_id' => $proyecto->id
+            ]);
+
+            if(!$proyecto_programa->save())
+                return response()->json([
+                    'message' => 'Ha ocurrido un error inesperado',
+                    'data' => [],
+                    'status' => 'error'
+                ], 200);
+        }
+
+        return response()->json([
+            'message' => 'Proyecto creado',
+            'data' => [],
+            'status' => 'ok'
+        ], 200);
+    }   
 
     /**
      * Display the specified resource.

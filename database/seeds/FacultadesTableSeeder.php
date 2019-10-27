@@ -12,6 +12,7 @@ class FacultadesTableSeeder extends Seeder
      */
     public function run()
     {
+        Facultad::truncate();
         Facultad::create(
             ['id' => 1, 'nombre' => 'Sistemas', 'codigo' => '1']
         );
