@@ -139,7 +139,6 @@ class EjeController extends Controller
             'nombre' => $request->get('nombre'),
             'descripcion' => $request->get('descripcion'),
             'codigo' => $request->get('codigo'),
-            'estado' => $request->get('estado')
         ];
 
         if ($eje->update($values))
