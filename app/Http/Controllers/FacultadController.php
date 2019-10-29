@@ -154,7 +154,10 @@ class FacultadController extends Controller
      */
     public function destroy($id)
     {
-        if (Facultad::find($id)->delete())
+        $facultad = Facultad::find($id);
+        $relaciones = $facultad->with(['departamentos.programasAcademicos'])->get()->toArray()[0];
+
+        if ($facultad->delete())
             return response()->json([
                 'message' => 'Dependencia eliminada',
                 'data' => [],
@@ -191,7 +194,7 @@ class FacultadController extends Controller
     public function storeDepartamento(Request $request)
     {
 
-        if (!$request->has('departamentos') or $request->has('facultad_id'))
+        if (!$request->has('departamentos') or !$request->has('facultad_id'))
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
@@ -309,7 +312,13 @@ class FacultadController extends Controller
      */
     public function destroyDepartamento($id)
     {
-        if (Departamento::find($id)->delete())
+
+        $departamento = Departamento::find($id);
+        ProgramaAcademico::where(['departamento_id' => $id])->update(['codigo' => null]);
+
+        $departamento->update(['codigo' => null]);
+
+        if ($departamento->delete())
             return response()->json([
                 'message' => 'Departamento eliminado',
                 'data' => [],
@@ -489,7 +498,10 @@ class FacultadController extends Controller
      */
     public function destroyProgramaAcademico($id)
     {
-        if (ProgramaAcademico::find($id)->delete())
+        $programaAcademico = ProgramaAcademico::find($id);
+        $programaAcademico->update(['codigo' => null]);
+
+        if ($programaAcademico->delete())
             return response()->json([
                 'message' => 'Programa academico eliminado',
                 'data' => [],

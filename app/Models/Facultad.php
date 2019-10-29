@@ -6,6 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Facultad extends Model
 {
+
+    use SoftDeletes;
+
+    use \Askedio\SoftCascade\Traits\SoftCascadeTrait;
+    protected $softCascade = ['departamentos'];
+
     /**
      * The table associated with the model.
      * 

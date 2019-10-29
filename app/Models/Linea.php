@@ -21,7 +21,7 @@ class Linea extends Model
     use SoftDeletes;
 
     use \Askedio\SoftCascade\Traits\SoftCascadeTrait;
-    protected $softCascade = ['programas'];
+    protected $softCascade = ['programas', 'planEjeLineaProgramas'];
 
     /**
      * The table associated with the model.
