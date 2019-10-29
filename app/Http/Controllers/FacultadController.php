@@ -25,7 +25,7 @@ class FacultadController extends Controller
     {
         return response()->json([
             'message' => 'Consulta exitosa',
-            'data' => Facultad::with(['departamentos'])->get()->toArray(),
+            'data' => Facultad::with(['departamentos.programasAcademicos'])->get()->toArray(),
             'status' => 'ok'
         ], 200);
     }
@@ -438,7 +438,7 @@ class FacultadController extends Controller
         if (!$request->has('nombre') or !$request->has('codigo') or !$request->has('departamento_id'))
             return response()->json([
                 'message' => 'Faltan datos',
-                'data' => $request->toArray(),
+                'data' => [$request->toArray(), !$request->has('nombre') or !$request->has('codigo') or !$request->has('departamento_id')],
                 'status' => 'error'
             ], 200);
 

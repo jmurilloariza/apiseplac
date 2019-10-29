@@ -36,6 +36,14 @@ class Departamento extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
+    public function usuarios()
+    {
+        return $this->hasMany(Usuario::class, 'programa_academico_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function programasAcademicos()
     {
         return $this->hasMany(ProgramaAcademico::class, 'departamento_id');

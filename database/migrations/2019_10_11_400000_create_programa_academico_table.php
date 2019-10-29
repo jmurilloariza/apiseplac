@@ -34,7 +34,7 @@ class CreateProgramaAcademicoTable extends Migration
 
             $table->foreign('departamento_id', 'fk_departamento_idx')
                 ->references('id')->on('departamento')
-                ->onDelete('no action')
+                ->onDelete('cascade')
                 ->onUpdate('no action');
         });
     }

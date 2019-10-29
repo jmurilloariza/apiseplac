@@ -33,7 +33,7 @@ class CreateDepartamentoTable extends Migration
 
             $table->foreign('facultad_id', 'fk_facultad_idx')
                 ->references('id')->on('facultad')
-                ->onDelete('no action')
+                ->onDelete('cascade')
                 ->onUpdate('no action');
         });
     }

@@ -68,5 +68,5 @@ Route::group(['prefix' => 'rol'], function () {
 });
 
 Route::get('p', function(){
-    return Eje::find(1)->delete().'';
+    return Eje::find(1)->get()->toArray()[0];
 });
