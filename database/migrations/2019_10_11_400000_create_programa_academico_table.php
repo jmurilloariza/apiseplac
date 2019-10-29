@@ -24,7 +24,7 @@ class CreateProgramaAcademicoTable extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->string('nombre', 100);
-            $table->string('codigo', 8);
+            $table->string('codigo', 8)->nullable();
             $table->integer('departamento_id')->unsigned();
             $table->timestamps();
             $table->softDeletes();

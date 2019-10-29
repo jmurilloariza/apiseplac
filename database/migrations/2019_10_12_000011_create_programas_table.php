@@ -26,7 +26,7 @@ class CreateProgramasTable extends Migration
             $table->integer('linea_id')->unsigned();
             $table->string('nombre', 45);
             $table->string('descripcion', 250);
-            $table->string('codigo', 8);
+            $table->string('codigo', 8)->nullable();
             $table->timestamps();
 
             $table->softDeletes();

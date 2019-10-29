@@ -25,7 +25,7 @@ class CreateEjesTable extends Migration
             $table->increments('id');
             $table->string('nombre', 45);
             $table->string('descripcion', 250);
-            $table->string('codigo', 8);
+            $table->string('codigo', 8)->nullable();
             $table->string('estado', 8);
 
             $table->softDeletes();

@@ -19,6 +19,9 @@ class Eje extends Model
 
     use SoftDeletes;
 
+    use \Askedio\SoftCascade\Traits\SoftCascadeTrait;
+    protected $softCascade = ['lineas'];
+    
     /**
      * The table associated with the model.
      *
@@ -29,7 +32,7 @@ class Eje extends Model
     /**
      * @var array
      */
-    protected $fillable = ['id', 'nombre', 'descripcion', 'codigo', 'estado', 'deleted_at', 'created_at', 'updated_at'];
+    protected $fillable = ['id', 'nombre', 'descripcion', 'codigo', 'deleted_at', 'created_at', 'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

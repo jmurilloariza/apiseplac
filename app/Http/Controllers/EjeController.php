@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Eje;
 use App\Models\Linea;
+use App\Models\Programa;
 use Illuminate\Http\Request;
 
 class EjeController extends Controller
@@ -57,7 +58,7 @@ class EjeController extends Controller
                     'status' => 'error'
                 ], 200);
 
-            $eje = new Eje(['nombre' => $ej['nombre'], 'descripcion' => $ej['descripcion'], 'codigo' => $ej['codigo'], 'estado' => 'ACTIVO']);
+            $eje = new Eje(['nombre' => $ej['nombre'], 'descripcion' => $ej['descripcion'], 'codigo' => $ej['codigo']]);
 
             if (!$eje->save())
                 response()->json([
@@ -108,7 +109,7 @@ class EjeController extends Controller
     public function update(Request $request, $id)
     {
 
-        if (!$request->has('nombre') or !$request->has('descripcion') or !$request->has('codigo') or !$request->has('estado'))
+        if (!$request->has('nombre') or !$request->has('descripcion') or !$request->has('codigo'))
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
@@ -163,17 +164,43 @@ class EjeController extends Controller
      */
     public function destroy($id)
     {
-        if (Eje::find($id)->delete())
+        $eje = Eje::find($id);
+        $relaciones = $eje->with(['lineas.programas.proyectos'])->get()[0];
+
+        for ($i = 0, $long = count($relaciones['lineas']); $i < $long; $i++) {
+            $programas = $relaciones['lineas'][$i]['programas'];
+
+            if (count($programas) > 0) {
+                for ($j = 0, $long = count($programas); $j < $long; $j++) {
+                    $proyectos = $programas[$j]['proyectos'];
+                    if (count($proyectos) > 0) {
+                        return response()->json([
+                            'message' => 'NO es posible eliminar el eje ya que una de sus lineas tiene programas asignados a algunos proyectos',
+                            'data' => [],
+                            'status' => 'error'
+                        ], 200);
+                    } else {
+                        Programa::where(['linea_id' => $relaciones['lineas'][$i]['id']])->update(['codigo' => null]);
+                    }
+                }
+            }
+
+            Linea::where(['eje_id' => $id])->update(['codigo' => null]);
+        }
+
+        $eje->update(['codigo' => null]);
+
+        if ($eje->delete())
             return response()->json([
                 'message' => 'Eje eliminado',
-                'data' => [],
+                'data' => [$relaciones],
                 'status' => 'ok'
             ], 200);
         else
-            return response()->json([
-                'message' => 'Ocurrió un error',
-                'data' => [],
-                'status' => 'error'
-            ], 200);
+        return response()->json([
+            'message' => 'Ocurrió un error',
+            'data' => [],
+            'status' => 'error'
+        ], 200);
     }
 }

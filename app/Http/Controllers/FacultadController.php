@@ -94,7 +94,7 @@ class FacultadController extends Controller
                 'message' => 'No existen registros',
                 'data' => [],
                 'status' => 'error'
-            ], 404);
+            ], 200);
     }
 
     /**
@@ -111,7 +111,7 @@ class FacultadController extends Controller
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
                 'status' => 'error'
-            ], 400);
+            ], 200);
 
         $facultad = Facultad::where(['id' => $id]);
 
@@ -120,7 +120,7 @@ class FacultadController extends Controller
                 'message' => 'No existen registros',
                 'data' => [],
                 'status' => 'error'
-            ], 404);
+            ], 200);
 
         if ($facultad->get()->toArray()[0]['codigo'] != $request->get('codigo')) {
             $existencias = Facultad::where(['codigo' => $request->get('codigo')])->get()->toArray();
@@ -205,7 +205,7 @@ class FacultadController extends Controller
                 'message' => 'No existen registros de esa facultad',
                 'data' => [],
                 'status' => 'error'
-            ], 404);
+            ], 200);
 
         $departamentos = $request->get('departamentos');
 
@@ -252,7 +252,7 @@ class FacultadController extends Controller
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
                 'status' => 'error'
-            ], 400);
+            ], 200);
 
         $facultad = Facultad::where(['id' => $request->get('facultad_id')]);
 
@@ -344,7 +344,7 @@ class FacultadController extends Controller
                 'message' => 'No existen registros',
                 'data' => [],
                 'status' => 'error'
-            ], 404);
+            ], 200);
     }
 
     /**
@@ -356,7 +356,7 @@ class FacultadController extends Controller
     {
         return response()->json([
             'message' => 'Consulta exitosa',
-            'data' => ProgramaAcademico::with(['departamento', 'usuarios', 'planes'])->get()->toArray(),
+            'data' => ProgramaAcademico::with(['departamento.facultad', 'usuarios', 'planes'])->get()->toArray(),
             'status' => 'ok'
         ], 200);
     }
@@ -384,7 +384,7 @@ class FacultadController extends Controller
                 'message' => 'No existen registros de ese departamento',
                 'data' => [],
                 'status' => 'error'
-            ], 404);
+            ], 200);
 
         $programasAcademicos = $request->get('programasAcademicos');
 
@@ -431,7 +431,7 @@ class FacultadController extends Controller
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
                 'status' => 'error'
-            ], 400);
+            ], 200);
 
         $departamento = Departamento::where(['id' => $request->get('departamento_id')]);
 
@@ -524,6 +524,6 @@ class FacultadController extends Controller
                 'message' => 'No existen registros',
                 'data' => [],
                 'status' => 'error'
-            ], 404);
+            ], 200);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Eje;
 use App\Models\Linea;
+use App\Models\Programa;
 use Illuminate\Http\Request;
 
 class LineaController extends Controller
@@ -143,8 +144,8 @@ class LineaController extends Controller
             ], 200);
 
         if ($linea->get()->toArray()[0]['codigo'] != $request->get('codigo')) {
-            $existencias = Linea::where(['codigo' => $request->get('codigo')])->get()->toArray();
-            if (count($existencias) >= 1)
+            $existencias = Linea::where(['codigo' => $request->get('codigo')])->get()->exists();
+            if ($existencias)
                 return response()->json([
                     'message' => 'Ya existe el codigo',
                     'data' => [],
@@ -173,7 +174,23 @@ class LineaController extends Controller
      */
     public function destroy($id)
     {
-        if (Linea::find($id)->delete())
+        $linea = Linea::find($id);
+        $programas = $linea->with(['programas.proyectos'])->get()[0]['programas'];
+
+        for ($i = 0, $long = count($programas); $i < $long; $i++) {
+            if (count($programas[$i]['proyectos']) > 0) {
+                return response()->json([
+                    'message' => 'NO es posible eliminar la linea ya que tiene programas asignados a algunos proyectos',
+                    'data' => [],
+                    'status' => 'error'
+                ], 200);
+            }
+        }
+
+        $linea->update(['codigo' => null]);
+        Programa::where(['linea_id' => $id])->update(['codigo' => null]);
+
+        if ($linea->delete())
             return response()->json([
                 'message' => 'Linea eliminado',
                 'data' => [],

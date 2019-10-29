@@ -24,7 +24,7 @@ class ProgramaController extends Controller
     {
         return response()->json([
             'message' => 'Consulta exitosa',
-            'data' => Programa::with(['linea'])->get()->toArray(),
+            'data' => Programa::with(['linea.eje'])->get()->toArray(),
             'status' => 'ok'
         ], 200);
     }

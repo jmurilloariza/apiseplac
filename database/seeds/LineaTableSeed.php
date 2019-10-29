@@ -12,16 +12,16 @@ class LineaTableSeed extends Seeder
      */
     public function run()
     {
-        Linea::truncate();
+        // Linea::truncate();
         Linea::create(
-            ['eje_id' => 1, 'nombre' => "Linea 1"],
-            ['eje_id' => 2, 'nombre' => "Linea 2"],
-            ['eje_id' => 3, 'nombre' => "Linea 3"],
-            ['eje_id' => 1, 'nombre' => "Linea 4"],
-            ['eje_id' => 2, 'nombre' => "Linea 5"],
-            ['eje_id' => 3, 'nombre' => "Linea 6"],
-            ['eje_id' => 4, 'nombre' => "Linea 7"],
-            ['eje_id' => 4, 'nombre' => "Linea 8"]
+            ['eje_id' => 1, 'nombre' => "Linea 1", "descripcion" => "Descripcion", "codigo" => "e2"],
+            ['eje_id' => 2, 'nombre' => "Linea 2", "descripcion" => "Descripcion", "codigo" => "e1"],
+            ['eje_id' => 3, 'nombre' => "Linea 3", "descripcion" => "Descripcion", "codigo" => "e3"],
+            ['eje_id' => 1, 'nombre' => "Linea 4", "descripcion" => "Descripcion", "codigo" => "e4"],
+            ['eje_id' => 2, 'nombre' => "Linea 5", "descripcion" => "Descripcion", "codigo" => "e5"],
+            ['eje_id' => 3, 'nombre' => "Linea 6", "descripcion" => "Descripcion", "codigo" => "e6"],
+            ['eje_id' => 4, 'nombre' => "Linea 7", "descripcion" => "Descripcion", "codigo" => "e7"],
+            ['eje_id' => 4, 'nombre' => "Linea 8", "descripcion" => "Descripcion", "codigo" => "e8"]
         );
     }
 }

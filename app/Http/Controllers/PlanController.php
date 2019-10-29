@@ -32,10 +32,17 @@ class PlanController extends Controller
      */
     public function store(Request $request)
     {
-        if (!$request->has('fecha_inicio') or !$request->has('fecha_fin') or !$request->has('programa_academico_id') or !$request->hasFile('documento'))
+        if (!$request->has('fecha_inicio') or !$request->has('fecha_fin') or !$request->has('programa_academico_id'))
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
+                'status' => 'error'
+            ], 200);
+
+        if (!$request->hasFile('documento'))
+            return response()->json([
+                'message' => 'Debe enviar el documento del plan',
+                'data' => [],
                 'status' => 'error'
             ], 200);
 
@@ -140,7 +147,7 @@ class PlanController extends Controller
     public function storeProyecto(Request $request)
     {
         if (!$request->has('nombre') or !$request->has('plan_id') or !$request->has('descripcion') or
-            !$request->has('objetivo') or !$request->has('codigo') or !$request->has('programas')) 
+            !$request->has('objetivo') or !$request->has('codigo') or !$request->has('programas'))
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
@@ -149,7 +156,7 @@ class PlanController extends Controller
 
         $plan = Plan::where(['id' => $request->get('plan_id')])->exists();
 
-        if(!$plan) 
+        if (!$plan)
             return response()->json([
                 'message' => 'No existe el plan asociado',
                 'data' => [],
@@ -158,7 +165,7 @@ class PlanController extends Controller
 
         $proyecto = Proyecto::where(['codigo' => $request->get('codigo')])->exists();
 
-        if($proyecto) 
+        if ($proyecto)
             return response()->json([
                 'message' => 'Ya existe un proyecto con ese codigo',
                 'data' => [],
@@ -166,13 +173,13 @@ class PlanController extends Controller
             ], 200);
 
         $proyecto = new Proyecto([
-            'nombre' => $request->get('nombre'), 
-            'descripcion' => $request->get('descripcion'), 
-            'objetivo' => $request->get('objetivo'), 
+            'nombre' => $request->get('nombre'),
+            'descripcion' => $request->get('descripcion'),
+            'objetivo' => $request->get('objetivo'),
             'codigo' => $request->get('codigo')
         ]);
 
-        if(!$proyecto->save())
+        if (!$proyecto->save())
             return response()->json([
                 'message' => 'Ha ocurrido un error inesperado',
                 'data' => [],
@@ -181,20 +188,20 @@ class PlanController extends Controller
 
         $programas = $request->get('programas');
 
-        for($i = 0, $long = count($programas); $i < $long; $i++){
-            if(!ProyectoPrograma::where(['id' => $programas[$i]])->exists())
+        for ($i = 0, $long = count($programas); $i < $long; $i++) {
+            if (!ProyectoPrograma::where(['id' => $programas[$i]])->exists())
                 return response()->json([
-                    'message' => 'No existe un programa asociado a el id: '.$programas[$i],
+                    'message' => 'No existe un programa asociado a el id: ' . $programas[$i],
                     'data' => [],
                     'status' => 'error'
                 ], 200);
 
             $proyecto_programa = new ProyectoPrograma([
-                'programa_id' => $programas[$i], 
+                'programa_id' => $programas[$i],
                 'proyecto_id' => $proyecto->id
             ]);
 
-            if(!$proyecto_programa->save())
+            if (!$proyecto_programa->save())
                 return response()->json([
                     'message' => 'Ha ocurrido un error inesperado',
                     'data' => [],
@@ -207,7 +214,7 @@ class PlanController extends Controller
             'data' => [],
             'status' => 'ok'
         ], 200);
-    }   
+    }
 
     /**
      * Display the specified resource.

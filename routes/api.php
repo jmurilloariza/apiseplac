@@ -11,7 +11,7 @@
 |
 */
 
-use Illuminate\Http\Request;
+use App\Models\Eje;
 
 Route::group(['middleware' => 'api', 'prefix' => 'auth'], function () {
     Route::post('login', 'AuthController@login')->name('login');
@@ -53,22 +53,20 @@ Route::group(['prefix' => 'plan'], function () {
     Route::get('', 'PlanController@index');
     Route::post('', 'PlanController@store');
     Route::get('{plan}', 'PlanController@show');
-});
 
-Route::group(['prefix' => 'proyecto'], function () {
-    Route::get('', 'PlanController@indexProyecto');
-    Route::get('{proyecto}', 'PlanController@showProyecto');
-    Route::post('', 'PlanController@storeProyecto');
-    Route::put('{proyecto}', 'PlanController@updateProyecto');
-    Route::delete('{proyecto}', 'PlanController@destroyProyecto');
+    Route::group(['prefix' => 'proyecto'], function () {
+        Route::get('', 'PlanController@indexProyecto');
+        Route::get('{proyecto}', 'PlanController@showProyecto');
+        Route::post('', 'PlanController@storeProyecto');
+        Route::put('{proyecto}', 'PlanController@updateProyecto');
+        Route::delete('{proyecto}', 'PlanController@destroyProyecto');
+    });
 });
 
 Route::group(['prefix' => 'rol'], function () {
     Route::get('', 'UserController@getRoles');
 });
 
-Route::post('app', function (Request $request) {
-    $anexofile = $request->file('file');
-    $url = $anexofile->storeAs('public', $anexofile->getClientOriginalName());
-    if ($request->hasFile('file')) return response()->json([$anexofile->getClientOriginalName(), $url]);
+Route::get('p', function(){
+    return Eje::find(1)->delete().'';
 });

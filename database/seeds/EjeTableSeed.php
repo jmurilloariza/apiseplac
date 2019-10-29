@@ -12,12 +12,11 @@ class EjeTableSeed extends Seeder
      */
     public function run()
     {
-        Eje::truncate();
         Eje::create(
-            ['nombre' => "Eje1"], 
-            ['nombre' => "Eje2"], 
-            ['nombre' => "Eje3"], 
-            ['nombre' => "Eje4"]
+            ['nombre' => "Eje1", "descripcion" => "Descripcion", "codigo" => "c1"], 
+            ['nombre' => "Eje2", "descripcion" => "Descripcion", "codigo" => "c2"], 
+            ['nombre' => "Eje3", "descripcion" => "Descripcion", "codigo" => "c3"], 
+            ['nombre' => "Eje4", "descripcion" => "Descripcion", "codigo" => "c4"]
         );
     }
 }

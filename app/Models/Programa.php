@@ -20,6 +20,8 @@ class Programa extends Model
 
     use SoftDeletes;
 
+    use \Askedio\SoftCascade\Traits\SoftCascadeTrait;
+    protected $softCascade = ['proyectos'];
 
     /**
      * The table associated with the model.

@@ -24,8 +24,9 @@ class CreateDepartamentoTable extends Migration
             $table->increments('id');
             $table->integer('facultad_id')->unsigned();;
             $table->string('nombre', 100);
-            $table->string('codigo', 8);
+            $table->string('codigo', 8)->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->unique(["codigo"], 'unique_codigo');
             $table->index(["facultad_id"], 'fk_facultad_idx');

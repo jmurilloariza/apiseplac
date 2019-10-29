@@ -178,6 +178,7 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         Barryvdh\Cors\ServiceProvider::class,
+        Askedio\SoftCascade\Providers\GenericServiceProvider::class,
 
     ],
 

@@ -1,7 +1,7 @@
 <?php
 
+use App\Models\Rol;
 use Illuminate\Database\Seeder;
-use \App\Models\Rol;
 
 class RolesTableSeeder extends Seeder
 {
@@ -12,7 +12,7 @@ class RolesTableSeeder extends Seeder
      */
     public function run()
     {
-        Rol::truncate();
+        // Rol::truncate();
         Rol::create(
             [ 'id' => 1, 'nombre' => 'Administrador'],
             [ 'id' => 2, 'nombre' => 'Docente'],
