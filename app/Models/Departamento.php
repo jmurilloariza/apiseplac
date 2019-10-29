@@ -3,9 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Departamento extends Model
 {
+
+    use SoftDeletes;
+
+    use \Askedio\SoftCascade\Traits\SoftCascadeTrait;
+    protected $softCascade = ['programasAcademicos'];
+
     /**
      * The table associated with the model.
      * 
@@ -24,14 +31,6 @@ class Departamento extends Model
     public function facultad()
     {
         return $this->belongsTo(Facultad::class, 'facultad_id');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function usuarios()
-    {
-        return $this->hasMany(Usuario::class, 'programa_academico_id');
     }
 
     /**
