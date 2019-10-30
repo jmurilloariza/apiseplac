@@ -48,7 +48,7 @@ class UserController extends Controller
                 'message' => 'Rol no encontrado',
                 'data' => $request->toArray(),
                 'status' => 'errror'
-            ], 404);
+            ], 200);
 
         $programaAcademico = ProgramaAcademico::where(['id' => $request->get('programa_academico_id')])->first();
 
@@ -57,7 +57,7 @@ class UserController extends Controller
                 'message' => 'Programa no encontrado',
                 'data' => $request->toArray(),
                 'status' => 'errror'
-            ], 404);
+            ], 200);
 
         $usuario = Usuario::orWhere([
             'codigo' => $request->get('codigo'), 'email' => $request->get('email')
@@ -68,7 +68,7 @@ class UserController extends Controller
                 'message' => 'Ya existe un usuario con ese correo y/o codigo',
                 'data' => [],
                 'status' => 'error'
-            ], 400);
+            ], 200);
 
         $usuario = new Usuario([
             'rol_id' => $request->get('rol_id'),
@@ -116,7 +116,7 @@ class UserController extends Controller
                 'message' => 'No existen registros',
                 'data' => [],
                 'status' => 'error'
-            ], 404);
+            ], 200);
     }
 
     /**
@@ -135,7 +135,7 @@ class UserController extends Controller
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
                 'status' => 'errror'
-            ], 400);
+            ], 200);
         }
 
         $user = Usuario::where('codigo', $codigo)->first();
@@ -172,7 +172,7 @@ class UserController extends Controller
                 'message' => 'Ya existe un usuario con ese correo y/o codigo',
                 'data' => [],
                 'status' => 'error'
-            ], 400);
+            ], 200);
 
         $columnas = [];
 
@@ -212,7 +212,6 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
     }
 
     public function getRoles()
