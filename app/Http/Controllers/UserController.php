@@ -13,7 +13,7 @@ class UserController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api');
+        // $this->middleware('auth:api');
     }
 
     /**
@@ -220,5 +220,21 @@ class UserController extends Controller
     public function getRoles()
     {
         return response()->json(['message' => 'Consulta exitosa', 'data' => Rol::with(['users'])->get()->toArray(), 'status' => 'ok']);
+    }
+
+    public function getDocentes(){
+        return response()->json($this->getUserRol(3));
+    }
+
+    public function getAdministrativos(){
+        return response()->json($this->getUserRol(2));
+    }
+
+    public function getUserRol($rol_id){
+        return [
+            'message' => 'Consulta exitosa', 
+            'data' => Usuario::where(['rol_id' => $rol_id])->get()->toArray(), 
+            'status' => 'ok'
+        ];
     }
 }

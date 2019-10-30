@@ -65,8 +65,7 @@ Route::group(['prefix' => 'plan'], function () {
 
 Route::group(['prefix' => 'rol'], function () {
     Route::get('', 'UserController@getRoles');
+    Route::get('docente', 'UserController@getDocentes');
+    Route::get('administrativo', 'UserController@getAdministrativos');
 });
 
-Route::get('p', function(){
-    return Eje::find(1)->get()->toArray()[0];
-});
