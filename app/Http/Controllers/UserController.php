@@ -126,7 +126,7 @@ class UserController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $codigo)
     {
 
         if (!$request->has('rol_id') or !$request->has('name') or !$request->has('apellidos') or !$request->has('contrato')
@@ -138,7 +138,7 @@ class UserController extends Controller
             ], 400);
         }
 
-        $user = Usuario::where('id', $id)->first();
+        $user = Usuario::where('codigo', $codigo)->first();
 
         if (is_null($user))
             return response()->json([
@@ -228,10 +228,10 @@ class UserController extends Controller
         return response()->json($this->getUserRol(2));
     }
 
-    public function getUserRol($rol_id){
+    private function getUserRol($rol_id){
         return [
             'message' => 'Consulta exitosa', 
-            'data' => Usuario::where(['rol_id' => $rol_id])->get()->toArray(), 
+            'data' => Usuario::where(['rol_id' => $rol_id])->with(['programaAcademico'])->get()->toArray(), 
             'status' => 'ok'
         ];
     }

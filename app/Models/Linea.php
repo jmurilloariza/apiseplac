@@ -21,7 +21,7 @@ class Linea extends Model
     use SoftDeletes;
 
     use \Askedio\SoftCascade\Traits\SoftCascadeTrait;
-    protected $softCascade = ['programas', 'planEjeLineaProgramas'];
+    protected $softCascade = ['programas'];
 
     /**
      * The table associated with the model.
@@ -41,14 +41,6 @@ class Linea extends Model
     public function eje()
     {
         return $this->belongsTo(Eje::class, 'eje_id');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function planEjeLineaProgramas()
-    {
-        return $this->hasMany(ProyectoPrograma::class, 'linea_id');
     }
 
     /**

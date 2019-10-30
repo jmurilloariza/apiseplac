@@ -192,7 +192,7 @@ class EjeController extends Controller
         if ($eje->delete())
             return response()->json([
                 'message' => 'Eje eliminado',
-                'data' => [$relaciones],
+                'data' => [],
                 'status' => 'ok'
             ], 200);
         else

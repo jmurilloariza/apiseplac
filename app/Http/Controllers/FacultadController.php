@@ -155,7 +155,6 @@ class FacultadController extends Controller
     public function destroy($id)
     {
         $facultad = Facultad::find($id);
-        $relaciones = $facultad->with(['departamentos.programasAcademicos'])->get()->toArray()[0];
 
         if ($facultad->delete())
             return response()->json([
