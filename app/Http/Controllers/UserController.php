@@ -31,11 +31,9 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        if (
-            !$request->has('rol_id') or !$request->has('name') or !$request->has('apellidos')
-            or !$request->has('codigo') or !$request->has('email') or !$request->has('programa_academico_id')
-        ) {
+    { 
+        if (!$request->has('rol_id') or !$request->has('name') or !$request->has('apellidos') or !$request->has('contrato') 
+            or !$request->has('codigo') or !$request->has('email') or !$request->has('programa_academico_id')) {
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
@@ -78,6 +76,7 @@ class UserController extends Controller
             'apellidos' => $request->get('apellidos'),
             'codigo' => $request->get('codigo'),
             'email' => $request->get('email'),
+            'contrato' => $request->get('contrato'),
             'password' => Hash::make($request->get('codigo')),
             'programa_academico_id' => $request->get('programa_academico_id')
         ]);
@@ -130,10 +129,8 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
 
-        if (
-            !$request->has('rol_id') or !$request->has('name') or !$request->has('apellidos')
-            or !$request->has('codigo') or !$request->has('email') or !$request->has('programa_academico_id')
-        ) {
+        if (!$request->has('rol_id') or !$request->has('name') or !$request->has('apellidos') or !$request->has('contrato')
+            or !$request->has('codigo') or !$request->has('email') or !$request->has('programa_academico_id')) {
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
@@ -185,6 +182,7 @@ class UserController extends Controller
         if ($request->has('apellidos')) $columnas['apellidos'] = $request->get('apellidos');
         if ($request->has('codigo')) $columnas['codigo'] = $request->get('codigo');
         if ($request->has('email')) $columnas['email'] = $request->get('email');
+        if ($request->has('contrato')) $columnas['contrato'] = $request->get('contrato');
 
         if (count($columnas) == 0)
             return response()->json([

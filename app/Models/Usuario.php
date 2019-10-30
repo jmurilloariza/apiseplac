@@ -41,7 +41,7 @@ class Usuario extends Authenticatable
      */
     protected $fillable = [
         'id', 'rol_id', 'programa_academico_id', 'name', 'apellidos', 'codigo', 'email', 'password', 'email_verified_at',
-        'remember_token', 'created_at', 'updated_at', 'deleted_at'
+        'contrato', 'remember_token', 'created_at', 'updated_at', 'deleted_at'
     ];
 
     /**
