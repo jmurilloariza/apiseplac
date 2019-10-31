@@ -39,12 +39,12 @@ class PlanController extends Controller
                 'status' => 'error'
             ], 200);
 
-        if (!$request->hasFile('documento'))
-            return response()->json([
-                'message' => 'Debe enviar el documento del plan',
-                'data' => [],
-                'status' => 'error'
-            ], 200);
+        // if (!$request->hasFile('documento'))
+        //     return response()->json([
+        //         'message' => 'Debe enviar el documento del plan',
+        //         'data' => [],
+        //         'status' => 'error'
+        //     ], 200);
 
         $programaAcademico = ProgramaAcademico::where(['id' => $request->get('programa_academico_id')]);
 
@@ -55,15 +55,22 @@ class PlanController extends Controller
                 'status' => 'error'
             ], 200);
 
-        $file = $request->file('documento');
-        $time = time();
-        $file->storeAs('public', $time . '-' . $file->getClientOriginalName());
+        // $file = $request->file('documento');
+        // $time = time();
+        // $file->storeAs('public', $time . '-' . $file->getClientOriginalName());
+
+        // $plan = new Plan([
+        //     'fecha_inicio' => $request->get('fecha_inicio'),
+        //     'fecha_fin' => $request->get('fecha_fin'),
+        //     'programa_academico_id' => $request->get('programa_academico_id'),
+        //     'url_documento' => 'storage/' . $time . '-' . $file->getClientOriginalName()
+        // ]);
 
         $plan = new Plan([
             'fecha_inicio' => $request->get('fecha_inicio'),
             'fecha_fin' => $request->get('fecha_fin'),
             'programa_academico_id' => $request->get('programa_academico_id'),
-            'url_documento' => 'storage/' . $time . '-' . $file->getClientOriginalName()
+            'url_documento' => ''
         ]);
 
         if (!$plan->save())
