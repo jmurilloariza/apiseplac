@@ -138,9 +138,9 @@ class UserController extends Controller
             ], 200);
         }
 
-        $user = Usuario::where('codigo', $codigo)->first();
+        $user = Usuario::where('codigo', $codigo);
 
-        if (is_null($user))
+        if (is_null($user->first()))
             return response()->json([
                 'message' => 'No existe el usuario',
                 'data' => [],
@@ -165,15 +165,21 @@ class UserController extends Controller
                 'status' => 'errror'
             ], 200);
 
-        $usuario = Usuario::orWhere(['codigo' => $request->get('codigo'), 'email' => $request->get('email')])->first();
 
-        if (!is_null($usuario))
-            return response()->json([
-                'message' => 'Ya existe un usuario con ese correo y/o codigo',
-                'data' => [],
-                'status' => 'error'
-            ], 200);
+        $usuario = $user->get()->toArray()[0];
 
+        if($request->get('codigo') != $usuario['codigo'] AND $request->get('email') != $usuario['email']){
+            $usuario = Usuario::orWhere(['codigo' => $request->get('codigo'), 'email' => $request->get('email')])->first();
+
+            if (!is_null($usuario))
+                return response()->json([
+                    'message' => 'Ya existe un usuario con ese correo y/o codigo',
+                    'data' => [],
+                    'status' => 'error'
+                ], 200);
+
+        }
+        
         $columnas = [];
 
         if ($request->has('rol_id')) $columnas['rol_id'] = $request->get('rol_id');
