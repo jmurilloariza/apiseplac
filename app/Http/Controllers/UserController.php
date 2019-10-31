@@ -216,8 +216,22 @@ class UserController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($codigo)
     {
+        $usuario = Usuario::where(['codigo' => $codigo]);
+        $usuario->update(['codigo' => null, 'email' => null]);
+        if ($usuario->delete())
+            return response()->json([
+                'message' => 'Usuario eliminado',
+                'data' => [],
+                'status' => 'ok'
+            ], 200);
+        else
+            return response()->json([
+                'message' => 'Ocurrió un error',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
     }
 
     public function getRoles()
