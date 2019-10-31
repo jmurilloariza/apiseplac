@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActividadUsuario;
 use App\Models\ProgramaAcademico;
 use App\Models\Rol;
 use App\Models\Usuario;
@@ -222,6 +223,7 @@ class UserController extends Controller
     {
         $usuario = Usuario::where(['id' => $id]);
         $usuario->update(['codigo' => null, 'email' => null]);
+        ActividadUsuario::where(['usuario_id' => $id])->delete();
         if ($usuario->delete())
             return response()->json([
                 'message' => 'Usuario eliminado',
