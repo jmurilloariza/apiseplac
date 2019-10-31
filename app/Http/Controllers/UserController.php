@@ -50,14 +50,16 @@ class UserController extends Controller
                 'status' => 'errror'
             ], 200);
 
-        $programaAcademico = ProgramaAcademico::where(['id' => $request->get('programa_academico_id')])->first();
+        if($request->get('programa_academico_id') != null){
+            $programaAcademico = ProgramaAcademico::where(['id' => $request->get('programa_academico_id')])->first();
 
-        if (is_null($programaAcademico))
-            return response()->json([
-                'message' => 'Programa no encontrado',
-                'data' => $request->toArray(),
-                'status' => 'errror'
-            ], 200);
+            if (is_null($programaAcademico))
+                return response()->json([
+                    'message' => 'Programa no encontrado',
+                    'data' => $request->toArray(),
+                    'status' => 'errror'
+                ], 200);
+        }
 
         $usuario = Usuario::orWhere([
             'codigo' => $request->get('codigo'), 'email' => $request->get('email')
@@ -216,9 +218,9 @@ class UserController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($codigo)
+    public function destroy($id)
     {
-        $usuario = Usuario::where(['codigo' => $codigo]);
+        $usuario = Usuario::where(['id' => $id]);
         $usuario->update(['codigo' => null, 'email' => null]);
         if ($usuario->delete())
             return response()->json([

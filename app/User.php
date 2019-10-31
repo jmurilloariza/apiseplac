@@ -5,6 +5,7 @@ namespace App;
 use App\Models\ActividadUsuario;
 use App\Models\ProgramaAcademico;
 use App\Models\Rol;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -31,6 +32,11 @@ class User extends Authenticatable implements JWTSubject
 {
 
     use Notifiable;
+
+    use SoftDeletes;
+
+    use \Askedio\SoftCascade\Traits\SoftCascadeTrait;
+    protected $softCascade = ['actividadesUsuarios'];
 
     /**
      * The table associated with the model.

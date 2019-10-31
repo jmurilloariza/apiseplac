@@ -20,8 +20,8 @@ class CreateUsersTable extends Migration
             $table->integer('programa_academico_id')->unsigned()->nullable();
             $table->string('name', 80);
             $table->string('apellidos', 80);
-            $table->string('codigo', 8);
-            $table->string('email', 50);
+            $table->string('codigo', 8)->nullable();
+            $table->string('email', 50)->nullable();
             $table->string('contrato', 50)->nullable();
             $table->string('password', 120);
             

@@ -170,7 +170,7 @@ class FacultadController extends Controller
 
         if ($facultad->delete())
             return response()->json([
-                'message' => 'Dependencia eliminada',
+                'message' => 'Facultad eliminada',
                 'data' => [],
                 'status' => 'ok'
             ], 200);
