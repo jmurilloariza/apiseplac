@@ -16,15 +16,23 @@ class CreatePlanProyectos extends Migration
         Schema::create('plan_proyectos', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->integer('programa_academico_id')->unsigned();
-            $table->string('nombre', 80);
-            $table->string('descripcion', 250);
-            $table->string('objetivo', 200);
+            $table->integer('proyecto_id')->unsigned();
+            $table->integer('plan_id')->unsigned();
 
-            $table->index(["programa_academico_id"], 'fk_proyectos_programa_academico1_idx');
+            $table->softDeletes();
+            $table->timestamps();
 
-            $table->foreign('programa_academico_id', 'fk_proyectos_programa_academico1_idx')
-                ->references('id')->on('programa_academico')
+            $table->index(["proyecto_id"], 'fk_proyecto_id_idx_p');
+
+            $table->foreign('proyecto_id', 'fk_proyecto_id_idx_p')
+                ->references('id')->on('proyectos')
+                ->onDelete('no action')
+                ->onUpdate('no action');
+
+            $table->index(["plan_id"], 'fk_plan_id_idx_p');
+
+            $table->foreign('plan_id', 'fk_plan_id_idx_p')
+                ->references('id')->on('plan')
                 ->onDelete('no action')
                 ->onUpdate('no action');
         });

@@ -11,7 +11,7 @@
 |
 */
 
-use App\Models\Eje;
+use App\Models\Proyecto;
 
 Route::group(['middleware' => 'api', 'prefix' => 'auth'], function () {
     Route::post('login', 'AuthController@login')->name('login');
@@ -64,6 +64,12 @@ Route::group(['prefix' => 'proyecto'], function () {
     
     Route::get('getProgramaAcademico/{programa_academico_id}', 'ProyectoController@getProgramaAcademico');
 
+    Route::group(['prefix' => 'actividad'], function () {
+        Route::post('', 'ProyectoController@storeActividad');
+        Route::get('x', function() {
+            return Proyecto::where(['id' => 1])->exists().'';
+        });
+    });
 });
 
 Route::group(['prefix' => 'rol'], function () {

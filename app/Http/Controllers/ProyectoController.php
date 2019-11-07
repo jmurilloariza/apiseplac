@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Actividad;
+use App\Models\ActividadRecurso;
 use App\Models\Programa;
 use App\Models\ProgramaAcademico;
 use App\Models\Proyecto;
 use App\Models\ProyectoPrograma;
+use App\Models\Recurso;
 use Illuminate\Http\Request;
 
 class ProyectoController extends Controller
@@ -135,7 +138,7 @@ class ProyectoController extends Controller
     }
 
     public function getProgramaAcademico($programaAcademico){
-        $proyectos = Proyecto::with(['programas', 'actividades', 'planesProyectos.proyecto', 'programaAcademico'])
+        $proyectos = Proyecto::with(['programas', 'actividades', 'programaAcademico', 'planesProyectos.proyecto'])
             ->where(['programa_academico_id' => $programaAcademico])->get()->toArray();
 
         return response()->json([
@@ -161,7 +164,7 @@ class ProyectoController extends Controller
             ], 200);
         }
 
-        $proyecto = Proyecto::where(['id' => $request->get('proyecto_id')])->get()->exists();
+        $proyecto = Proyecto::where(['id' => $request->get('proyecto_id')])->exists();
 
         if(!$proyecto)
             return response()->json([
@@ -172,12 +175,12 @@ class ProyectoController extends Controller
 
         $actividades = $request->get('actividades');
 
-        for ($i = 0, $long = $actividades; $i < $long; $i++) {
+        for ($i = 0, $long = count($actividades); $i < $long; $i++) {
             $actividad = $actividades[$i];
 
             if (!isset($actividad['indicador_id']) or !isset($actividad['nombre']) or !isset($actividad['descripcion']) or
                 !isset($actividad['fecha_inicio']) or !isset($actividad['fecha_fin']) or !isset($actividad['costo']) or
-                !isset($actividad['unidad_medida']) or !isset($actividad['peso'])){
+                !isset($actividad['unidad_medida']) or !isset($actividad['peso']) or !isset($actividad['recursos'])){
                 return response()->json([
                     'message' => 'Faltan datos',
                     'data' => $request->toArray(),
@@ -203,6 +206,35 @@ class ProyectoController extends Controller
                     'data' => [],
                     'status' => 'error'
                 ], 200);
+
+            $recursos = $actividad['recursos'];
+
+            foreach($recursos as $recurso){
+                if(!Recurso::where(['id' => $recurso])->exists())
+                    return response()->json([
+                        'message' => 'No existen registros recurso',
+                        'data' => [],
+                        'status' => 'error'
+                    ], 200);
+                
+                $actividadRecurso = new ActividadRecurso([
+                    'actividad_id' => $model->id, 
+                    'recursos_id' => $recurso
+                ]);
+
+                if(!$actividadRecurso->save())
+                    return response()->json([
+                        'message' => 'Error inesperado al registrar el recurso para la actividad',
+                        'data' => [],
+                        'status' => 'error'
+                    ], 200);
+            }
         }
+
+        return response()->json([
+            'message' => 'actividades registradas al proyecto',
+            'data' => [],
+            'status' => 'ok'
+        ], 200);
     }
 }
