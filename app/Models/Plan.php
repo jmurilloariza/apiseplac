@@ -40,8 +40,8 @@ class Plan extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function proyectos()
+    public function planesProyectos()
     {
-        return $this->hasMany(Proyecto::class, 'plan_id');
+        return $this->hasMany(PlanProyecto::class, 'plan_id');
     }
 }

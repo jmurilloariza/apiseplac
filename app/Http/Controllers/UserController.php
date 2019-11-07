@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ActividadUsuario;
 use App\Models\ProgramaAcademico;
 use App\Models\Rol;
 use App\Models\Usuario;
@@ -159,14 +158,16 @@ class UserController extends Controller
                 'status' => 'errror'
             ], 200);
 
-        $programaAcademico = ProgramaAcademico::where(['id' => $request->get('programa_academico_id')])->first();
+        if($request->get('programa_academico_id') != null){
+            $programaAcademico = ProgramaAcademico::where(['id' => $request->get('programa_academico_id')])->first();
 
-        if (is_null($programaAcademico))
-            return response()->json([
-                'message' => 'Programa no encontrado',
-                'data' => $request->toArray(),
-                'status' => 'errror'
-            ], 200);
+            if (is_null($programaAcademico))
+                return response()->json([
+                    'message' => 'Programa no encontrado',
+                    'data' => $request->toArray(),
+                    'status' => 'errror'
+                ], 200);
+        }
 
 
         $usuario = $user->get()->toArray()[0];
@@ -223,7 +224,6 @@ class UserController extends Controller
     {
         $usuario = Usuario::where(['id' => $id]);
         $usuario->update(['codigo' => null, 'email' => null]);
-        ActividadUsuario::where(['usuario_id' => $id])->delete();
         if ($usuario->delete())
             return response()->json([
                 'message' => 'Usuario eliminado',

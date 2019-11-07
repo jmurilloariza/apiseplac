@@ -23,20 +23,18 @@ class CreateProyectosTable extends Migration
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->integer('plan_id')->unsigned();
             $table->string('nombre', 250);
-            $table->string('codigo', 10);
             $table->string('objetivo', 200);
             $table->string('descripcion', 500);
+            $table->integer('programa_academico_id')->unsigned();
 
             $table->softDeletes();
             $table->timestamps();
 
-            $table->index(["plan_id"], 'fk_plan_id');
-            $table->unique(["codigo"], 'unique_codigo');
+            $table->index(["programa_academico_id"], 'fk_programa_academico_idx111');
 
-            $table->foreign('plan_id', 'plan_id')
-                ->references('id')->on('plan')
+            $table->foreign('programa_academico_id', 'fk_programa_academico_idx111')
+                ->references('id')->on('programa_academico')
                 ->onDelete('no action')
                 ->onUpdate('no action');
         });
@@ -47,8 +45,8 @@ class CreateProyectosTable extends Migration
      *
      * @return void
      */
-     public function down()
-     {
-       Schema::dropIfExists($this->tableName);
-     }
+    public function down()
+    {
+        Schema::dropIfExists($this->tableName);
+    }
 }

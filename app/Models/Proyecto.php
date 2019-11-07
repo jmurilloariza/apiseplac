@@ -30,7 +30,7 @@ class Proyecto extends Model
     /**
      * @var array
      */
-    protected $fillable = ['id', 'plan_id', 'nombre', 'descripcion', 'objetivo', 'codigo',  'deleted_at', 'created_at', 'updated_at'];
+    protected $fillable = ['id', 'nombre', 'descripcion', 'objetivo', 'programa_academico_id', 'deleted_at', 'created_at', 'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -46,5 +46,21 @@ class Proyecto extends Model
     public function actividades()
     {
         return $this->hasMany(Actividad::class, 'proyecto_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function planesProyectos()
+    {
+        return $this->hasMany(PlanProyecto::class, 'proyecto_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function programaAcademico()
+    {
+        return $this->belongsTo(ProgramaAcademico::class, 'programa_academico_id');
     }
 }

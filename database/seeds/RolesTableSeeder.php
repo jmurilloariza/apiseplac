@@ -14,7 +14,7 @@ class RolesTableSeeder extends Seeder
     {
         // Rol::truncate();
         Rol::create(['id' => 1, 'nombre' => 'Administrador']);
-        Rol::create(['id' => 2, 'nombre' => 'Docente']);
-        Rol::create(['id' => 3, 'nombre' => 'Administrativo']);
+        Rol::create(['id' => 2, 'nombre' => 'Administrativo']);
+        Rol::create(['id' => 3, 'nombre' => 'Docente']);
     }
 }

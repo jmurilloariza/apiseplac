@@ -53,14 +53,17 @@ Route::group(['prefix' => 'plan'], function () {
     Route::get('', 'PlanController@index');
     Route::post('', 'PlanController@store');
     Route::get('{plan}', 'PlanController@show');
+});
 
-    Route::group(['prefix' => 'proyecto'], function () {
-        Route::get('', 'PlanController@indexProyecto');
-        Route::get('{proyecto}', 'PlanController@showProyecto');
-        Route::post('', 'PlanController@storeProyecto');
-        Route::put('{proyecto}', 'PlanController@updateProyecto');
-        Route::delete('{proyecto}', 'PlanController@destroyProyecto');
-    });
+Route::group(['prefix' => 'proyecto'], function () {
+    Route::get('', 'ProyectoController@index');
+    Route::get('{proyecto}', 'ProyectoController@show');
+    Route::post('', 'ProyectoController@store');
+    Route::put('{proyecto}', 'ProyectoController@update');
+    Route::delete('{proyecto}', 'ProyectoController@destroy');
+    
+    Route::get('getProgramaAcademico/{programa_academico_id}', 'ProyectoController@getProgramaAcademico');
+
 });
 
 Route::group(['prefix' => 'rol'], function () {

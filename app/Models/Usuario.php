@@ -32,6 +32,9 @@ class Usuario extends Authenticatable
 
     use SoftDeletes;
 
+    use \Askedio\SoftCascade\Traits\SoftCascadeTrait;
+    protected $softCascade = ['actividadesUsuarios'];
+
     /**
      * The table associated with the model.
      * 
