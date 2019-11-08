@@ -111,7 +111,11 @@ class ProyectoController extends Controller
      */
     public function show($id)
     {
-        //
+        return response()->json([
+            'message' => 'Consulta exitosa',
+            'data' => Proyecto::where(['id' => $id])->with(['programas', 'actividades', 'planesProyectos.proyecto', 'programaAcademico'])->get()->toArray(),
+            'status' => 'ok'
+        ], 200);
     }
 
     /**
