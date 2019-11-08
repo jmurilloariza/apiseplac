@@ -39,14 +39,7 @@ class ProyectoController extends Controller
             !$request->has('objetivo') or !$request->has('programas'))
             return response()->json([
                 'message' => 'Faltan datos',
-                'data' => [$request->toArray(), 
-                !$request->has('nombre') or !$request->has('programa_academico_id') or !$request->has('descripcion') or
-                !$request->has('objetivo') or !$request->has('programas')],
-                !$request->has('nombre'), 
-                !$request->has('programa_academico_id'), 
-                !$request->has('descripcion'), 
-                !$request->has('objetivo'), 
-                !$request->has('programas'), 
+                'data' => $request->toArray(), 
                 'status' => 'error'
             ], 200);
 
@@ -111,11 +104,21 @@ class ProyectoController extends Controller
      */
     public function show($id)
     {
-        return response()->json([
-            'message' => 'Consulta exitosa',
-            'data' => Proyecto::where(['id' => $id])->with(['programas', 'actividades', 'planesProyectos.proyecto', 'programaAcademico'])->get()->toArray(),
-            'status' => 'ok'
-        ], 200);
+        $proyecto = Proyecto::where(['id' => $id])->with(['programas', 'actividades', 'planesProyectos.proyecto', 'programaAcademico'])
+            ->get()->toArray();
+
+        if (count($proyecto) > 0)
+            return response()->json([
+                'message' => 'Consulta exitosa',
+                'data' => $proyecto[0],
+                'status' => 'ok'
+            ], 200);
+        else
+            return response()->json([
+                'message' => 'No existen registros',
+                'data' => [],
+                'status' => 'error'
+            ], 404);
     }
 
     /**
@@ -127,7 +130,76 @@ class ProyectoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        if (!$request->has('nombre') or !$request->has('programa_academico_id') or !$request->has('descripcion') or
+            !$request->has('objetivo') or !$request->has('programas'))
+            return response()->json([
+                'message' => 'Faltan datos',
+                'data' => $request->toArray(), 
+                'status' => 'error'
+            ], 200);
+
+        $programaAcademico = ProgramaAcademico::where(['id' => $request->get('programa_academico_id')])->exists();
+
+        if (!$programaAcademico)
+            return response()->json([
+                'message' => 'No existe el plan asociado',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        $proyecto = Proyecto::where(['id' => $id]);
+
+        if(count($proyecto->get()->toArray()) == 0)
+            return response()->json([
+                'message' => 'No existen registros de ese proyecto',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        $data = [
+            'nombre' => $request->get('nombre'),
+            'descripcion' => $request->get('descripcion'),
+            'objetivo' => $request->get('objetivo'), 
+            'programa_academico_id' => $request->get('programa_academico_id')
+        ];
+
+        if(!$proyecto->update($data))
+            return response()->json([
+                'message' => 'Ha ocurido un error al actualizar el proyecto',
+                'data' => [],
+                'status' => 'error'
+            ], 500);
+
+        ProyectoPrograma::where(['proyecto_id' => $id])->delete();
+
+        $programas = $request->get('programas');
+
+        for ($i = 0, $long = count($programas); $i < $long; $i++) {
+            if (!Programa::where(['id' => $programas[$i]])->exists())
+                return response()->json([
+                    'message' => 'No existe un programa asociado a el id: ' . $programas[$i],
+                    'data' => [],
+                    'status' => 'error'
+                ], 200);
+
+            $proyecto_programa = new ProyectoPrograma([
+                'programa_id' => $programas[$i],
+                'proyecto_id' => $id
+            ]);
+
+            if (!$proyecto_programa->save())
+                return response()->json([
+                    'message' => 'Ha ocurrido un error inesperado',
+                    'data' => [],
+                    'status' => 'error'
+                ], 200);
+        }
+
+        return response()->json([
+            'message' => 'Actualización exitosa',
+            'data' => [],
+            'status' => 'ok'
+        ], 200);
     }
 
     /**
@@ -241,4 +313,31 @@ class ProyectoController extends Controller
             'status' => 'ok'
         ], 200);
     }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function showActividad($id)
+    {
+        $actividad = Actividad::where(['id' => $id])
+            ->with(['indicador', 'proyecto', 'actividadesRecursos.recurso', 'actividadesUsuarios.usuario', 'observaciones'])
+            ->get()->toArray();
+
+        if (count($actividad) > 0)
+            return response()->json([
+                'message' => 'Consulta exitosa',
+                'data' => $actividad[0],
+                'status' => 'ok'
+            ], 200);
+        else
+            return response()->json([
+                'message' => 'No existen registros',
+                'data' => [],
+                'status' => 'error'
+            ], 404);
+    }
+
 }

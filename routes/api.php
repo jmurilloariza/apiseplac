@@ -61,14 +61,11 @@ Route::group(['prefix' => 'proyecto'], function () {
     Route::post('', 'ProyectoController@store');
     Route::put('{proyecto}', 'ProyectoController@update');
     Route::delete('{proyecto}', 'ProyectoController@destroy');
-    
     Route::get('getProgramaAcademico/{programa_academico_id}', 'ProyectoController@getProgramaAcademico');
 
     Route::group(['prefix' => 'actividad'], function () {
         Route::post('', 'ProyectoController@storeActividad');
-        Route::get('x', function() {
-            return Proyecto::where(['id' => 1])->exists().'';
-        });
+        Route::get('{id}', 'ProyectoController@showActividad');
     });
 });
 
