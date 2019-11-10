@@ -157,9 +157,8 @@ class FacultadController extends Controller
         $facultad = Facultad::find($id);
 
         $relaciones = $facultad->with(['departamentos.programasAcademicos'])->get()->toArray()[0];
-
-        for ($i = 0, $long = count($relaciones['departamentos']); $i < $long; $i++) { 
-            $departamento = $relaciones[$i];
+        for ($i = 0, $long = count($relaciones['departamentos']); $i < $long; $i++) {
+            $departamento = $relaciones['departamentos'][$i];
             if(count($departamento['programas_academicos']) > 0){
                 ProgramaAcademico::where(['departamento_id' => $departamento['id']])->update(['codigo' => null]);
             }
