@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\Indicador;
 use Illuminate\Database\Seeder;
+use App\Models\Indicador;
 
 class IndicadorTableSeeder extends Seeder
 {

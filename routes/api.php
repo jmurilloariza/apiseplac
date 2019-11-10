@@ -66,6 +66,8 @@ Route::group(['prefix' => 'proyecto'], function () {
     Route::group(['prefix' => 'actividad'], function () {
         Route::post('', 'ProyectoController@storeActividad');
         Route::get('{id}', 'ProyectoController@showActividad');
+        Route::delete('{id}', 'ProyectoController@destroyActividad');
+        Route::put('{id}', 'ProyectoController@updateActividad');
     });
 });
 

@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Actividad;
 use App\Models\ActividadRecurso;
+use App\Models\ActividadUsuario;
+use App\Models\Indicador;
+use App\Models\Observacion;
 use App\Models\Programa;
 use App\Models\ProgramaAcademico;
 use App\Models\Proyecto;
@@ -338,6 +341,103 @@ class ProyectoController extends Controller
                 'data' => [],
                 'status' => 'error'
             ], 404);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroyActividad($id)
+    {
+        if (Actividad::find($id)->delete())
+            return response()->json([
+                'message' => 'Actividad eliminada',
+                'data' => [],
+                'status' => 'ok'
+            ], 200);
+        else
+            return response()->json([
+                'message' => 'Ocurrió un error',
+                'data' => [],
+                'status' => 'error'
+            ], 500);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function updateActividad(Request $request, $id){
+        if (!$request->has('indicador_id') or !$request->has('nombre') or !$request->has('descripcion') or
+            !$request->has('fecha_inicio') or !$request->has('fecha_fin') or !$request->has('costo') or
+            !$request->has('unidad_medida') or !$request->has('peso')){
+            return response()->json([
+                'message' => 'Faltan datos',
+                'data' => $request->toArray(),
+                'status' => 'error'
+            ], 200);
+        }
+
+        $indicador = Indicador::where(['id' => $id])->exists();
+
+        if(!$indicador)
+            return response()->json([
+                'message' => 'No existen registros del indicador',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        $actividad = Actividad::where(['id' => $id]);
+
+        if (count($actividad->get()->toArray()) == 0)
+            return response()->json([
+                'message' => 'No existen registros de la actividad',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        $set = [
+            'indicador_id' => $request->get('indicador_id'),
+            'nombre' => $request->get('nombre'),
+            'descripcion' => $request->get('descripcion'),
+            'fecha_inicio' => $request->get('fecha_inicio'),
+            'fecha_fin' => $request->get('fecha_fin'),
+            'costo' => $request->get('costo'),
+            'unidad_medida' => $request->get('unidad_medida'),
+            'peso' => $request->get('peso')
+        ];
+
+        if (!$actividad->update($set))
+            return response()->json([
+                'message' => 'Ha ocurido un error',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        ActividadRecurso::where(['actividad_id' => $id])->delete();
+        ActividadUsuario::where(['actividad_id' => $id])->delete();
+        Observacion::where(['actividad_id' => $id])->delete();
+
+        return response()->json([
+            'message' => 'Actualización exitosa',
+            'data' => [],
+            'status' => 'ok'
+        ], 200);
+
+
+    }
+
+    public function eliminarActividadRecurso($id){
+
+    }
+
+    public function eliminarUsuarioActividad($id){
+
     }
 
 }
