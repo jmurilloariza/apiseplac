@@ -416,6 +416,15 @@ class FacultadController extends Controller
                     'status' => 'error'
                 ], 200);
 
+            $exists = ProgramaAcademico::where(['codigo' => $programasAcademicos[$i]['codigo']])->exists();
+
+            if($exists)
+                return response()->json([
+                    'message' => 'Ya existe un programa con el código '.$programasAcademicos[$i]['codigo'],
+                    'data' => [],
+                    'status' => 'error'
+                ], 200);
+
             $programaAcademico = new ProgramaAcademico([
                 'nombre' => $programasAcademicos[$i]['nombre'],
                 'codigo' => $programasAcademicos[$i]['codigo'],
@@ -509,7 +518,7 @@ class FacultadController extends Controller
      */
     public function destroyProgramaAcademico($id)
     {
-        $programaAcademico = ProgramaAcademico::find($id);
+        $programaAcademico = ProgramaAcademico::where(['id' => $id]);
         $programaAcademico->update(['codigo' => null]);
 
         if ($programaAcademico->delete())
