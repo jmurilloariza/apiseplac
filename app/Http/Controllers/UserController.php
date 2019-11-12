@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActividadUsuario;
 use App\Models\ProgramaAcademico;
 use App\Models\Rol;
 use App\Models\Usuario;
@@ -223,14 +224,14 @@ class UserController extends Controller
     public function destroy($id)
     {
         $usuario = Usuario::where(['id' => $id]);
-        $usuario->update(['codigo' => null, 'email' => null]);
-        if ($usuario->delete())
+        if ($usuario->delete()){
+            ActividadUsuario::where(['usuario_id' => $id])->delete();
             return response()->json([
                 'message' => 'Usuario eliminado',
                 'data' => [],
                 'status' => 'ok'
             ], 200);
-        else
+        }else
             return response()->json([
                 'message' => 'Ocurrió un error',
                 'data' => [],
