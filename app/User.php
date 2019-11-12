@@ -32,11 +32,7 @@ class User extends Authenticatable implements JWTSubject
 {
 
     use Notifiable;
-
     use SoftDeletes;
-
-    use \Askedio\SoftCascade\Traits\SoftCascadeTrait;
-    protected $softCascade = ['actividadesUsuarios'];
 
     /**
      * The table associated with the model.
