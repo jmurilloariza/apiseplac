@@ -12,6 +12,7 @@ use App\Models\ProgramaAcademico;
 use App\Models\Proyecto;
 use App\Models\ProyectoPrograma;
 use App\Models\Recurso;
+use App\Models\Usuario;
 use Illuminate\Http\Request;
 
 class ProyectoController extends Controller
@@ -25,7 +26,12 @@ class ProyectoController extends Controller
     {
         return response()->json([
             'message' => 'Consulta exitosa',
-            'data' => Proyecto::with(['programas', 'actividades', 'planesProyectos.proyecto', 'programaAcademico'])->get()->toArray(),
+            'data' => Proyecto::with([
+                'programas',
+                'actividades.actividadesRecursos.recurso',
+                'planesProyectos.proyecto',
+                'programaAcademico',
+            ])->get()->toArray(),
             'status' => 'ok'
         ], 200);
     }
@@ -107,8 +113,12 @@ class ProyectoController extends Controller
      */
     public function show($id)
     {
-        $proyecto = Proyecto::where(['id' => $id])->with(['programas', 'actividades', 'planesProyectos.proyecto', 'programaAcademico'])
-            ->get()->toArray();
+        $proyecto = Proyecto::where(['id' => $id])->with([
+            'programas',
+            'actividades.actividadesRecursos.recurso',
+            'planesProyectos.proyecto',
+            'programaAcademico',
+            ])->get()->toArray();
 
         if (count($proyecto) > 0)
             return response()->json([
@@ -116,12 +126,12 @@ class ProyectoController extends Controller
                 'data' => $proyecto[0],
                 'status' => 'ok'
             ], 200);
-        else
-            return response()->json([
-                'message' => 'No existen registros',
-                'data' => [],
-                'status' => 'error'
-            ], 404);
+
+        return response()->json([
+            'message' => 'No existen registros',
+            'data' => [],
+            'status' => 'error'
+        ], 404);
     }
 
     /**
@@ -216,6 +226,11 @@ class ProyectoController extends Controller
         //
     }
 
+    /**
+     * Permite obtener todos los proyectos asociados a un programa academico en especifico
+     * @param $programaAcademico
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getProgramaAcademico($programaAcademico){
         $proyectos = Proyecto::with(['programas', 'actividades', 'programaAcademico', 'planesProyectos.proyecto'])
             ->where(['programa_academico_id' => $programaAcademico])->get()->toArray();
@@ -335,12 +350,12 @@ class ProyectoController extends Controller
                 'data' => $actividad[0],
                 'status' => 'ok'
             ], 200);
-        else
-            return response()->json([
-                'message' => 'No existen registros',
-                'data' => [],
-                'status' => 'error'
-            ], 404);
+
+        return response()->json([
+            'message' => 'No existen registros',
+            'data' => [],
+            'status' => 'error'
+        ], 404);
     }
 
     /**
@@ -432,12 +447,178 @@ class ProyectoController extends Controller
 
     }
 
+    /**
+     * Metodo que permite eliminar un recurso que tenga asignada una actividad
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function eliminarActividadRecurso($id){
+        if(ActividadRecurso::where(['id' => $id])->delete())
+            return response()->json([
+                'message' => 'Recurso eliminado',
+                'data' => [],
+                'status' => 'ok'
+            ], 200);
+
+        return response()->json([
+            'message' => 'Ocurrio un error inesperado',
+            'data' => [],
+            'status' => 'ok'
+        ], 200);
+    }
+
+    /**
+     * Metodo que permite eliminar un usuario responsable que tenga asignada una actividad
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function eliminarUsuarioActividad($id){
+        if(ActividadUsuario::where(['id' => $id])->delete())
+            return response()->json([
+                'message' => 'Usuario desagregado',
+                'data' => [],
+                'status' => 'ok'
+            ], 200);
+
+        return response()->json([
+            'message' => 'Ocurrio un error inesperado',
+            'data' => [],
+            'status' => 'ok'
+        ], 200);
+    }
+
+    /**
+     * Permite agregar uno o más recursos nuevos a una actividad en especifico
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function agregarRecursosActividad(Request $request){
+        if(!$request->has('actividad_id') OR !$request->has('recursos'))
+            return response()->json([
+                'message' => 'Faltan datos',
+                'data' => $request->toArray(),
+                'status' => 'error'
+            ], 200);
+
+        $actividad = Actividad::where(['id' => $request->get('actividad_id')])->exists();
+
+        if(!$actividad)
+            return response()->json([
+                'message' => 'No existe una actividad asociada a ese id',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        foreach ($request->get('recursos') as $r){
+            $recurso = Recurso::where(['id' => $r])->exists();
+
+            if(!$recurso)
+                return response()->json([
+                    'message' => 'No existe un recursos asociado al id '.$r,
+                    'data' => [],
+                    'status' => 'error'
+                ], 200);
+
+            $exists = ActividadRecurso::where(['actividad_id' => $request->get('actividad_id'), 'recursos_id' => $r])->exists();
+
+            if($exists)
+                return response()->json([
+                    'message' => 'El recurso ya está asignado a la actividad',
+                    'data' => [],
+                    'status' => 'error'
+                ], 200);
+
+            $actividadRecurso = new ActividadRecurso([
+                'actividad_id' => $request->get('actividad_id'),
+                'recursos_id' => $r
+            ]);
+
+            if(!$actividadRecurso->save())
+                return response()->json([
+                    'message' => 'Ha ocurido un error',
+                    'data' => [],
+                    'status' => 'error'
+                ], 200);
+        }
+
+        return response()->json([
+            'message' => 'Recurso asignado',
+            'data' => [],
+            'status' => 'ok'
+        ], 201);
+    }
+
+    /**
+     * Permite agregar uno o más usuarios reponsables a una actividad en especifico
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function agregarUsuarioActividad(Request $request){
+        if(!$request->has('actividad_id') OR !$request->has('responsables'))
+            return response()->json([
+                'message' => 'Faltan datos',
+                'data' => $request->toArray(),
+                'status' => 'error'
+            ], 200);
+
+        $actividad = Actividad::where(['id' => $request->get('actividad_id')])->exists();
+
+        if(!$actividad)
+            return response()->json([
+                'message' => 'No existe una actividad asociada a ese id',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        foreach ($request->get('responsables') as $r){
+            $usuario = Usuario::where(['id' => $r])->exists();
+
+            if(!$usuario)
+                return response()->json([
+                    'message' => 'No existe un usuario asociado al id '.$r,
+                    'data' => [],
+                    'status' => 'error'
+                ], 200);
+
+            $exists = ActividadUsuario::where(['actividad_id' => $request->get('actividad_id'), 'usuario_id' => $r])->exists();
+
+            if($exists)
+                return response()->json([
+                    'message' => 'El usuario ya está asignado a la actividad',
+                    'data' => [],
+                    'status' => 'error'
+                ], 200);
+
+            $actividadUsuario = new ActividadUsuario([
+                'actividad_id' => $request->get('actividad_id'),
+                'usuario_id' => $r
+            ]);
+
+            if(!$actividadUsuario->save())
+                return response()->json([
+                    'message' => 'Ha ocurido un error',
+                    'data' => [],
+                    'status' => 'error'
+                ], 200);
+        }
+
+        return response()->json([
+            'message' => 'Usuario asignado',
+            'data' => [],
+            'status' => 'ok'
+        ], 201);
+    }
+
+    public function storeObservationActividad(Request $request){
 
     }
 
-    public function eliminarUsuarioActividad($id){
-
+    public function showObservationActividad($id){
+        return response()->json([
+            'message' => 'Consulta exitosa',
+            'data' => Observacion::where(['id' => $id])->with(['actividad'])->get()->toArray(),
+            'status' => 'ok'
+        ], 200);
     }
 
 }

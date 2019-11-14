@@ -23,7 +23,13 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    { }
+    {
+        return response()->json([
+            'message' => 'Consulta exitosa',
+            'data' => Usuario::with(['programaAcademico', 'rol', 'actividadesUsuarios'])->get()->toArray(),
+            'status' => 'ok'
+        ], 200);
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -90,12 +96,12 @@ class UserController extends Controller
                 'data' => [$usuario->toArray()],
                 'status' => 'ok'
             ], 201);
-        else
-            return response()->json([
-                'message' => 'Ha ocurido un error',
-                'data' => [],
-                'status' => 'error'
-            ], 500);
+
+        return response()->json([
+            'message' => 'Ha ocurido un error',
+            'data' => [],
+            'status' => 'error'
+        ], 500);
     }
 
     /**
@@ -114,22 +120,22 @@ class UserController extends Controller
                 'data' => $eje[0],
                 'status' => 'ok'
             ], 200);
-        else
-            return response()->json([
-                'message' => 'No existen registros',
-                'data' => [],
-                'status' => 'error'
-            ], 200);
+
+        return response()->json([
+            'message' => 'No existen registros',
+            'data' => [],
+            'status' => 'error'
+        ], 200);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @param int $id
+     * @param string $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $codigo)
+    public function update(Request $request, $id)
     {
 
         if (!$request->has('rol_id') or !$request->has('name') or !$request->has('apellidos') or !$request->has('contrato')
@@ -141,7 +147,7 @@ class UserController extends Controller
             ], 200);
         }
 
-        $user = Usuario::where('codigo', $codigo);
+        $user = Usuario::where('id', $id);
 
         if (is_null($user->first()))
             return response()->json([
@@ -208,7 +214,8 @@ class UserController extends Controller
                 'data' => [],
                 'status' => 'ok'
             ], 200);
-        else return response()->json([
+
+        return response()->json([
             'message' => 'Ha ocurido un error',
             'data' => [],
             'status' => 'error'
@@ -224,24 +231,30 @@ class UserController extends Controller
     public function destroy($id)
     {
         $usuario = Usuario::where(['id' => $id]);
-        if ($usuario->delete()){
+
+        if ($usuario->delete()) {
             ActividadUsuario::where(['usuario_id' => $id])->delete();
             return response()->json([
                 'message' => 'Usuario eliminado',
                 'data' => [],
                 'status' => 'ok'
             ], 200);
-        }else
-            return response()->json([
-                'message' => 'Ocurrió un error',
-                'data' => [],
-                'status' => 'error'
-            ], 200);
+        }
+
+        return response()->json([
+            'message' => 'Ocurrió un error',
+            'data' => [],
+            'status' => 'error'
+        ], 200);
     }
 
     public function getRoles()
     {
-        return response()->json(['message' => 'Consulta exitosa', 'data' => Rol::with(['users'])->get()->toArray(), 'status' => 'ok']);
+        return response()->json([
+            'message' => 'Consulta exitosa',
+            'data' => Rol::with(['users'])->get()->toArray(),
+            'status' => 'ok'
+        ]);
     }
 
     public function getDocentes(){

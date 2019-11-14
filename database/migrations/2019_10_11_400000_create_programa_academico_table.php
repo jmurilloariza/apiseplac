@@ -29,7 +29,6 @@ class CreateProgramaAcademicoTable extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->unique(["codigo"], 'unique_codigo');
             $table->index(["departamento_id"], 'fk_departamento_idx');
 
             $table->foreign('departamento_id', 'fk_departamento_idx')

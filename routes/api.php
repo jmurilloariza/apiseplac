@@ -11,8 +11,6 @@
 |
 */
 
-use App\Models\Proyecto;
-
 Route::group(['middleware' => 'api', 'prefix' => 'auth'], function () {
     Route::post('login', 'AuthController@login')->name('login');
     Route::post('logout', 'AuthController@logout');
@@ -68,6 +66,16 @@ Route::group(['prefix' => 'proyecto'], function () {
         Route::get('{id}', 'ProyectoController@showActividad');
         Route::delete('{id}', 'ProyectoController@destroyActividad');
         Route::put('{id}', 'ProyectoController@updateActividad');
+
+        Route::delete('recurso/{id}', 'ProyectoController@eliminarActividadRecurso');
+        Route::delete('responsable/{id}', 'ProyectoController@eliminarUsuarioActividad');
+
+        Route::post('recurso', 'ProyectoController@agregarRecursosActividad');
+        Route::post('responsable', 'ProyectoController@agregarUsuarioActividad');
+
+        Route::group(['prefix' => 'observacion'], function () {
+            Route::get('{id}', 'ProyectoController@showObservationActividad');
+        });
     });
 });
 

@@ -28,7 +28,6 @@ class CreateDepartamentoTable extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->unique(["codigo"], 'unique_codigo');
             $table->index(["facultad_id"], 'fk_facultad_idx');
 
             $table->foreign('facultad_id', 'fk_facultad_idx')

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Actividad;
 use App\Models\Indicador;
 use Illuminate\Http\Request;
 
@@ -10,7 +11,7 @@ class IndicadorController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api');
+        //$this->middleware('auth:api');
     }
 
     /**
@@ -135,17 +136,26 @@ class IndicadorController extends Controller
      */
     public function destroy($id)
     {
+        $exists = Actividad::where(['indicador_id' => $id])->exists();
+
+        if($exists)
+            return response()->json([
+                'message' => 'Existen actividades cuyo indicador es este',
+                'data' => [],
+                'status' => 'ok'
+            ], 200);
+
         if (Indicador::find($id)->delete())
             return response()->json([
                 'message' => 'Indicador eliminado',
                 'data' => [],
                 'status' => 'ok'
             ], 200);
-        else
-            return response()->json([
-                'message' => 'Ocurrió un error',
-                'data' => [],
-                'status' => 'error'
-            ], 500);
+
+        return response()->json([
+            'message' => 'Ocurrió un error',
+            'data' => [],
+            'status' => 'error'
+        ], 500);
     }
 }

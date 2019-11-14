@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActividadRecurso;
 use App\Models\Recurso;
 use Illuminate\Http\Request;
 
@@ -129,6 +130,15 @@ class RecursoController extends Controller
      */
     public function destroy($id)
     {
+        $exists = ActividadRecurso::where(['recurso_id' => $id])->exists();
+
+        if($exists)
+            return response()->json([
+                'message' => 'Existen actividades que tienen este recurso asigando',
+                'data' => [],
+                'status' => 'ok'
+            ], 200);
+
         if (Recurso::find($id)->delete())
             return response()->json([
                 'message' => 'Recurso eliminado',

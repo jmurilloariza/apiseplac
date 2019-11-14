@@ -31,7 +31,6 @@ class CreateProgramasTable extends Migration
 
             $table->softDeletes();
 
-            $table->unique(["codigo"], 'unique_codigo');
             $table->index(["linea_id"], 'fk_programas_lineas_idx');
 
 

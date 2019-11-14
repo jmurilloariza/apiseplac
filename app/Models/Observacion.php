@@ -35,4 +35,12 @@ class Observacion extends Model
     {
         return $this->belongsTo(Actividad::class, 'actividad_id');
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function evidencias()
+    {
+        return $this->hasMany(Evidencias::class, 'observacion_id');
+    }
 }

@@ -27,7 +27,6 @@ class CreateFacultadTable extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->unique(["codigo"], 'unique_codigo');
         });
     }
 

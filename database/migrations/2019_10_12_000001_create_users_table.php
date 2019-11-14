@@ -34,10 +34,6 @@ class CreateUsersTable extends Migration
 
             $table->index(["programa_academico_id"], 'fk_programa_academico_idx');
 
-            $table->unique(["codigo"], 'unique_codigo');
-
-            $table->unique(["email"], 'correo_UNIQUE');
-
             $table->foreign('rol_id', 'fk_usuarios_roles1_idx')
                 ->references('id')->on('roles')
                 ->onDelete('no action')

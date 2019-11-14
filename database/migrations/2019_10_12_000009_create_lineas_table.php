@@ -30,8 +30,6 @@ class CreateLineasTable extends Migration
             $table->softDeletes();
             $table->timestamps();
 
-            $table->unique(["codigo"], 'unique_codigo');
-
             $table->index(["eje_id"], 'fk_lineas_ejes1_idx');
 
             $table->foreign('eje_id', 'fk_lineas_ejes1_idx')

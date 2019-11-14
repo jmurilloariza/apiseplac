@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call(DepartamentoTableSeeder::class);
         $this->call(ProgramaAcademicoTableSeeder::class);
         $this->call(UsersTableSeeder::class);
-        $this->call(IndicadorTableSeeder::class);
-        $this->call(RecursosTableSeeder::class);
+        // $this->call(IndicadorTableSeeder::class);
+        // $this->call(RecursosTableSeeder::class);
     }
 }

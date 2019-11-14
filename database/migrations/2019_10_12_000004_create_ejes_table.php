@@ -29,8 +29,6 @@ class CreateEjesTable extends Migration
 
             $table->softDeletes();
             $table->timestamps();
-
-            $table->unique(["codigo"], 'unique_codigo');
         });
     }
 
