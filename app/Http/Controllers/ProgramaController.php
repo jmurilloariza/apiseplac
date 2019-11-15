@@ -127,10 +127,20 @@ class ProgramaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!$request->has('nombre') or !$request->has('codigo') or !$request->has('descripcion'))
+        if (!$request->has('nombre') or !$request->has('codigo')
+            or !$request->has('descripcion') or !$request->has('linea_id'))
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
+                'status' => 'error'
+            ], 200);
+
+        $linea = Linea::where(['id' => $request->get('linea_id')])->exists();
+
+        if(!$linea)
+            return response()->json([
+                'message' => 'No existen registros de una libea con ese id',
+                'data' => [],
                 'status' => 'error'
             ], 200);
 
