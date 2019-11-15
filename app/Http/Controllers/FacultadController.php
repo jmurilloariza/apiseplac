@@ -162,6 +162,8 @@ class FacultadController extends Controller
             if(count($departamento['programas_academicos']) > 0){
                 ProgramaAcademico::where(['departamento_id' => $departamento['id']])->update(['codigo' => null]);
                 ProgramaAcademico::where(['departamento_id' => $departamento['id']])->delete();
+                Plan::where(['programa_academico_id' => $departamento['programas_academicos'][0]['id']])->delete();
+                Usuario::where(['programa_academico_id' => $departamento['programas_academicos'][0]['id']])->delete();
             }
         }
 
