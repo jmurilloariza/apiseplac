@@ -162,6 +162,7 @@ class LineaController extends Controller
                     'status' => 'error'
                 ], 200);
         }
+
         $values = [
             'nombre' => $request->get('nombre'),
             'codigo' => $request->get('codigo'),
@@ -172,7 +173,7 @@ class LineaController extends Controller
         if ($linea->update($values))
             return response()->json([
                 'message' => 'Actualización exitosa',
-                'data' => [],
+                'data' => [$values],
                 'status' => 'ok'
             ], 200);
         return response()->json([

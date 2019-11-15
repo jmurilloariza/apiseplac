@@ -161,10 +161,13 @@ class FacultadController extends Controller
             $departamento = $relaciones['departamentos'][$i];
             if(count($departamento['programas_academicos']) > 0){
                 ProgramaAcademico::where(['departamento_id' => $departamento['id']])->update(['codigo' => null]);
+                ProgramaAcademico::where(['departamento_id' => $departamento['id']])->delete();
             }
         }
 
         Departamento::where(['facultad_id' => $id])->update(['codigo' => null]);
+        Departamento::where(['facultad_id' => $id])->delete();
+
         Facultad::where(['id' => $id])->update(['codigo' => null]);
 
         if ($facultad->delete())
