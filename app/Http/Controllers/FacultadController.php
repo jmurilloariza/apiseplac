@@ -216,7 +216,7 @@ class FacultadController extends Controller
                 'status' => 'error'
             ], 200);
 
-        $facultad = Facultad::where(['id' => $request->has('facultad_id')]);
+        $facultad = Facultad::where(['id' => $request->get('facultad_id')]);
 
         if (count($facultad->get()->toArray()) == 0)
             return response()->json([
