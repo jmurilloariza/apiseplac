@@ -163,7 +163,12 @@ class ProgramaController extends Controller
                 ], 200);
         }
 
-        $values = ['nombre' => $request->get('nombre'), 'codigo' => $request->get('codigo'), 'descripcion' => $request->get('descripcion')];
+        $values = [
+            'nombre' => $request->get('nombre'),
+            'codigo' => $request->get('codigo'),
+            'descripcion' => $request->get('descripcion'),
+            'linea_id' => $request->get('linea_id')
+        ];
 
         if ($programa->update($values))
             return response()->json([
