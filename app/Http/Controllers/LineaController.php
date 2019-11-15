@@ -127,10 +127,20 @@ class LineaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!$request->has('nombre') or !$request->has('codigo') or !$request->has('descripcion'))
+        if (!$request->has('nombre') or !$request->has('codigo')
+            or !$request->has('descripcion') or !$request->has('eje_id'))
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
+                'status' => 'error'
+            ], 200);
+
+        $eje = Eje::where(['id' => $request->get('eje_id')])->exists();
+
+        if(!$eje)
+            return response()->json([
+                'message' => 'No existen registros de un eje con ese id',
+                'data' => [],
                 'status' => 'error'
             ], 200);
 
@@ -152,8 +162,13 @@ class LineaController extends Controller
                     'status' => 'error'
                 ], 200);
         }
+        $values = [
+            'nombre' => $request->get('nombre'),
+            'codigo' => $request->get('codigo'),
+            'descripcion' => $request->get('descripcion')
+        ];
 
-        if ($linea->update(['nombre' => $request->get('nombre'), 'codigo' => $request->get('codigo'), 'descripcion' => $request->get('descripcion')]))
+        if ($linea->update($values))
             return response()->json([
                 'message' => 'Actualización exitosa',
                 'data' => [],
