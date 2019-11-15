@@ -401,7 +401,7 @@ class FacultadController extends Controller
                 'status' => 'error'
             ], 200);
 
-        $departamento = Departamento::where(['id' => $request->has('departamento_id')]);
+        $departamento = Departamento::where(['id' => $request->get('departamento_id')]);
 
         if (count($departamento->get()->toArray()) == 0)
             return response()->json([
