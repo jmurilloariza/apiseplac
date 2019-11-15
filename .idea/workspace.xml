@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="820ac9db-7a12-4ca2-9a50-97f9f97891dc" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/FacultadController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/FacultadController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/ProgramaAcademico.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/ProgramaAcademico.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -25,12 +25,12 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="php" value="7" />
+          <entry key="php" value="9" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="PHP" value="7" />
+          <entry key="PHP" value="9" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
@@ -92,7 +92,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/Http/Controllers/FacultadController.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="493">
@@ -102,22 +102,15 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/EjeController.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2465">
-              <caret line="148" column="20" selection-start-line="137" selection-start-column="8" selection-end-line="148" selection-end-column="20" />
-              <folding>
-                <element signature="e#40#59#0#PHP" expanded="true" />
-              </folding>
-            </state>
-          </provider>
+        <entry file="file://$PROJECT_DIR$/app/Models/Facultad.php">
+          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/AuthController.php">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/Models/ProgramaAcademico.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1428">
-              <caret line="84" column="64" selection-start-line="84" selection-start-column="64" selection-end-line="84" selection-end-column="64" />
+            <state relative-caret-position="306">
+              <caret line="19" column="20" selection-start-line="19" selection-start-column="20" selection-end-line="19" selection-end-column="20" />
             </state>
           </provider>
         </entry>
@@ -200,6 +193,7 @@
         <option value="$PROJECT_DIR$/app/Http/Controllers/LineaController.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/ProgramaController.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/FacultadController.php" />
+        <option value="$PROJECT_DIR$/app/Models/ProgramaAcademico.php" />
       </list>
     </option>
   </component>
@@ -358,6 +352,12 @@
             <path>
               <item name="apiseplac-hithub" type="b2602c69:ProjectViewProjectNode" />
               <item name="apiseplac-hithub" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Models" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="apiseplac-hithub" type="b2602c69:ProjectViewProjectNode" />
+              <item name="apiseplac-hithub" type="462c0819:PsiDirectoryNode" />
               <item name="database" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -437,12 +437,12 @@
       <workItem from="1571785059269" duration="3870000" />
       <workItem from="1571885689834" duration="450000" />
       <workItem from="1573528117334" duration="723000" />
-      <workItem from="1573784837885" duration="3501000" />
+      <workItem from="1573784837885" duration="3578000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="33492000" />
+    <option name="totallyTimeSpent" value="33569000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="754" extended-state="6" />
@@ -833,6 +833,16 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="493">
           <caret line="186" column="5" selection-start-line="186" selection-start-column="5" selection-end-line="186" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Models/Facultad.php">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Models/ProgramaAcademico.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="19" column="20" selection-start-line="19" selection-start-column="20" selection-end-line="19" selection-end-column="20" />
         </state>
       </provider>
     </entry>

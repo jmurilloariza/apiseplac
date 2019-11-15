@@ -19,9 +19,6 @@ class ProgramaAcademico extends Model
 
     use SoftDeletes;
 
-    use \Askedio\SoftCascade\Traits\SoftCascadeTrait;
-    protected $softCascade = ['planes', 'usuarios'];
-
     /**
      * The table associated with the model.
      * 
