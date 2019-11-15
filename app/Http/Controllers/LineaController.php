@@ -165,7 +165,8 @@ class LineaController extends Controller
         $values = [
             'nombre' => $request->get('nombre'),
             'codigo' => $request->get('codigo'),
-            'descripcion' => $request->get('descripcion')
+            'descripcion' => $request->get('descripcion'),
+            'eje_id' => $request->get('eje_id')
         ];
 
         if ($linea->update($values))

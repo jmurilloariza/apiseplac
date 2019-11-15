@@ -35,12 +35,12 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="php" value="14" />
+          <entry key="php" value="45" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PHP" value="14" />
+          <entry key="PHP" value="45" />
         </counts>
       </usages-collector>
     </session>
@@ -96,7 +96,7 @@
         <entry file="file://$PROJECT_DIR$/app/Http/Controllers/LineaController.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="272">
-              <caret line="168" column="10" lean-forward="true" selection-start-line="168" selection-start-column="10" selection-end-line="168" selection-end-column="10" />
+              <caret line="168" column="47" lean-forward="true" selection-start-line="168" selection-start-column="12" selection-end-line="168" selection-end-column="47" />
             </state>
           </provider>
         </entry>
@@ -436,12 +436,12 @@
       <workItem from="1571785059269" duration="3870000" />
       <workItem from="1571885689834" duration="450000" />
       <workItem from="1573528117334" duration="723000" />
-      <workItem from="1573784837885" duration="1695000" />
+      <workItem from="1573784837885" duration="2083000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="31686000" />
+    <option name="totallyTimeSpent" value="32074000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="754" extended-state="6" />
@@ -824,7 +824,7 @@
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/LineaController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="272">
-          <caret line="168" column="10" lean-forward="true" selection-start-line="168" selection-start-column="10" selection-end-line="168" selection-end-column="10" />
+          <caret line="168" column="47" lean-forward="true" selection-start-line="168" selection-start-column="12" selection-end-line="168" selection-end-column="47" />
         </state>
       </provider>
     </entry>
