@@ -179,12 +179,24 @@ class UserController extends Controller
 
         $usuario = $user->get()->toArray()[0];
 
-        if($request->get('codigo') != $usuario['codigo'] AND $request->get('email') != $usuario['email']){
-            $usuario = Usuario::orWhere(['codigo' => $request->get('codigo'), 'email' => $request->get('email')])->first();
+        if($request->get('email') != $usuario['email']){
+            $usuario = Usuario::orWhere(['email' => $request->get('email')])->first();
 
             if (!is_null($usuario))
                 return response()->json([
-                    'message' => 'Ya existe un usuario con ese correo y/o codigo',
+                    'message' => 'Ya existe un usuario con ese correo',
+                    'data' => [],
+                    'status' => 'error'
+                ], 200);
+
+        }
+
+        if($request->get('codigo') != $usuario['codigo']){
+            $usuario = Usuario::orWhere(['codigo' => $request->get('codigo')])->first();
+
+            if (!is_null($usuario))
+                return response()->json([
+                    'message' => 'Ya existe un usuario con ese codigo',
                     'data' => [],
                     'status' => 'error'
                 ], 200);

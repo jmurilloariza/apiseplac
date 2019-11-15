@@ -23,7 +23,7 @@ class UsersTableSeeder extends Seeder
             'programa_academico_id' => 2
         ]);
 
-        User::create([
+        /*User::create([
             'email' => 'administardor@admin.com',
             'password' => Hash::make('adminadmin'),
             'name' => 'Administrativo',
@@ -51,6 +51,6 @@ class UsersTableSeeder extends Seeder
             'codigo' => '2',
             'rol_id' => 2,
             'programa_academico_id' => 2
-        ]);
+        ]);*/
     }
 }
