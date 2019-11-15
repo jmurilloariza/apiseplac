@@ -154,7 +154,7 @@ class LineaController extends Controller
             ], 200);
 
         if ($linea->get()->toArray()[0]['codigo'] != $request->get('codigo')) {
-            $existencias = Linea::where(['codigo' => $request->get('codigo')])->get()->exists();
+            $existencias = Linea::where(['codigo' => $request->get('codigo')])->exists();
             if ($existencias)
                 return response()->json([
                     'message' => 'Ya existe el codigo',
