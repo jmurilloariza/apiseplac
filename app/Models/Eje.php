@@ -18,9 +18,6 @@ class Eje extends Model
 {
 
     use SoftDeletes;
-
-    use \Askedio\SoftCascade\Traits\SoftCascadeTrait;
-    protected $softCascade = ['lineas'];
     
     /**
      * The table associated with the model.

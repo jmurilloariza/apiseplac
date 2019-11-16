@@ -10,9 +10,6 @@ class Departamento extends Model
 
     use SoftDeletes;
 
-    use \Askedio\SoftCascade\Traits\SoftCascadeTrait;
-    protected $softCascade = ['programasAcademicos'];
-
     /**
      * The table associated with the model.
      * 

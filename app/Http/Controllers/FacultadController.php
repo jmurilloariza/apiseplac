@@ -63,7 +63,7 @@ class FacultadController extends Controller
                     'message' => 'Ha ocurido un error',
                     'data' => [],
                     'status' => 'error'
-                ], 500);
+                ], 200);
         }
 
         return response()->json([
@@ -143,7 +143,7 @@ class FacultadController extends Controller
             'message' => 'Ha ocurido un error',
             'data' => [],
             'status' => 'error'
-        ], 500);
+        ], 200);
     }
 
     /**
@@ -157,18 +157,12 @@ class FacultadController extends Controller
         $facultad = Facultad::find($id);
         $relaciones = $facultad->with(['departamentos.programasAcademicos'])->get()->toArray()[0];
 
-        for ($i = 0, $long = count($relaciones['departamentos']); $i < $long; $i++) {
-            $departamento = $relaciones['departamentos'][$i];
-            if(count($departamento['programas_academicos']) > 0){
-                ProgramaAcademico::where(['departamento_id' => $departamento['id']])->update(['codigo' => null]);
-                ProgramaAcademico::where(['departamento_id' => $departamento['id']])->delete();
-                Plan::where(['programa_academico_id' => $departamento['programas_academicos'][0]['id']])->delete();
-                Usuario::where(['programa_academico_id' => $departamento['programas_academicos'][0]['id']])->delete();
-            }
-        }
-
-        Departamento::where(['facultad_id' => $id])->update(['codigo' => null]);
-        Departamento::where(['facultad_id' => $id])->delete();
+        if (count($relaciones['departamentos']) > 0)
+            return response()->json([
+                'message' => 'La facultad tiene departamentos asociados',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
 
         Facultad::where(['id' => $id])->update(['codigo' => null]);
 
@@ -183,7 +177,7 @@ class FacultadController extends Controller
                 'message' => 'Ocurrió un error',
                 'data' => [],
                 'status' => 'error'
-            ], 500);
+            ], 200);
     }
 
     /**
@@ -246,7 +240,7 @@ class FacultadController extends Controller
                     'message' => 'Ha ocurido un error',
                     'data' => [],
                     'status' => 'error'
-                ], 500);
+                ], 200);
         }
 
         return response()->json([
@@ -316,7 +310,7 @@ class FacultadController extends Controller
             'message' => 'Ha ocurido un error',
             'data' => [],
             'status' => 'error'
-        ], 500);
+        ], 200);
     }
 
     /**
@@ -328,8 +322,14 @@ class FacultadController extends Controller
     public function destroyDepartamento($id)
     {
 
-        $departamento = Departamento::find($id);
-        ProgramaAcademico::where(['departamento_id' => $id])->update(['codigo' => null]);
+        $departamento = Departamento::where(['id' => $id])->with(['programasAcademicos']);
+
+        if (count($departamento->get()->toArray()[0]['programas_academicos']) > 0)
+            return response()->json([
+                'message' => 'El departamento tiene programas academicos asociados',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
 
         $departamento->update(['codigo' => null]);
 
@@ -344,7 +344,7 @@ class FacultadController extends Controller
                 'message' => 'Ocurrió un error',
                 'data' => [],
                 'status' => 'error'
-            ], 500);
+            ], 200);
     }
 
     /**
@@ -422,9 +422,9 @@ class FacultadController extends Controller
 
             $exists = ProgramaAcademico::where(['codigo' => $programasAcademicos[$i]['codigo']])->exists();
 
-            if($exists)
+            if ($exists)
                 return response()->json([
-                    'message' => 'Ya existe un programa con el código '.$programasAcademicos[$i]['codigo'],
+                    'message' => 'Ya existe un programa con el código ' . $programasAcademicos[$i]['codigo'],
                     'data' => [],
                     'status' => 'error'
                 ], 200);
@@ -440,7 +440,7 @@ class FacultadController extends Controller
                     'message' => 'Ha ocurido un error',
                     'data' => [],
                     'status' => 'error'
-                ], 500);
+                ], 200);
         }
 
         return response()->json([
@@ -507,11 +507,12 @@ class FacultadController extends Controller
                 'data' => [],
                 'status' => 'ok'
             ], 200);
-        else return response()->json([
+        
+        return response()->json([
             'message' => 'Ha ocurido un error',
             'data' => [],
             'status' => 'error'
-        ], 500);
+        ], 200);
     }
 
     /**
@@ -523,6 +524,16 @@ class FacultadController extends Controller
     public function destroyProgramaAcademico($id)
     {
         $programaAcademico = ProgramaAcademico::where(['id' => $id]);
+
+        $relaciones = $programaAcademico->with(['planes', 'usuarios'])->get()->toArray()[0];
+
+        if(count($relaciones['planes']) > 0 or count($relaciones['usuarios']) > 0 )
+            return response()->json([
+                'message' => 'El programa tiene recursos relaciodos que no se pueden eliminar',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
         $programaAcademico->update(['codigo' => null]);
 
         if ($programaAcademico->delete())
@@ -536,7 +547,7 @@ class FacultadController extends Controller
                 'message' => 'Ocurrió un error',
                 'data' => [],
                 'status' => 'error'
-            ], 500);
+            ], 200);
     }
 
     /**

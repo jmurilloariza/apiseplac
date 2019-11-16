@@ -20,9 +20,6 @@ class Linea extends Model
 {
     use SoftDeletes;
 
-    use \Askedio\SoftCascade\Traits\SoftCascadeTrait;
-    protected $softCascade = ['programas'];
-
     /**
      * The table associated with the model.
      *

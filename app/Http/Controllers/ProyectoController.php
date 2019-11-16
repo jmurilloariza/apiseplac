@@ -372,12 +372,12 @@ class ProyectoController extends Controller
                 'data' => [],
                 'status' => 'ok'
             ], 200);
-        else
-            return response()->json([
-                'message' => 'Ocurrió un error',
-                'data' => [],
-                'status' => 'error'
-            ], 500);
+            
+        return response()->json([
+            'message' => 'Ocurrió un error',
+            'data' => [],
+            'status' => 'error'
+        ], 500);
     }
 
     /**
