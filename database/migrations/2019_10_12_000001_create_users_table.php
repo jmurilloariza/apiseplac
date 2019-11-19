@@ -41,7 +41,7 @@ class CreateUsersTable extends Migration
 
             $table->foreign('programa_academico_id', 'fk_programa_academico_idx')
                 ->references('id')->on('programa_academico')
-                ->onDelete('set null')
+                ->onDelete('no action')
                 ->onUpdate('no action');
         });
     }

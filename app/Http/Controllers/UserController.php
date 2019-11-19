@@ -277,10 +277,10 @@ class UserController extends Controller
         return response()->json($this->getUserRol(2));
     }
 
-    private function getUserRol($rol_id){
+    public function getUserRol($rol){
         return [
             'message' => 'Consulta exitosa', 
-            'data' => Usuario::where(['rol_id' => $rol_id])->with(['programaAcademico'])->get()->toArray(), 
+            'data' => Usuario::where(['rol_id' => $rol])->with(['programaAcademico'])->get()->toArray(), 
             'status' => 'ok'
         ];
     }

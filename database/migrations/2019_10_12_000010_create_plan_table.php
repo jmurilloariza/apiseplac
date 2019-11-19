@@ -24,6 +24,7 @@ class CreatePlanTable extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->integer('programa_academico_id')->unsigned();
+            $table->string('nombre', 200)->nullable();
             $table->string('url_documento', 256);
             $table->date('fecha_inicio');
             $table->date('fecha_fin');

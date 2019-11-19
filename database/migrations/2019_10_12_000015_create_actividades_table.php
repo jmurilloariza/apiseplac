@@ -29,7 +29,7 @@ class CreateActividadesTable extends Migration
             $table->string('descripcion');
             $table->date('fecha_inicio');
             $table->date('fecha_fin');
-            $table->double('costo', 8, 2);
+            $table->double('costo');
             $table->string('unidad_medida', 60);
             $table->integer('peso');
 

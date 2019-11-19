@@ -7,6 +7,7 @@ use App\Models\ActividadRecurso;
 use App\Models\ActividadUsuario;
 use App\Models\Indicador;
 use App\Models\Observacion;
+use App\Models\PlanProyecto;
 use App\Models\Programa;
 use App\Models\ProgramaAcademico;
 use App\Models\Proyecto;
@@ -181,7 +182,7 @@ class ProyectoController extends Controller
                 'message' => 'Ha ocurido un error al actualizar el proyecto',
                 'data' => [],
                 'status' => 'error'
-            ], 500);
+            ], 200);
 
         ProyectoPrograma::where(['proyecto_id' => $id])->delete();
 
@@ -223,7 +224,44 @@ class ProyectoController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $proyecto = Proyecto::where(['id' => $id]);
+
+        if(!$proyecto->exists())
+            return response()->json([
+                'message' => 'No existen registros de ese proyecto',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        $relaciones = $proyecto->with([
+            'programas',
+            'actividades.actividadesRecursos.recurso',
+            'planesProyectos.proyecto',
+            'programaAcademico',
+        ])->get()->toArray()[0];
+
+        if(count($relaciones['planes_proyectos']) > 0)
+            return response()->json([
+                'message' => 'El proyeto está asociado a un plan',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        ProyectoPrograma::where(['proyecto_id' => $id])->delete();
+        Actividad::where(['proyecto_id' => $id])->delete();
+        
+        if ($proyecto->delete())
+            return response()->json([
+                'message' => 'proyecto eliminado',
+                'data' => [],
+                'status' => 'ok'
+            ], 200);
+            
+        return response()->json([
+            'message' => 'Ocurrió un error',
+            'data' => [],
+            'status' => 'error'
+        ], 200);
     }
 
     /**
@@ -231,7 +269,7 @@ class ProyectoController extends Controller
      * @param $programaAcademico
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getProgramaAcademico($programaAcademico){
+    public function showByPogramaAcademico($programaAcademico){
         $proyectos = Proyecto::with(['programas', 'actividades', 'programaAcademico', 'planesProyectos.proyecto'])
             ->where(['programa_academico_id' => $programaAcademico])->get()->toArray();
 
@@ -377,7 +415,7 @@ class ProyectoController extends Controller
             'message' => 'Ocurrió un error',
             'data' => [],
             'status' => 'error'
-        ], 500);
+        ], 200);
     }
 
     /**

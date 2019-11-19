@@ -27,7 +27,7 @@ class Plan extends Model
     /**
      * @var array
      */
-    protected $fillable = ['id', 'programa_academico_id', 'url_documento', 'fecha_inicio', 'fecha_fin', 'created_at', 'updated_at', 'deleted_at'];
+    protected $fillable = ['id', 'programa_academico_id', 'nombre', 'url_documento', 'fecha_inicio', 'fecha_fin', 'created_at', 'updated_at', 'deleted_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

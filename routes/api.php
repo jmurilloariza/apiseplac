@@ -45,12 +45,22 @@ Route::group(['prefix' => 'programa_academico'], function () {
     Route::put('{programa_academico}', 'FacultadController@updateProgramaAcademico');
     Route::get('{programa_academico}', 'FacultadController@showProgramaAcademico');
     Route::delete('{programa_academico}', 'FacultadController@destroyProgramaAcademico');
+    
+    Route::group(['prefix' => 'proyecto'], function () {
+        Route::get('{programa_academico}', 'PlanController@showByProgramaAcademico');
+    });
 });
 
 Route::group(['prefix' => 'plan'], function () {
     Route::get('', 'PlanController@index');
     Route::post('', 'PlanController@store');
     Route::get('{plan}', 'PlanController@show');
+    Route::put('{id}', 'PlanController@update');
+    
+    Route::group(['prefix' => 'proyecto'], function () {
+        Route::post('', 'PlanController@asignarProyectosPlan');
+    });
+
 });
 
 Route::group(['prefix' => 'proyecto'], function () {
@@ -59,7 +69,7 @@ Route::group(['prefix' => 'proyecto'], function () {
     Route::post('', 'ProyectoController@store');
     Route::put('{proyecto}', 'ProyectoController@update');
     Route::delete('{proyecto}', 'ProyectoController@destroy');
-    Route::get('getProgramaAcademico/{programa_academico_id}', 'ProyectoController@getProgramaAcademico');
+    Route::get('getProgramaAcademico/{programa_academico_id}', 'ProyectoController@showByPogramaAcademico');
 
     Route::group(['prefix' => 'actividad'], function () {
         Route::post('', 'ProyectoController@storeActividad');
@@ -81,7 +91,6 @@ Route::group(['prefix' => 'proyecto'], function () {
 
 Route::group(['prefix' => 'rol'], function () {
     Route::get('', 'UserController@getRoles');
-    Route::get('docente', 'UserController@getDocentes');
-    Route::get('administrativo', 'UserController@getAdministrativos');
+    Route::get('{rol}', 'UserController@getUserRol');
 });
 

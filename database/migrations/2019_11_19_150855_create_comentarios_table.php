@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateEvidenciasTable extends Migration
+class CreateComentariosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,19 @@ class CreateEvidenciasTable extends Migration
      */
     public function up()
     {
-        Schema::create('evidencias', function (Blueprint $table) {
+        Schema::create('comentarios', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->string('url', 256);
-            $table->integer('obsevacion_id')->unsigned();
+            $table->longText('observacion', 150);
+            $table->integer('seguimiento_id')->unsigned();
+
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index(["obsevacion_id"], 'fk_observacion_idx_p');
+            $table->index(["seguimiento_id"], 'fk_seguimiento_actividades1_idx');
 
-            $table->foreign('obsevacion_id', 'fk_observacion_idx_p')
-                ->references('id')->on('observaciones')
+            $table->foreign('seguimiento_id', 'fk_seguimiento_actividades1_idx')
+                ->references('id')->on('seguimiento')
                 ->onDelete('no action')
                 ->onUpdate('no action');
         });
@@ -36,6 +38,6 @@ class CreateEvidenciasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('evidencias');
+        Schema::dropIfExists('comentarios');
     }
 }

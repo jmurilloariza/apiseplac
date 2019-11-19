@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Evidencias extends Model
+class Seguimiento extends Model
 {
     use SoftDeletes;
 
@@ -14,18 +14,18 @@ class Evidencias extends Model
      *
      * @var string
      */
-    protected $table = 'evidencias';
+    protected $table = 'seguimiento';
 
     /**
      * @var array
      */
-    protected $fillable = ['id', 'url', 'comentario_id', 'deleted_at', 'created_at', 'updated_at'];
+    protected $fillable = ['id', 'actividad_id', 'periodo_evaluado', 'fecha_seguimiento', 'valoracion', 'situacion_actual', 'deleted_at', 'created_at', 'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function comentario()
+    public function actividad()
     {
-        return $this->belongsTo(Comentarios::class, 'comentario_id');
+        return $this->belongsTo(Actividad::class, 'actividad_id');
     }
 }

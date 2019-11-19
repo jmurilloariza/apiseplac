@@ -12,7 +12,6 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        // User::truncate();
         User::create([
             'email' => 'admin@admin.com',
             'password' => Hash::make('adminadmin'),
@@ -20,7 +19,7 @@ class UsersTableSeeder extends Seeder
             'apellidos' => 'Murillo Ariza',
             'codigo' => '1151222',
             'rol_id' => 1,
-            'programa_academico_id' => 16
+            'programa_academico_id' => 2
         ]);
 
         User::create([
@@ -30,7 +29,7 @@ class UsersTableSeeder extends Seeder
             'apellidos' => 'Murillo Ariza',
             'codigo' => '11222',
             'rol_id' => 2,
-            'programa_academico_id' => 16
+            'programa_academico_id' => 2
         ]);
 
         User::create([
@@ -40,7 +39,7 @@ class UsersTableSeeder extends Seeder
             'apellidos' => 'Murillo Ariza',
             'codigo' => '12',
             'rol_id' => 3,
-            'programa_academico_id' => 16
+            'programa_academico_id' => 2
         ]);
 
         User::create([
@@ -50,7 +49,7 @@ class UsersTableSeeder extends Seeder
             'apellidos' => 'Murillo Ariza',
             'codigo' => '2',
             'rol_id' => 2,
-            'programa_academico_id' => 16
+            'programa_academico_id' => 2
         ]);
     }
 }
