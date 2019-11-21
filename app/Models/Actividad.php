@@ -80,8 +80,8 @@ class Actividad extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function observaciones()
+    public function seguimientos()
     {
-        return $this->hasMany(Observacion::class, 'actividad_id');
+        return $this->hasMany(Seguimiento::class, 'actividad_id');
     }
 }

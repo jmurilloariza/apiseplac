@@ -36,4 +36,12 @@ class Comentarios extends Model
         return $this->belongsTo(Seguimiento::class, 'seguimiento_id');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function evidencias()
+    {
+        return $this->hasMany(Evidencias::class, 'comentario_id');
+    }
+
 }

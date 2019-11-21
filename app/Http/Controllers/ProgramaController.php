@@ -110,12 +110,12 @@ class ProgramaController extends Controller
                 'data' => $programa[0],
                 'status' => 'ok'
             ], 200);
-        else
-            return response()->json([
-                'message' => 'No existen registros',
-                'data' => [],
-                'status' => 'error'
-            ], 200);
+            
+        return response()->json([
+            'message' => 'No existen registros',
+            'data' => [],
+            'status' => 'error'
+        ], 200);
     }
 
     /**

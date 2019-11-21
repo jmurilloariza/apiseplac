@@ -19,7 +19,7 @@ class PlanController extends Controller
     {
         return response()->json([
             'message' => 'Consulta exitosa',
-            'data' => Plan::with(['programaAcademico', 'proyectos'])->get()->toArray(),
+            'data' => Plan::with(['programaAcademico', 'planesProyectos.proyectos'])->get()->toArray(),
             'status' => 'ok'
         ], 200);
     }
@@ -32,45 +32,39 @@ class PlanController extends Controller
      */
     public function store(Request $request)
     {
-        if (!$request->has('fecha_inicio') or !$request->has('fecha_fin') or !$request->has('programa_academico_id') or !$request->has('nombre'))
+        if (!$request->has('fecha_inicio') or !$request->has('fecha_fin') or
+            !$request->has('programa_academico_id') or !$request->has('nombre'))
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
                 'status' => 'error'
             ], 200);
 
-        // if (!$request->hasFile('documento'))
-        //     return response()->json([
-        //         'message' => 'Debe enviar el documento del plan',
-        //         'data' => [],
-        //         'status' => 'error'
-        //     ], 200);
-
-        $programaAcademico = ProgramaAcademico::where(['id' => $request->get('programa_academico_id')]);
-
-        if (count($programaAcademico->get()->toArray()) != 1)
+        if (!$request->hasFile('documento'))
             return response()->json([
-                'message' => 'No existen registros del programa academico',
+                'message' => 'Debe enviar el documento del plan',
                 'data' => [],
                 'status' => 'error'
             ], 200);
 
-        // $file = $request->file('documento');
-        // $time = time();
-        // $file->storeAs('public', $time . '-' . $file->getClientOriginalName());
+        $programaAcademico = ProgramaAcademico::where(['id' => $request->get('programa_academico_id')]);
 
-        // $plan = new Plan([
-        //     'fecha_inicio' => $request->get('fecha_inicio'),
-        //     'fecha_fin' => $request->get('fecha_fin'),
-        //     'programa_academico_id' => $request->get('programa_academico_id'),
-        //     'url_documento' => 'storage/' . $time . '-' . $file->getClientOriginalName()
-        // ]);
+        if (!$programaAcademico->exists())
+            return response()->json([
+                'message' => 'No existen registros del programa academico',
+                'data' => [ProgramaAcademico::where(['id' => $request->get('programa_academico_id')])->get()->toArray()],
+                'status' => 'error'
+            ], 200);
+
+        $file = $request->file('documento');
+        $time = time();
+        $file->storeAs('public', $time . '-' . $file->getClientOriginalName());
 
         $plan = new Plan([
             'fecha_inicio' => $request->get('fecha_inicio'),
             'fecha_fin' => $request->get('fecha_fin'),
             'programa_academico_id' => $request->get('programa_academico_id'),
-            'url_documento' => '',
+            'url_documento' => 'storage/' . $time . '-' . $file->getClientOriginalName(),
             'nombre' => $request->get('nombre')
         ]);
 
@@ -96,7 +90,7 @@ class PlanController extends Controller
      */
     public function show($id)
     {
-        $plan = Plan::where(['id' => $id])->with(['programaAcademico', 'proyectos.programas.linea.eje', 'proyectos.actividades'])
+        $plan = Plan::where(['id' => $id])->with(['programaAcademico', 'planesProyectos.proyectos.programas.linea.eje', 'planesProyectos.proyectos.actividades'])
             ->get()->toArray();
 
         if (count($plan) > 0)
@@ -116,7 +110,7 @@ class PlanController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int  $programa_academico
      * @return \Illuminate\Http\Response
      */
     public function showByProgramaAcademico($programa_academico)
@@ -194,7 +188,28 @@ class PlanController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $plan = Plan::where(['id' => $id]);
+        $relaciones = $plan->with(['planesProyectos'])->get()->toArray()[0];
+
+        if(count($relaciones['planes_proyectos']) > 0)
+            return response()->json([
+                'message' => 'El plan tiene proyectos asignados y es posible que esten en seguimiento',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        if ($plan->delete())
+            return response()->json([
+                'message' => 'Plan eliminado',
+                'data' => [],
+                'status' => 'ok'
+            ], 200);
+
+        return response()->json([
+            'message' => 'Ocurrió un error',
+            'data' => [],
+            'status' => 'error'
+        ], 200);
     }
 
     public function asignarProyectosPlan(Request $request)

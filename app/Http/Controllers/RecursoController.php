@@ -130,13 +130,13 @@ class RecursoController extends Controller
      */
     public function destroy($id)
     {
-        $exists = ActividadRecurso::where(['recurso_id' => $id])->exists();
+        $exists = ActividadRecurso::where(['recursos_id' => $id])->exists();
 
         if($exists)
             return response()->json([
                 'message' => 'Existen actividades que tienen este recurso asigando',
                 'data' => [],
-                'status' => 'ok'
+                'status' => 'error'
             ], 200);
 
         if (Recurso::find($id)->delete())

@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="820ac9db-7a12-4ca2-9a50-97f9f97891dc" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/FacultadController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/FacultadController.php" afterDir="false" />
-    </list>
+    <list default="true" id="820ac9db-7a12-4ca2-9a50-97f9f97891dc" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,7 +15,7 @@
     <session id="-180615970">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="1" />
+          <entry key="project.closed" value="2" />
           <entry key="project.open.time.2" value="1" />
           <entry key="project.open.time.5" value="1" />
           <entry key="project.opened" value="2" />
@@ -95,7 +93,7 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/Http/Controllers/FacultadController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
+            <state relative-caret-position="-2261">
               <caret line="403" column="66" selection-start-line="403" selection-start-column="66" selection-end-line="403" selection-end-column="66" />
             </state>
           </provider>
@@ -437,12 +435,12 @@
       <workItem from="1571785059269" duration="3870000" />
       <workItem from="1571885689834" duration="450000" />
       <workItem from="1573528117334" duration="723000" />
-      <workItem from="1573784837885" duration="4512000" />
+      <workItem from="1573784837885" duration="5101000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="34503000" />
+    <option name="totallyTimeSpent" value="35092000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="754" extended-state="6" />
@@ -841,7 +839,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/FacultadController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
+        <state relative-caret-position="-2261">
           <caret line="403" column="66" selection-start-line="403" selection-start-column="66" selection-end-line="403" selection-end-column="66" />
         </state>
       </provider>

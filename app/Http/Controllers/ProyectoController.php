@@ -6,8 +6,6 @@ use App\Models\Actividad;
 use App\Models\ActividadRecurso;
 use App\Models\ActividadUsuario;
 use App\Models\Indicador;
-use App\Models\Observacion;
-use App\Models\PlanProyecto;
 use App\Models\Programa;
 use App\Models\ProgramaAcademico;
 use App\Models\Proyecto;
@@ -273,9 +271,16 @@ class ProyectoController extends Controller
         $proyectos = Proyecto::with(['programas', 'actividades', 'programaAcademico', 'planesProyectos.proyecto'])
             ->where(['programa_academico_id' => $programaAcademico])->get()->toArray();
 
+        $data = [];
+
+        foreach ($proyectos as $proyecto){
+            if(count($proyecto['planes_proyectos']) == 0)
+                array_push( $data, $proyecto);
+        }
+
         return response()->json([
             'message' => 'Consulta exitosa',
-            'data' => $proyectos,
+            'data' => $data,
             'status' => 'ok'
         ], 200);
     }
@@ -379,7 +384,7 @@ class ProyectoController extends Controller
     public function showActividad($id)
     {
         $actividad = Actividad::where(['id' => $id])
-            ->with(['indicador', 'proyecto', 'actividadesRecursos.recurso', 'actividadesUsuarios.usuario', 'observaciones'])
+            ->with(['indicador', 'proyecto', 'actividadesRecursos.recurso', 'actividadesUsuarios.usuario'])
             ->get()->toArray();
 
         if (count($actividad) > 0)

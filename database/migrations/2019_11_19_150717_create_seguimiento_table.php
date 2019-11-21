@@ -16,10 +16,10 @@ class CreateSeguimientoTable extends Migration
         Schema::create('seguimiento', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('actividad_id')->unsigned();
-            $table->string('periodo_evaluado', 45);
-            $table->date('fecha_seguimiento');
-            $table->integer('valoracion');
-            $table->string('situacion_actual', 45);
+            $table->string('periodo_evaluado', 45)->nullable();
+            $table->date('fecha_seguimiento')->nullable();
+            $table->integer('valoracion')->nullable();
+            $table->string('situacion_actual', 45)->nullable();
 
             $table->timestamps();
             $table->softDeletes();

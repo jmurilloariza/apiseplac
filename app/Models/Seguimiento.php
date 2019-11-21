@@ -28,4 +28,12 @@ class Seguimiento extends Model
     {
         return $this->belongsTo(Actividad::class, 'actividad_id');
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function comentarios()
+    {
+        return $this->hasMany(Comentarios::class, 'seguimiento_id');
+    }
 }

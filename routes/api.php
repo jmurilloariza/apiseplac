@@ -11,6 +11,9 @@
 |
 */
 
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
 Route::group(['middleware' => 'api', 'prefix' => 'auth'], function () {
     Route::post('login', 'AuthController@login')->name('login');
     Route::post('logout', 'AuthController@logout');
@@ -45,7 +48,7 @@ Route::group(['prefix' => 'programa_academico'], function () {
     Route::put('{programa_academico}', 'FacultadController@updateProgramaAcademico');
     Route::get('{programa_academico}', 'FacultadController@showProgramaAcademico');
     Route::delete('{programa_academico}', 'FacultadController@destroyProgramaAcademico');
-    
+
     Route::group(['prefix' => 'proyecto'], function () {
         Route::get('{programa_academico}', 'PlanController@showByProgramaAcademico');
     });
@@ -56,11 +59,21 @@ Route::group(['prefix' => 'plan'], function () {
     Route::post('', 'PlanController@store');
     Route::get('{plan}', 'PlanController@show');
     Route::put('{id}', 'PlanController@update');
-    
+    Route::delete('{id}', 'PlanController@destroy');
+
     Route::group(['prefix' => 'proyecto'], function () {
         Route::post('', 'PlanController@asignarProyectosPlan');
-    });
 
+        Route::group(['prefix' => 'seguimiento'], function () {
+            Route::get('', 'SeguimientoController@index');
+            Route::post('', 'SeguimientoController@store');
+            Route::get('{id}', 'SeguimientoController@show');
+            Route::put('{id}', 'SeguimientoController@update');
+            Route::delete('{id}', 'SeguimientoController@destroy');
+
+            Route::get('actividad/{actividad_id}', 'SeguimientoController@showByActividad');
+        });
+    });
 });
 
 Route::group(['prefix' => 'proyecto'], function () {
@@ -93,4 +106,3 @@ Route::group(['prefix' => 'rol'], function () {
     Route::get('', 'UserController@getRoles');
     Route::get('{rol}', 'UserController@getUserRol');
 });
-
