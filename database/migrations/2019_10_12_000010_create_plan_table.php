@@ -26,8 +26,8 @@ class CreatePlanTable extends Migration
             $table->integer('programa_academico_id')->unsigned();
             $table->string('nombre', 200)->nullable();
             $table->string('url_documento', 256);
-            $table->date('fecha_inicio');
-            $table->date('fecha_fin');
+            $table->string('periodo_inicio', 8);
+            $table->string('periodo_fin', 8);
             $table->timestamps();
 
             $table->softDeletes();

@@ -19,7 +19,7 @@ class PlanController extends Controller
     {
         return response()->json([
             'message' => 'Consulta exitosa',
-            'data' => Plan::with(['programaAcademico', 'planesProyectos.proyectos'])->get()->toArray(),
+            'data' => Plan::with(['programaAcademico', 'planesProyectos.proyecto.programas.programa.linea.eje', 'planesProyectos.proyecto.actividades'])->get()->toArray(),
             'status' => 'ok'
         ], 200);
     }
@@ -32,7 +32,7 @@ class PlanController extends Controller
      */
     public function store(Request $request)
     {
-        if (!$request->has('fecha_inicio') or !$request->has('fecha_fin') or
+        if (!$request->has('periodo_inicio') or !$request->has('periodo_fin') or
             !$request->has('programa_academico_id') or !$request->has('nombre'))
             return response()->json([
                 'message' => 'Faltan datos',
@@ -61,8 +61,8 @@ class PlanController extends Controller
         $file->storeAs('public', $time . '-' . $file->getClientOriginalName());
 
         $plan = new Plan([
-            'fecha_inicio' => $request->get('fecha_inicio'),
-            'fecha_fin' => $request->get('fecha_fin'),
+            'periodo_inicio' => $request->get('periodo_inicio'),
+            'periodo_fin' => $request->get('periodo_fin'),
             'programa_academico_id' => $request->get('programa_academico_id'),
             'url_documento' => 'storage/' . $time . '-' . $file->getClientOriginalName(),
             'nombre' => $request->get('nombre')
@@ -90,7 +90,7 @@ class PlanController extends Controller
      */
     public function show($id)
     {
-        $plan = Plan::where(['id' => $id])->with(['programaAcademico', 'planesProyectos.proyectos.programas.linea.eje', 'planesProyectos.proyectos.actividades'])
+        $plan = Plan::where(['id' => $id])->with(['programaAcademico', 'planesProyectos.proyecto.programas.programa.linea.eje', 'planesProyectos.proyecto.actividades'])
             ->get()->toArray();
 
         if (count($plan) > 0)
@@ -99,12 +99,12 @@ class PlanController extends Controller
                 'data' => $plan[0],
                 'status' => 'ok'
             ], 200);
-        else
-            return response()->json([
-                'message' => 'No existen registros',
-                'data' => [],
-                'status' => 'error'
-            ], 404);
+
+        return response()->json([
+            'message' => 'No existen registros',
+            'data' => [],
+            'status' => 'error'
+        ], 404);
     }
 
     /**
@@ -151,7 +151,7 @@ class PlanController extends Controller
                 'status' => 'error'
             ], 200);
 
-        if (!$request->has('fecha_inicio') or !$request->has('fecha_fin') or !$request->has('programa_academico_id') or !$request->has('nombre'))
+        if (!$request->has('periodo_inicio') or !$request->has('periodo_fin') or !$request->has('programa_academico_id') or !$request->has('nombre'))
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
@@ -159,17 +159,23 @@ class PlanController extends Controller
             ], 200);
 
         $values = [
-            'fecha_inicio' => $request->get('fecha_inicio'),
-            'fecha_fin' => $request->get('fecha_fin'),
+            'periodo_inicio' => $request->get('periodo_inicio'),
+            'periodo_fin' => $request->get('periodo_fin'),
             'programa_academico_id' => $request->get('programa_academico_id'),
-            'url_documento' => '',
             'nombre' => $request->get('nombre')
         ];
+
+        if ($request->hasFile('documento')) {
+            $file = $request->file('documento');
+            $time = time();
+            $file->storeAs('public', $time . '-' . $file->getClientOriginalName());
+            $values['url_documento'] = 'storage/' . $time . '-' . $file->getClientOriginalName();
+        }
 
         if ($plan->update($values))
             return response()->json([
                 'message' => 'Actualización exitosa',
-                'data' => [$values],
+                'data' => [],
                 'status' => 'ok'
             ], 200);
 
@@ -191,7 +197,7 @@ class PlanController extends Controller
         $plan = Plan::where(['id' => $id]);
         $relaciones = $plan->with(['planesProyectos'])->get()->toArray()[0];
 
-        if(count($relaciones['planes_proyectos']) > 0)
+        if (count($relaciones['planes_proyectos']) > 0)
             return response()->json([
                 'message' => 'El plan tiene proyectos asignados y es posible que esten en seguimiento',
                 'data' => [],

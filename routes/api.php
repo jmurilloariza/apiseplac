@@ -58,7 +58,7 @@ Route::group(['prefix' => 'plan'], function () {
     Route::get('', 'PlanController@index');
     Route::post('', 'PlanController@store');
     Route::get('{plan}', 'PlanController@show');
-    Route::put('{id}', 'PlanController@update');
+    Route::post('{id}', 'PlanController@update');
     Route::delete('{id}', 'PlanController@destroy');
 
     Route::group(['prefix' => 'proyecto'], function () {
@@ -70,8 +70,10 @@ Route::group(['prefix' => 'plan'], function () {
             Route::get('{id}', 'SeguimientoController@show');
             Route::put('{id}', 'SeguimientoController@update');
             Route::delete('{id}', 'SeguimientoController@destroy');
-
+            
             Route::get('actividad/{actividad_id}', 'SeguimientoController@showByActividad');
+
+            Route::get('periodos/{plan_id}', 'SeguimientoController@calcularPeriodosPendienteSeguimiento');
         });
     });
 });

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Actividad;
+use App\Models\PlanProyecto;
 use App\Models\Seguimiento;
 use Illuminate\Http\Request;
 
@@ -169,5 +170,14 @@ class SeguimientoController extends Controller
             'data' => [],
             'status' => 'error'
         ], 200);
+    }
+
+    public function iniciarSeguimientoProyecto(Request $request){
+        
+    }
+
+    public function calcularPeriodosPendienteSeguimiento($plan_id){
+        $planesProyectos = PlanProyecto::where(['plan_id' => $plan_id])->with(['proyecto.actividades', 'plan'])->get();
+        return response()->json($planesProyectos->toArray());
     }
 }
