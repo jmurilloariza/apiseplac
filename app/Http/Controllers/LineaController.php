@@ -213,11 +213,11 @@ class LineaController extends Controller
                 'data' => [],
                 'status' => 'ok'
             ], 200);
-        else
-            return response()->json([
-                'message' => 'Ocurrió un error',
-                'data' => [],
-                'status' => 'error'
-            ], 200);
+            
+        return response()->json([
+            'message' => 'Ocurrió un error',
+            'data' => [],
+            'status' => 'error'
+        ], 200);
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Actividad;
 use App\Models\PlanProyecto;
 use App\Models\Seguimiento;
+use App\Models\Plan;
 use Illuminate\Http\Request;
 
 class SeguimientoController extends Controller
@@ -173,11 +174,111 @@ class SeguimientoController extends Controller
     }
 
     public function iniciarSeguimientoProyecto(Request $request){
-        
+        if(!$request->has('plan_proyecto_id') or !$request->has('periodo_evaluado'))
+            return response()->json([
+                'message' => 'Faltan datos',
+                'data' => $request->toArray(),
+                'status' => 'error'
+            ], 200);
+
+        $planProyecto = PlanProyecto::where(['id' => $request->get('plan_proyecto_id')])
+            ->with(['proyecto.actividades.seguimientos', 'plan']);
+
+        if (!$planProyecto->exists())
+            return response()->json([
+                'message' => 'No existen registros',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        $planProyecto = $planProyecto->get()->toArray()[0];
+
+        $actividades  = $planProyecto['proyecto']['actividades'];
+
+        for ($i=0; $i < count($actividades); $i++) { 
+            $seguimiento = new Seguimiento([
+                'actividad_id' => $actividades[$i]['id'], 
+                'periodo_evaluado' => $request->get('periodo_evaluado')
+            ]);
+
+            if (!$seguimiento->save())
+                return response()->json([
+                    'message' => 'Ha ocurido un error',
+                    'data' => [],
+                    'status' => 'error'
+                ], 200);
+        }
+
+        return response()->json([
+            'message' => 'Seguimiento para el periodo '. $request->get('periodo_evaluado').' iniciado',
+            'data' => [],
+            'status' => 'ok'
+        ], 201);
     }
 
     public function calcularPeriodosPendienteSeguimiento($plan_id){
-        $planesProyectos = PlanProyecto::where(['plan_id' => $plan_id])->with(['proyecto.actividades', 'plan'])->get();
-        return response()->json($planesProyectos->toArray());
+        $plan = Plan::where(['id' => $plan_id]);
+
+        if (!$plan->exists())
+            return response()->json([
+                'message' => 'No existen registros de ese plan',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        $plan = $plan->get()->toArray();
+
+        $periodo_inicio = explode('-', $plan[0]['periodo_inicio']);
+        $anioInicio = intval($periodo_inicio[0]);
+        $semestreInicio =  $periodo_inicio[1];
+
+        $periodo_fin = explode('-', $plan[0]['periodo_fin']);
+        $anioFin = intval($periodo_fin[0]);
+        $semestreFin = $periodo_fin[1];
+
+        $periodos = [];
+        $inicio = $anioInicio;
+        $fin = $anioFin;
+        $sinicio = $semestreInicio;
+        $sfin = $semestreFin;
+
+        while($anioInicio<= $anioFin){
+            if($anioInicio == $inicio && $sinicio == 'II'){
+                array_push($periodos, $anioInicio.'-'.$semestreInicio);
+            }else{
+                if($anioInicio == $anioFin && $sfin == 'I')
+                    array_push($periodos, $anioInicio.'-'.$sfin);
+                else {
+                    array_push($periodos, $anioInicio.'-'.$semestreInicio);
+                    if($semestreInicio == 'I') $semestreInicio = 'II';
+                    else $semestreInicio = 'I';
+                    array_push($periodos, $anioInicio.'-'.$semestreInicio);
+                }
+            }
+
+            $anioInicio++;
+        }
+
+        $planesProyectos = PlanProyecto::where(['plan_id' => $plan_id])
+            ->with(['proyecto.actividades.seguimientos', 'plan'])->get()->toArray();
+
+        for ($i=0; $i < count($planesProyectos) ; $i++) { 
+           $actividades = $planesProyectos[$i]['proyecto']['actividades'];
+           for ($j=0; $j < count($actividades) ; $j++) { 
+              $seguimientos = $actividades[$j]['seguimientos'];
+              foreach ($seguimientos as $seguimiento) {
+                  for ($k=0; $k < count($periodos) ; $k++) { 
+                      if($seguimiento['periodo_evaluado'] == $periodos[$k])
+                        unset($periodos[$k]);
+                  }
+              }
+           }
+        }
+
+        return response()->json([
+            'message' => 'Consulta exitosa',
+            'data' => $periodos,
+            'status' => 'ok'
+        ], 200);
     }
 }

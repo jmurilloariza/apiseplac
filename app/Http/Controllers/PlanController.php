@@ -69,7 +69,7 @@ class PlanController extends Controller
         ]);
 
         if (!$plan->save())
-            response()->json([
+            return response()->json([
                 'message' => 'Ha ocurido un error',
                 'data' => [],
                 'status' => 'error'
@@ -232,7 +232,7 @@ class PlanController extends Controller
         if (!$plan->exists())
             return response()->json([
                 'message' => 'No existen registros de ese plan',
-                'data' => [],
+                'data' => [$request->toArray(), !$request->has('plan_id') or !$request->has('proyectos')],
                 'status' => 'error'
             ], 200);
 
@@ -264,5 +264,42 @@ class PlanController extends Controller
             'data' => [],
             'status' => 'ok'
         ], 201);
+    }
+
+    public function desasignarProyectosPlan($plan_proyecto){
+        $planProyecto = PlanProyecto::where(['id' => $plan_proyecto])->with(['proyecto.actividades.seguimientos']);
+
+        if(!$planProyecto->exists())
+            return response()->json([
+                'message' => 'Uno existe el proyecto relacionado al plan',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        $actividades = $planProyecto->get()->toArray()[0]['proyecto']['actividades'];
+
+        if(count($actividades) > 0){
+            foreach($actividades as $actividad){
+                if(count($actividad['seguimientos']) > 0)
+                    return response()->json([
+                        'message' => 'No es posible eliminar el proyecto ya que tiene actividades en seguimiento',
+                        'data' => [],
+                        'status' => 'error'
+                    ], 200);
+            }
+        }
+
+        if ($planProyecto->delete())
+            return response()->json([
+                'message' => 'Proyecto eliminado',
+                'data' => [],
+                'status' => 'ok'
+            ], 200);
+            
+        return response()->json([
+            'message' => 'Ocurrió un error',
+            'data' => [],
+            'status' => 'error'
+        ], 200);
     }
 }

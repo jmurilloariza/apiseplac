@@ -11,9 +11,6 @@
 |
 */
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-
 Route::group(['middleware' => 'api', 'prefix' => 'auth'], function () {
     Route::post('login', 'AuthController@login')->name('login');
     Route::post('logout', 'AuthController@logout');
@@ -62,7 +59,8 @@ Route::group(['prefix' => 'plan'], function () {
     Route::delete('{id}', 'PlanController@destroy');
 
     Route::group(['prefix' => 'proyecto'], function () {
-        Route::post('', 'PlanController@asignarProyectosPlan');
+        Route::post('asignar', 'PlanController@asignarProyectosPlan');
+        Route::delete('desasignar/{plan_proyecto}', 'PlanController@desasignarProyectosPlan');
 
         Route::group(['prefix' => 'seguimiento'], function () {
             Route::get('', 'SeguimientoController@index');
@@ -71,8 +69,9 @@ Route::group(['prefix' => 'plan'], function () {
             Route::put('{id}', 'SeguimientoController@update');
             Route::delete('{id}', 'SeguimientoController@destroy');
             
+            Route::post('iniciar', 'SeguimientoController@iniciarSeguimientoProyecto');
+            
             Route::get('actividad/{actividad_id}', 'SeguimientoController@showByActividad');
-
             Route::get('periodos/{plan_id}', 'SeguimientoController@calcularPeriodosPendienteSeguimiento');
         });
     });
