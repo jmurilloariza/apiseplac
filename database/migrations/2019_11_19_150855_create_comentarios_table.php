@@ -16,7 +16,7 @@ class CreateComentariosTable extends Migration
         Schema::create('comentarios', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->longText('observacion', 150);
+            $table->longText('observacion', 150)->nullable();
             $table->integer('seguimiento_id')->unsigned();
 
             $table->timestamps();

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Actividad;
+use App\Models\Comentarios;
+use App\Models\Evidencias;
 use App\Models\PlanProyecto;
 use App\Models\Seguimiento;
 use App\Models\Plan;
@@ -28,7 +30,7 @@ class SeguimientoController extends Controller
      */
     public function store(Request $request)
     {
-        if(!$request->has('actividad_id') or !$request->has('periodo_evaluado') or !$request->has('fecha_seguimiento') or 
+        if (!$request->has('actividad_id') or !$request->has('periodo_evaluado') or !$request->has('fecha_seguimiento') or
             !$request->has('valoracion') or !$request->has('situacion_actual'))
             return response()->json([
                 'message' => 'Faltan datos',
@@ -38,7 +40,7 @@ class SeguimientoController extends Controller
 
         $actividad = Actividad::where(['actividad'])->exists();
 
-        if(!$actividad)
+        if (!$actividad)
             return response()->json([
                 'message' => 'No existen registros de esa actividad',
                 'data' => [],
@@ -46,15 +48,15 @@ class SeguimientoController extends Controller
             ], 200);
 
         $seguimiento = new Seguimiento([
-            'actividad_id' => $request->get('actividad_id'), 
-            'periodo_evaluado' => $request->get('periodo_evaluado'), 
-            'fecha_seguimiento' => $request->get('fecha_seguimiento'), 
-            'valoracion' => $request->get('valoracion'), 
+            'actividad_id' => $request->get('actividad_id'),
+            'periodo_evaluado' => $request->get('periodo_evaluado'),
+            'fecha_seguimiento' => $request->get('fecha_seguimiento'),
+            'valoracion' => $request->get('valoracion'),
             'situacion_actual' => $request->get('situacion_actual')
         ]);
 
         if (!$seguimiento->save())
-            response()->json([
+            return response()->json([
                 'message' => 'Ha ocurido un error',
                 'data' => [],
                 'status' => 'error'
@@ -83,7 +85,7 @@ class SeguimientoController extends Controller
                 'data' => $seguimiento[0],
                 'status' => 'ok'
             ], 200);
-            
+
         return response()->json([
             'message' => 'No existen registros',
             'data' => [],
@@ -100,7 +102,7 @@ class SeguimientoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if(!$request->has('actividad_id') or !$request->has('periodo_evaluado') or !$request->has('fecha_seguimiento') or 
+        if (!$request->has('actividad_id') or !$request->has('periodo_evaluado') or !$request->has('fecha_seguimiento') or
             !$request->has('valoracion') or !$request->has('situacion_actual'))
             return response()->json([
                 'message' => 'Faltan datos',
@@ -110,7 +112,7 @@ class SeguimientoController extends Controller
 
         $seguimiento = Seguimiento::where(['id' => $id]);
 
-        if(!$seguimiento->exists())
+        if (!$seguimiento->exists())
             return response()->json([
                 'message' => 'No existen registros de ese seguimiento en la actividad',
                 'data' => [],
@@ -118,9 +120,9 @@ class SeguimientoController extends Controller
             ], 200);
 
         $values = [
-            'periodo_evaluado' => $request->get('periodo_evaluado'), 
-            'fecha_seguimiento' => $request->get('fecha_seguimiento'), 
-            'valoracion' => $request->get('valoracion'), 
+            'periodo_evaluado' => $request->get('periodo_evaluado'),
+            'fecha_seguimiento' => $request->get('fecha_seguimiento'),
+            'valoracion' => $request->get('valoracion'),
             'situacion_actual' => $request->get('situacion_actual')
         ];
 
@@ -165,7 +167,7 @@ class SeguimientoController extends Controller
                 'data' => $seguimiento[0],
                 'status' => 'ok'
             ], 200);
-            
+
         return response()->json([
             'message' => 'No existen registros',
             'data' => [],
@@ -173,8 +175,9 @@ class SeguimientoController extends Controller
         ], 200);
     }
 
-    public function iniciarSeguimientoProyecto(Request $request){
-        if(!$request->has('plan_proyecto_id') or !$request->has('periodo_evaluado'))
+    public function iniciarSeguimientoProyecto(Request $request)
+    {
+        if (!$request->has('plan_proyecto_id') or !$request->has('periodo_evaluado'))
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
@@ -192,12 +195,24 @@ class SeguimientoController extends Controller
             ], 200);
 
         $planProyecto = $planProyecto->get()->toArray()[0];
-
         $actividades  = $planProyecto['proyecto']['actividades'];
 
-        for ($i=0; $i < count($actividades); $i++) { 
+        for ($i = 0; $i < count($actividades); $i++) {
+            $seguimientos = $actividades[$i]['seguimientos'];
+            for ($j=0; $j < count($seguimientos); $j++) { 
+                $seguimiento = $seguimientos[$j];
+                if($seguimiento['fecha_seguimiento'] == null)
+                    return response()->json([
+                        'message' => 'No es posible iniciar el seguimiento porque hay un seguimiento vigente del periodo '.$seguimiento['periodo_evaluado'],
+                        'data' => [],
+                        'status' => 'error'
+                    ], 200);
+            }
+        }
+
+        for ($i = 0; $i < count($actividades); $i++) {
             $seguimiento = new Seguimiento([
-                'actividad_id' => $actividades[$i]['id'], 
+                'actividad_id' => $actividades[$i]['id'],
                 'periodo_evaluado' => $request->get('periodo_evaluado')
             ]);
 
@@ -210,13 +225,14 @@ class SeguimientoController extends Controller
         }
 
         return response()->json([
-            'message' => 'Seguimiento para el periodo '. $request->get('periodo_evaluado').' iniciado',
+            'message' => 'Seguimiento para el periodo ' . $request->get('periodo_evaluado') . ' iniciado',
             'data' => [],
             'status' => 'ok'
         ], 201);
     }
 
-    public function calcularPeriodosPendienteSeguimiento($plan_id){
+    public function calcularPeriodosPendienteSeguimiento($plan_id)
+    {
         $plan = Plan::where(['id' => $plan_id]);
 
         if (!$plan->exists())
@@ -238,21 +254,20 @@ class SeguimientoController extends Controller
 
         $periodos = [];
         $inicio = $anioInicio;
-        $fin = $anioFin;
         $sinicio = $semestreInicio;
         $sfin = $semestreFin;
 
-        while($anioInicio<= $anioFin){
-            if($anioInicio == $inicio && $sinicio == 'II'){
-                array_push($periodos, $anioInicio.'-'.$semestreInicio);
-            }else{
-                if($anioInicio == $anioFin && $sfin == 'I')
-                    array_push($periodos, $anioInicio.'-'.$sfin);
+        while ($anioInicio <= $anioFin) {
+            if ($anioInicio == $inicio && $sinicio == 'II') 
+                array_push($periodos, $anioInicio . '-' . $semestreInicio);
+            else {
+                if ($anioInicio == $anioFin && $sfin == 'I')
+                    array_push($periodos, $anioInicio . '-' . $sfin);
                 else {
-                    array_push($periodos, $anioInicio.'-'.$semestreInicio);
-                    if($semestreInicio == 'I') $semestreInicio = 'II';
+                    array_push($periodos, $anioInicio . '-' . $semestreInicio);
+                    if ($semestreInicio == 'I') $semestreInicio = 'II';
                     else $semestreInicio = 'I';
-                    array_push($periodos, $anioInicio.'-'.$semestreInicio);
+                    array_push($periodos, $anioInicio . '-' . $semestreInicio);
                 }
             }
 
@@ -262,23 +277,74 @@ class SeguimientoController extends Controller
         $planesProyectos = PlanProyecto::where(['plan_id' => $plan_id])
             ->with(['proyecto.actividades.seguimientos', 'plan'])->get()->toArray();
 
-        for ($i=0; $i < count($planesProyectos) ; $i++) { 
-           $actividades = $planesProyectos[$i]['proyecto']['actividades'];
-           for ($j=0; $j < count($actividades) ; $j++) { 
-              $seguimientos = $actividades[$j]['seguimientos'];
-              foreach ($seguimientos as $seguimiento) {
-                  for ($k=0; $k < count($periodos) ; $k++) { 
-                      if($seguimiento['periodo_evaluado'] == $periodos[$k])
-                        unset($periodos[$k]);
-                  }
-              }
-           }
+        $p = [];
+
+        for ($i = 0; $i < count($planesProyectos); $i++) {
+            $actividades = $planesProyectos[$i]['proyecto']['actividades'];
+            for ($j = 0; $j < count($actividades); $j++) {
+                $seguimientos = $actividades[$j]['seguimientos'];
+                foreach ($seguimientos as $seguimiento) {
+                    for ($k = 0; $k < count($periodos); $k++) 
+                        array_push($p, $seguimiento['periodo_evaluado']);
+                }
+            }
         }
+
+        $periodos = array_diff($periodos, $p);
 
         return response()->json([
             'message' => 'Consulta exitosa',
             'data' => $periodos,
             'status' => 'ok'
         ], 200);
+    }
+
+    public function storeComentario(Request $request){
+        if(!$request->has('seguimiento_id') or !$request->has('observacion'))
+            return response()->json([
+                'message' => 'Faltan datos',
+                'data' => $request->toArray(),
+                'status' => 'error'
+            ], 200);
+
+        $comentario = new Comentarios([
+            'seguimiento_id' => $request->get('seguimiento_id'), 
+            'observacion' => $request->get('observacion')
+        ]);
+        
+        if (!$comentario->save())
+            return response()->json([
+                'message' => 'Ha ocurido un error',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        if ($request->hasFile('evidencias')) {
+            $evidencias = $request->file('evidencias');
+
+            foreach ($evidencias as $file) {
+                $time = time();
+                $file->storeAs('public', $time . '-' . $file->getClientOriginalName());
+                $url = 'storage/' . $time . '-' . $file->getClientOriginalName();
+
+                $evidencia = new Evidencias([
+                    'url' => $url, 
+                    'comentario_id' => $comentario->id, 
+                ]);
+
+                if (!$evidencia->save())
+                    return response()->json([
+                        'message' => 'Ha ocurido un error',
+                        'data' => [],
+                        'status' => 'error'
+                    ], 200);
+            }
+        }
+
+        return response()->json([
+            'message' => 'Comentario registrado',
+            'data' => [$request->toArray()],
+            'status' => 'ok'
+        ], 201);
     }
 }

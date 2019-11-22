@@ -26,7 +26,7 @@ class Comentarios extends Model
     /**
      * @var array
      */
-    protected $fillable = ['id', 'seguimiento_id', 'deleted_at', 'created_at', 'updated_at'];
+    protected $fillable = ['id', 'seguimiento_id', 'observacion', 'deleted_at', 'created_at', 'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

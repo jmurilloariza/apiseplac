@@ -11,6 +11,8 @@
 |
 */
 
+use Symfony\Component\HttpFoundation\Request;
+
 Route::group(['middleware' => 'api', 'prefix' => 'auth'], function () {
     Route::post('login', 'AuthController@login')->name('login');
     Route::post('logout', 'AuthController@logout');
@@ -68,11 +70,15 @@ Route::group(['prefix' => 'plan'], function () {
             Route::get('{id}', 'SeguimientoController@show');
             Route::put('{id}', 'SeguimientoController@update');
             Route::delete('{id}', 'SeguimientoController@destroy');
-            
+
             Route::post('iniciar', 'SeguimientoController@iniciarSeguimientoProyecto');
-            
+
             Route::get('actividad/{actividad_id}', 'SeguimientoController@showByActividad');
             Route::get('periodos/{plan_id}', 'SeguimientoController@calcularPeriodosPendienteSeguimiento');
+
+            Route::group(['prefix' => 'comentario'], function () {
+                Route::post('', 'SeguimientoController@storeComentario');
+            });
         });
     });
 });
@@ -106,4 +112,11 @@ Route::group(['prefix' => 'proyecto'], function () {
 Route::group(['prefix' => 'rol'], function () {
     Route::get('', 'UserController@getRoles');
     Route::get('{rol}', 'UserController@getUserRol');
+});
+
+Route::post('upload', function (Request $request) {
+    $file = $request->file('file');
+    $time = time();
+    $file->storeAs('public', $time . '-' . $file->getClientOriginalName());
+    return response($time . '-' . $file->getClientOriginalName());
 });
