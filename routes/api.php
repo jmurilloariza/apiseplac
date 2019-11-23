@@ -79,7 +79,11 @@ Route::group(['prefix' => 'plan'], function () {
             Route::group(['prefix' => 'comentario'], function () {
                 Route::get('{seguimiento_id}', 'SeguimientoController@showComentarioBySeguimiento');
                 Route::post('', 'SeguimientoController@storeComentario');
-                Route::post('cargar', 'SeguimientoController@storeEvidencia');
+                
+                Route::group(['prefix' => 'evidencia'], function () {
+                    Route::post('', 'SeguimientoController@storeEvidencia');
+                    Route::delete('{id}', 'SeguimientoController@destroyEvidencia');
+                });
             });
         });
     });

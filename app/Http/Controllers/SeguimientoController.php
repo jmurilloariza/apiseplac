@@ -537,4 +537,35 @@ class SeguimientoController extends Controller
             'status' => 'ok'
         ], 200);
     }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroyEvidencia($id)
+    {
+        $evidencia = Evidencias::where(['id' => $id]);
+
+        if(!$evidencia->exists())
+            return response()->json([
+                'message' => 'No existen registros de este evidencia',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        if ($evidencia->delete())
+            return response()->json([
+                'message' => 'evidencia eliminado',
+                'data' => [],
+                'status' => 'ok'
+            ], 200);
+            
+        return response()->json([
+            'message' => 'Ocurrió un error',
+            'data' => [],
+            'status' => 'error'
+        ], 200);
+    }
 }
