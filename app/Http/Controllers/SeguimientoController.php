@@ -8,6 +8,7 @@ use App\Models\Evidencias;
 use App\Models\PlanProyecto;
 use App\Models\Seguimiento;
 use App\Models\Plan;
+use App\Models\Usuario;
 use Illuminate\Http\Request;
 
 class SeguimientoController extends Controller
@@ -161,20 +162,19 @@ class SeguimientoController extends Controller
     {
         $seguimiento = Seguimiento::where(['actividad_id' => $actividad_id])->with(['actividad', 'comentarios.evidencias'])->get()->toArray();
 
-        if (count($seguimiento) > 0)
-            return response()->json([
-                'message' => 'Consulta exitosa',
-                'data' => $seguimiento[0],
-                'status' => 'ok'
-            ], 200);
-
         return response()->json([
-            'message' => 'No existen registros',
-            'data' => [],
-            'status' => 'error'
+            'message' => 'Consulta exitosa',
+            'data' => $seguimiento,
+            'status' => 'ok'
         ], 200);
     }
 
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function iniciarSeguimientoProyecto(Request $request)
     {
         if (!$request->has('plan_proyecto_id') or !$request->has('periodo_evaluado'))
@@ -231,6 +231,12 @@ class SeguimientoController extends Controller
         ], 201);
     }
 
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  int  $plan_id
+     * @return \Illuminate\Http\Response
+     */
     public function calcularPeriodosPendienteSeguimiento($plan_id)
     {
         $plan = Plan::where(['id' => $plan_id]);
@@ -299,17 +305,41 @@ class SeguimientoController extends Controller
         ], 200);
     }
 
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function storeComentario(Request $request){
-        if(!$request->has('seguimiento_id') or !$request->has('observacion'))
+        if(!$request->has('seguimiento_id') or !$request->has('comentario') or !$request->has('autor_id'))
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
                 'status' => 'error'
             ], 200);
 
+        $seguimiento = Seguimiento::where(['id' => $request->get('seguimiento_id')])->exists();
+
+        if(!$seguimiento)
+            return response()->json([
+                'message' => 'No existen registros de ese seguimiento',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        $autor = Usuario::where(['id' => $request->get('autor_id')])->exists();
+
+        if(!$autor)
+            return response()->json([
+                'message' => 'No existen registros de ese usuario',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
         $comentario = new Comentarios([
             'seguimiento_id' => $request->get('seguimiento_id'), 
-            'observacion' => $request->get('observacion')
+            'observacion' => $request->get('comentario')
         ]);
         
         if (!$comentario->save())
@@ -319,32 +349,192 @@ class SeguimientoController extends Controller
                 'status' => 'error'
             ], 200);
 
-        if ($request->hasFile('evidencias')) {
-            $evidencias = $request->file('evidencias');
-
-            foreach ($evidencias as $file) {
-                $time = time();
-                $file->storeAs('public', $time . '-' . $file->getClientOriginalName());
-                $url = 'storage/' . $time . '-' . $file->getClientOriginalName();
-
-                $evidencia = new Evidencias([
-                    'url' => $url, 
-                    'comentario_id' => $comentario->id, 
-                ]);
-
-                if (!$evidencia->save())
-                    return response()->json([
-                        'message' => 'Ha ocurido un error',
-                        'data' => [],
-                        'status' => 'error'
-                    ], 200);
-            }
-        }
 
         return response()->json([
             'message' => 'Comentario registrado',
-            'data' => [$request->toArray()],
+            'data' => $comentario->id,
             'status' => 'ok'
         ], 201);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function showComentario($id)
+    {
+        $comentario = Comentarios::where(['id' => $id])->with(['seguimiento', 'evidencias'])->get()->toArray();
+
+        if (count($comentario) > 0)
+            return response()->json([
+                'message' => 'Consulta exitosa',
+                'data' => $comentario[0],
+                'status' => 'ok'
+            ], 200);
+
+        return response()->json([
+            'message' => 'No existen registros',
+            'data' => [],
+            'status' => 'error'
+        ], 200);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroyComentario($id)
+    {
+        $comentario = Comentarios::where(['id' => $id]);
+
+        if(!$comentario->exists())
+            return response()->json([
+                'message' => 'No existen registros de este comentario',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        if ($comentario->delete())
+            return response()->json([
+                'message' => 'Comentario eliminado',
+                'data' => [],
+                'status' => 'ok'
+            ], 200);
+            
+        return response()->json([
+            'message' => 'Ocurrió un error',
+            'data' => [],
+            'status' => 'error'
+        ], 200);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function updateComentario(Request $request, $id)
+    {
+        if(!$request->has('comentario'))
+            return response()->json([
+                'message' => 'Faltan datos',
+                'data' => $request->toArray(),
+                'status' => 'error'
+            ], 200);
+
+        $comentario = Comentarios::where(['id' => $id])->exists();
+
+        if(!$comentario)
+            return response()->json([
+                'message' => 'No existen registros de ese comentario',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        $values = ['observacion' => $request->get('comentario')];
+
+        if ($comentario->update($values))
+            return response()->json([
+                'message' => 'Actualización exitosa',
+                'data' => [],
+                'status' => 'ok'
+            ], 200);
+
+        return response()->json([
+            'message' => 'Ha ocurido un error',
+            'data' => [],
+            'status' => 'error'
+        ], 200);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $seguimiento_id
+     * @return \Illuminate\Http\Response
+     */
+    public function showComentarioBySeguimiento($seguimiento_id)
+    {
+        $seguimiento = Seguimiento::where(['id' => $seguimiento_id])->exists();
+
+        if(!$seguimiento)
+            return response()->json([
+                'message' => 'No existen registros de ese seguimiento',
+                'data' => [],
+                'status' => 'error'
+        ], 200);
+
+        $comentario = Comentarios::where(['seguimiento_id' => $seguimiento_id])->with(['seguimiento', 'evidencias'])->get()->toArray();
+
+        if (count($comentario) > 0)
+            return response()->json([
+                'message' => 'Consulta exitosa',
+                'data' => $comentario[0],
+                'status' => 'ok'
+            ], 200);
+
+        return response()->json([
+            'message' => 'No existen registros',
+            'data' => [],
+            'status' => 'error'
+        ], 200);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function storeEvidencia(Request $request){
+        if(!$request->has('comentario_id'))
+            return response()->json([
+                'message' => 'Faltan datos',
+                'data' => $request->toArray(),
+                'status' => 'error'
+            ], 200);
+
+        $comentario = Comentarios::where(['id' => $request->get('comentario_id')]);
+
+        if (!$comentario->exists())
+            return response()->json([
+                'message' => 'No existen registros de este comentario',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        if ($request->hasFile('evidencia')) {
+            $file = $request->file('evidencia');
+
+            $time = time();
+            $file->storeAs('public', $time . '-' . $file->getClientOriginalName());
+            $url = 'storage/' . $time . '-' . $file->getClientOriginalName();
+
+            $comentario_id = $comentario->get()->toArray()[0]['id'];
+
+            $evidencia = new Evidencias([
+                'url' => $url, 
+                'comentario_id' => $comentario_id, 
+            ]);
+
+            if (!$evidencia->save())
+                return response()->json([
+                    'message' => 'Ha ocurido un error',
+                    'data' => [],
+                    'status' => 'error'
+                ], 200);
+        }
+
+        return response()->json([
+            'message' => 'Evidencia cargada',
+            'data' => [],
+            'status' => 'ok'
+        ], 200);
     }
 }

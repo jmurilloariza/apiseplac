@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
@@ -15,6 +16,10 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Comentarios extends Model
 {
+    use SoftDeletes;
+
+    use \Askedio\SoftCascade\Traits\SoftCascadeTrait;
+    protected $softCascade = ['evidencias'];
 
     /**
      * The table associated with the model.
@@ -26,7 +31,7 @@ class Comentarios extends Model
     /**
      * @var array
      */
-    protected $fillable = ['id', 'seguimiento_id', 'observacion', 'deleted_at', 'created_at', 'updated_at'];
+    protected $fillable = ['id', 'seguimiento_id', 'autor_id', 'observacion', 'deleted_at', 'created_at', 'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -42,6 +47,14 @@ class Comentarios extends Model
     public function evidencias()
     {
         return $this->hasMany(Evidencias::class, 'comentario_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function autor()
+    {
+        return $this->belongsTo(Usuario::class, 'autor_id');
     }
 
 }

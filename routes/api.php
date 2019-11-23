@@ -70,14 +70,16 @@ Route::group(['prefix' => 'plan'], function () {
             Route::get('{id}', 'SeguimientoController@show');
             Route::put('{id}', 'SeguimientoController@update');
             Route::delete('{id}', 'SeguimientoController@destroy');
-
+            
             Route::post('iniciar', 'SeguimientoController@iniciarSeguimientoProyecto');
-
+            
             Route::get('actividad/{actividad_id}', 'SeguimientoController@showByActividad');
             Route::get('periodos/{plan_id}', 'SeguimientoController@calcularPeriodosPendienteSeguimiento');
-
+            
             Route::group(['prefix' => 'comentario'], function () {
+                Route::get('{seguimiento_id}', 'SeguimientoController@showComentarioBySeguimiento');
                 Route::post('', 'SeguimientoController@storeComentario');
+                Route::post('cargar', 'SeguimientoController@storeEvidencia');
             });
         });
     });
@@ -115,8 +117,8 @@ Route::group(['prefix' => 'rol'], function () {
 });
 
 Route::post('upload', function (Request $request) {
-    $file = $request->file('file');
+    $file = $request->file('documento');
     $time = time();
     $file->storeAs('public', $time . '-' . $file->getClientOriginalName());
-    return response($time . '-' . $file->getClientOriginalName());
+    return response()->json([$time . '-' . $file->getClientOriginalName(), $request->get('comentario_id')]);
 });

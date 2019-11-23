@@ -18,6 +18,7 @@ class CreateComentariosTable extends Migration
             $table->increments('id');
             $table->longText('observacion', 150)->nullable();
             $table->integer('seguimiento_id')->unsigned();
+            $table->integer('autor_id')->unsigned();
 
             $table->timestamps();
             $table->softDeletes();
@@ -26,6 +27,13 @@ class CreateComentariosTable extends Migration
 
             $table->foreign('seguimiento_id', 'fk_seguimiento_actividades1_idx')
                 ->references('id')->on('seguimiento')
+                ->onDelete('no action')
+                ->onUpdate('no action');
+
+            $table->index(["autor_id"], 'fk_seguimiento_autor_id_idx');
+
+            $table->foreign('autor_id', 'fk_seguimiento_autor_id_idx')
+                ->references('id')->on('users')
                 ->onDelete('no action')
                 ->onUpdate('no action');
         });
