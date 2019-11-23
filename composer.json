@@ -10,10 +10,10 @@
     "require": {
         "php": "^7.2",
         "askedio/laravel-soft-cascade": "^6.0",
-        "barryvdh/laravel-cors": "^0.11.4",
         "fideloper/proxy": "^4.0",
         "laravel/framework": "v6.2.0",
         "laravel/tinker": "^1.0",
+        "spatie/laravel-cors": "^1.6",
         "tymon/jwt-auth": "1.0.0-rc.5"
     },
     "require-dev": {
