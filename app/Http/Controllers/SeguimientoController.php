@@ -197,18 +197,18 @@ class SeguimientoController extends Controller
         $planProyecto = $planProyecto->get()->toArray()[0];
         $actividades  = $planProyecto['proyecto']['actividades'];
 
-        for ($i = 0; $i < count($actividades); $i++) {
-            $seguimientos = $actividades[$i]['seguimientos'];
-            for ($j=0; $j < count($seguimientos); $j++) { 
-                $seguimiento = $seguimientos[$j];
-                if($seguimiento['fecha_seguimiento'] == null)
-                    return response()->json([
-                        'message' => 'No es posible iniciar el seguimiento porque hay un seguimiento vigente del periodo '.$seguimiento['periodo_evaluado'],
-                        'data' => [],
-                        'status' => 'error'
-                    ], 200);
-            }
-        }
+       // for ($i = 0; $i < count($actividades); $i++) {
+         //   $seguimientos = $actividades[$i]['seguimientos'];
+          //  for ($j=0; $j < count($seguimientos); $j++) { 
+          //      $seguimiento = $seguimientos[$j];
+           //     if($seguimiento['fecha_seguimiento'] == null)
+           //         return response()->json([
+           //             'message' => 'No es posible iniciar el seguimiento porque hay un seguimiento vigente del periodo '.$seguimiento['periodo_evaluado'],
+          //              'data' => [],
+           //             'status' => 'error'
+      //              ], 200);
+       //     }
+      //  }
 
         for ($i = 0; $i < count($actividades); $i++) {
             $seguimiento = new Seguimiento([
