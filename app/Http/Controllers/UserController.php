@@ -2,19 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PasswordReset;
 use App\Models\ActividadUsuario;
 use App\Models\ProgramaAcademico;
 use App\Models\Rol;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
 
     public function __construct()
     {
-        // $this->middleware('auth:api');
+        $this->middleware('auth:api')->except(['passwordReset', 'passwordResetChange']);
     }
 
     /**
@@ -149,7 +151,7 @@ class UserController extends Controller
 
         $user = Usuario::where('id', $id);
 
-        if (is_null($user->first()))
+        if (!$user->exists())
             return response()->json([
                 'message' => 'No existe el usuario',
                 'data' => [],
@@ -260,6 +262,11 @@ class UserController extends Controller
         ], 200);
     }
 
+    /**
+     * Display the specified resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function getRoles()
     {
         return response()->json([
@@ -269,19 +276,96 @@ class UserController extends Controller
         ]);
     }
 
-    public function getDocentes(){
-        return response()->json($this->getUserRol(3));
-    }
-
-    public function getAdministrativos(){
-        return response()->json($this->getUserRol(2));
-    }
-
+    /**
+     * Display the specified resource.
+     *
+     * @param string $rol
+     * @return \Illuminate\Http\Response
+     */
     public function getUserRol($rol){
         return [
             'message' => 'Consulta exitosa', 
             'data' => Usuario::where(['rol_id' => $rol])->with(['programaAcademico'])->get()->toArray(), 
             'status' => 'ok'
         ];
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function passwordReset(Request $request)
+    {
+        if(!$request->has('email'))
+            return response()->json([
+                'message' => 'Faltan datos',
+                'data' => $request->toArray(),
+                'status' => 'errror'
+            ], 200);
+
+        $usuario = Usuario::where(['email' => $request->get('email')]);
+
+        if(!$usuario->exists())
+            return response()->json([
+                'message' => 'No existe el usuario',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+        
+        $token = md5(time());
+        $usuario->update(['remember_token' => $token]);
+
+        Mail::to($request->get('email'), 'SEPLAC UFPS')->send(new PasswordReset($request->get('email'), $token));
+
+        return [
+            'message' => 'Hemos enviado un correo a '.$request->get('email').' para terminar el proceso de recuperación de contraseña', 
+            'data' => [], 
+            'status' => 'ok'
+        ]; 
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function passwordResetChange(Request $request)
+    {
+        if(!$request->has('token') or !$request->has('password') or !$request->has('email'))
+            return response()->json([
+                'message' => 'Faltan datos',
+                'data' => $request->toArray(),
+                'status' => 'errror'
+            ], 200);
+
+        $usuario = Usuario::where(['email' => $request->get('email'), 'remember_token' => $request->get('token')]);
+
+        if(!$usuario->exists())
+            return response()->json([
+                'message' => 'No existe el usuario o se ha vencido su token',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+        
+        $update = $usuario->update([
+            'password' => Hash::make($request->get('password')), 
+            'remember_token' => null
+        ]);
+
+        if($update)
+            return response()->json([
+                'message' => 'Actualización exitosa',
+                'data' => [],
+                'status' => 'ok'
+            ], 200);
+
+        return response()->json([
+            'message' => 'Ha ocurido un error',
+            'data' => [],
+            'status' => 'error'
+        ], 500);
     }
 }

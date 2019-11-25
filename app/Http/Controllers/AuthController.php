@@ -83,11 +83,11 @@ class AuthController extends Controller
                 'access_token' => $token,
                 'token_type' => 'bearer',
                 'expires_in' => auth()->factory()->getTTL() * 60,
-                'id' => '1092362256'
             ],
             'message' => 'success',
             'status' => 'ok'
         ]);
     }
+    
 
 }

@@ -108,7 +108,7 @@ Route::group(['prefix' => 'proyecto'], function () {
 
         Route::post('recurso', 'ProyectoController@agregarRecursosActividad');
         Route::post('responsable', 'ProyectoController@agregarUsuarioActividad');
-
+        
         Route::group(['prefix' => 'observacion'], function () {
             Route::get('{id}', 'ProyectoController@showObservationActividad');
         });
@@ -120,9 +120,7 @@ Route::group(['prefix' => 'rol'], function () {
     Route::get('{rol}', 'UserController@getUserRol');
 });
 
-Route::post('upload', function (Request $request) {
-    $file = $request->file('documento');
-    $time = time();
-    $file->storeAs('public', $time . '-' . $file->getClientOriginalName());
-    return response()->json([$time . '-' . $file->getClientOriginalName(), $request->get('comentario_id')]);
+Route::group(['prefix' => 'password'], function () {
+    Route::post('', 'UserController@passwordReset');
+    Route::post('change', 'UserController@passwordResetChange');
 });
