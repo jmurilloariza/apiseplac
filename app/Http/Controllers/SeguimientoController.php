@@ -78,7 +78,7 @@ class SeguimientoController extends Controller
      */
     public function show($id)
     {
-        $seguimiento = Seguimiento::where(['id' => $id])->with(['actividad', 'comentarios.evidencias'])->get()->toArray();
+        $seguimiento = Seguimiento::where(['id' => $id])->with(['actividad', 'comentarios.evidencias.autor'])->get()->toArray();
 
         if (count($seguimiento) > 0)
             return response()->json([
@@ -197,18 +197,18 @@ class SeguimientoController extends Controller
         $planProyecto = $planProyecto->get()->toArray()[0];
         $actividades  = $planProyecto['proyecto']['actividades'];
 
-        for ($i = 0; $i < count($actividades); $i++) {
-            $seguimientos = $actividades[$i]['seguimientos'];
-            for ($j=0; $j < count($seguimientos); $j++) { 
-                $seguimiento = $seguimientos[$j];
-                if($seguimiento['fecha_seguimiento'] == null)
-                    return response()->json([
-                        'message' => 'No es posible iniciar el seguimiento porque hay un seguimiento vigente del periodo '.$seguimiento['periodo_evaluado'],
-                        'data' => [],
-                        'status' => 'error'
-                    ], 200);
-            }
-        }
+        // for ($i = 0; $i < count($actividades); $i++) {
+        //     $seguimientos = $actividades[$i]['seguimientos'];
+        //     for ($j=0; $j < count($seguimientos); $j++) { 
+        //         $seguimiento = $seguimientos[$j];
+        //         if($seguimiento['fecha_seguimiento'] == null)
+        //             return response()->json([
+        //                 'message' => 'No es posible iniciar el seguimiento porque hay un seguimiento vigente del periodo '.$seguimiento['periodo_evaluado'],
+        //                 'data' => [],
+        //                 'status' => 'error'
+        //             ], 200);
+        //     }
+        // }
 
         for ($i = 0; $i < count($actividades); $i++) {
             $seguimiento = new Seguimiento([
@@ -339,7 +339,8 @@ class SeguimientoController extends Controller
 
         $comentario = new Comentarios([
             'seguimiento_id' => $request->get('seguimiento_id'), 
-            'observacion' => $request->get('comentario')
+            'observacion' => $request->get('comentario'), 
+            'autor_id' => $request->get('autor_id')
         ]);
         
         if (!$comentario->save())
@@ -365,7 +366,7 @@ class SeguimientoController extends Controller
      */
     public function showComentario($id)
     {
-        $comentario = Comentarios::where(['id' => $id])->with(['seguimiento', 'evidencias'])->get()->toArray();
+        $comentario = Comentarios::where(['id' => $id])->with(['seguimiento', 'evidencias', 'autor'])->get()->toArray();
 
         if (count($comentario) > 0)
             return response()->json([
@@ -470,12 +471,13 @@ class SeguimientoController extends Controller
                 'status' => 'error'
         ], 200);
 
-        $comentario = Comentarios::where(['seguimiento_id' => $seguimiento_id])->with(['seguimiento', 'evidencias'])->get()->toArray();
+        $comentario = Comentarios::where(['seguimiento_id' => $seguimiento_id])->orderBy('created_at', 'DESC')
+            ->with(['seguimiento', 'evidencias', 'autor'])->get()->toArray();
 
         if (count($comentario) > 0)
             return response()->json([
                 'message' => 'Consulta exitosa',
-                'data' => $comentario[0],
+                'data' => $comentario,
                 'status' => 'ok'
             ], 200);
 

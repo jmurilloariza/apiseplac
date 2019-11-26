@@ -79,6 +79,7 @@ Route::group(['prefix' => 'plan'], function () {
             Route::group(['prefix' => 'comentario'], function () {
                 Route::get('{seguimiento_id}', 'SeguimientoController@showComentarioBySeguimiento');
                 Route::post('', 'SeguimientoController@storeComentario');
+                Route::delete('{id}', 'SeguimientoController@destroyComentario');
                 
                 Route::group(['prefix' => 'evidencia'], function () {
                     Route::post('', 'SeguimientoController@storeEvidencia');
@@ -102,12 +103,17 @@ Route::group(['prefix' => 'proyecto'], function () {
         Route::get('{id}', 'ProyectoController@showActividad');
         Route::delete('{id}', 'ProyectoController@destroyActividad');
         Route::put('{id}', 'ProyectoController@updateActividad');
-
-        Route::delete('recurso/{id}', 'ProyectoController@eliminarActividadRecurso');
-        Route::delete('responsable/{id}', 'ProyectoController@eliminarUsuarioActividad');
-
-        Route::post('recurso', 'ProyectoController@agregarRecursosActividad');
-        Route::post('responsable', 'ProyectoController@agregarUsuarioActividad');
+        
+        Route::group(['prefix' => 'recurso'], function () {
+            Route::post('', 'ProyectoController@agregarRecursosActividad');
+            Route::delete('{id}', 'ProyectoController@eliminarActividadRecurso');
+        }); 
+        
+        Route::group(['prefix' => 'responsable'], function () {
+            Route::delete('{id}', 'ProyectoController@eliminarUsuarioActividad');
+            Route::post('', 'ProyectoController@agregarUsuarioActividad');
+            Route::get('{usaurio_id}', 'ProyectoController@showActividadByUsuario');
+        }); 
         
         Route::group(['prefix' => 'observacion'], function () {
             Route::get('{id}', 'ProyectoController@showObservationActividad');

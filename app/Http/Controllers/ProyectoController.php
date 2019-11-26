@@ -402,6 +402,32 @@ class ProyectoController extends Controller
     }
 
     /**
+     * Display the specified resource.
+     *
+     * @param  int  $usaurio_id
+     * @return \Illuminate\Http\Response
+     */
+    public function showActividadByUsuario($usaurio_id)
+    {
+        $actividad = ActividadUsuario::where(['usaurio_id' => $usaurio_id])
+            ->with(['actividad.indicador', 'actividad.proyecto', 'actividad.actividadesRecursos.recurso'])
+            ->get()->toArray();
+
+        if (count($actividad) > 0)
+            return response()->json([
+                'message' => 'Consulta exitosa',
+                'data' => $actividad[0],
+                'status' => 'ok'
+            ], 200);
+
+        return response()->json([
+            'message' => 'No existen registros',
+            'data' => [],
+            'status' => 'error'
+        ], 404);
+    }
+
+    /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
