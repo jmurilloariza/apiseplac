@@ -52,8 +52,8 @@ class SeguimientoController extends Controller
             'actividad_id' => $request->get('actividad_id'),
             'periodo_evaluado' => $request->get('periodo_evaluado'),
             'fecha_seguimiento' => $request->get('fecha_seguimiento'),
-            'valoracion' => $request->get('valoracion'),
-            'situacion_actual' => $request->get('situacion_actual')
+            'valoracion' => 0,
+            'situacion_actual' => 'Bajo'
         ]);
 
         if (!$seguimiento->save())
@@ -123,7 +123,7 @@ class SeguimientoController extends Controller
         $values = [
             'periodo_evaluado' => $request->get('periodo_evaluado'),
             'fecha_seguimiento' => $request->get('fecha_seguimiento'),
-            'valoracion' => $request->get('valoracion'),
+            'valoracion' => intval($request->get('valoracion')),
             'situacion_actual' => $request->get('situacion_actual')
         ];
 

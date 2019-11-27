@@ -6,6 +6,7 @@ use App\Models\Actividad;
 use App\Models\ActividadRecurso;
 use App\Models\ActividadUsuario;
 use App\Models\Indicador;
+use App\Models\Observacion;
 use App\Models\Programa;
 use App\Models\ProgramaAcademico;
 use App\Models\Proyecto;

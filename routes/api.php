@@ -80,7 +80,6 @@ Route::group(['prefix' => 'plan'], function () {
                 Route::get('{seguimiento_id}', 'SeguimientoController@showComentarioBySeguimiento');
                 Route::post('', 'SeguimientoController@storeComentario');
                 Route::delete('{id}', 'SeguimientoController@destroyComentario');
-                Route::put('{id}', 'SeguimientoController@updateComentario');
                 
                 Route::group(['prefix' => 'evidencia'], function () {
                     Route::post('', 'SeguimientoController@storeEvidencia');
