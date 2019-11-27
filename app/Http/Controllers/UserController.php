@@ -298,14 +298,14 @@ class UserController extends Controller
      */
     public function passwordReset(Request $request)
     {
-        if(!$request->has('email'))
+        if(!$request->has('email') or !$request->has('codigo'))
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
                 'status' => 'errror'
             ], 200);
 
-        $usuario = Usuario::where(['email' => $request->get('email')]);
+        $usuario = Usuario::where(['email' => $request->get('email'), 'codigo' => $request->get('codigo')]);
 
         if(!$usuario->exists())
             return response()->json([
