@@ -13,6 +13,7 @@
         "fideloper/proxy": "^4.0",
         "laravel/framework": "v6.2.0",
         "laravel/tinker": "^1.0",
+        "mpdf/mpdf": "^8.0",
         "spatie/laravel-cors": "^1.6",
         "tymon/jwt-auth": "1.0.0-rc.5"
     },
