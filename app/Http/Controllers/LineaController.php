@@ -192,7 +192,7 @@ class LineaController extends Controller
     public function destroy($id)
     {
         $linea = Linea::find($id);
-        $programas = $linea->with(['programas.proyectos'])->get()[0]['programas'];
+        $programas = $linea->with(['programas.proyectos'])->get()->toArray()[0]['programas'];
 
         for ($i = 0, $long = count($programas); $i < $long; $i++) {
             if (count($programas[$i]['proyectos']) > 0) {
@@ -206,6 +206,7 @@ class LineaController extends Controller
 
         $linea->update(['codigo' => null]);
         Programa::where(['linea_id' => $id])->update(['codigo' => null]);
+        Programa::where(['linea_id' => $id])->delete();
 
         if ($linea->delete())
             return response()->json([

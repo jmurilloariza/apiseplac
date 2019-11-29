@@ -164,13 +164,13 @@ class EjeController extends Controller
     public function destroy($id)
     {
         $eje = Eje::find($id);
-        $relaciones = $eje->with(['lineas.programas.proyectos'])->get()[0];
-
+        $relaciones = $eje->with(['lineas.programas.proyectos'])->get()->toArray()[0];
+        
         for ($i = 0, $long = count($relaciones['lineas']); $i < $long; $i++) {
             $programas = $relaciones['lineas'][$i]['programas'];
 
             if (count($programas) > 0) {
-                for ($j = 0, $long = count($programas); $j < $long; $j++) {
+                for ($j = 0, $long2 = count($programas); $j < $long2; $j++) {
                     $proyectos = $programas[$j]['proyectos'];
                     if (count($proyectos) > 0) {
                         return response()->json([
@@ -180,11 +180,13 @@ class EjeController extends Controller
                         ], 200);
                     } else {
                         Programa::where(['linea_id' => $relaciones['lineas'][$i]['id']])->update(['codigo' => null]);
+                        Programa::where(['linea_id' => $relaciones['lineas'][$i]['id']])->delete();
                     }
                 }
             }
-
+            
             Linea::where(['eje_id' => $id])->update(['codigo' => null]);
+            Linea::where(['eje_id' => $id])->delete();
         }
 
         $eje->update(['codigo' => null]);

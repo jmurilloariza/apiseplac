@@ -56,10 +56,19 @@ class FacultadController extends Controller
                     'status' => 'error'
                 ], 200);
 
+            $facultad = Facultad::where(['codigo' =>  $facultades[$i]['codigo']])->exists();
+
+            if($facultad)
+                return response()->json([
+                    'message' => 'Ya existe una facultad registrada con ese código',
+                    'data' => [],
+                    'status' => 'error'
+                ], 200);
+
             $facultad = new Facultad(['nombre' =>  $facultades[$i]['nombre'], 'codigo' =>  $facultades[$i]['codigo']]);
 
             if (!$facultad->save())
-                response()->json([
+                return response()->json([
                     'message' => 'Ha ocurido un error',
                     'data' => [],
                     'status' => 'error'
@@ -154,13 +163,13 @@ class FacultadController extends Controller
      */
     public function destroy($id)
     {
-        $facultad = Facultad::find($id);
+        $facultad = Facultad::where(['id' => $id]);
         $relaciones = $facultad->with(['departamentos.programasAcademicos'])->get()->toArray()[0];
 
         if (count($relaciones['departamentos']) > 0)
             return response()->json([
                 'message' => 'La facultad tiene departamentos asociados',
-                'data' => [],
+                'data' => [ $relaciones],
                 'status' => 'error'
             ], 200);
 
@@ -225,6 +234,15 @@ class FacultadController extends Controller
             if (!isset($departamentos[$i]['nombre']) or !isset($departamentos[$i]['codigo']))
                 return response()->json([
                     'message' => 'Faltan datos',
+                    'data' => [],
+                    'status' => 'error'
+                ], 200);
+
+            $departamento = Departamento::where(['codigo' => $departamentos[$i]['codigo']])->exists();
+
+            if($departamento)
+                return response()->json([
+                    'message' => 'Ya existe un departamento registrado con ese codigo',
                     'data' => [],
                     'status' => 'error'
                 ], 200);
@@ -542,12 +560,12 @@ class FacultadController extends Controller
                 'data' => [],
                 'status' => 'ok'
             ], 200);
-        else
-            return response()->json([
-                'message' => 'Ocurrió un error',
-                'data' => [],
-                'status' => 'error'
-            ], 200);
+        
+        return response()->json([
+            'message' => 'Ocurrió un error',
+            'data' => [],
+            'status' => 'error'
+        ], 200);
     }
 
     /**

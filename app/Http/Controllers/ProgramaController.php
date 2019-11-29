@@ -192,13 +192,20 @@ class ProgramaController extends Controller
      */
     public function destroy($id)
     {
-        Programa::where(['id' => $id])->delete();
+        $programa = Programa::where(['id' => $id]);
         ProyectoPrograma::where(['programa_id' => $id])->delete();
 
+        if(!$programa->delete())
+            return response()->json([
+                'message' => 'Ocurrió un error',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
         return response()->json([
-            'message' => 'Ocurrió un error',
+            'message' => 'Programa Eliminado',
             'data' => [],
-            'status' => 'error'
+            'status' => 'ok'
         ], 200);
     }
 }

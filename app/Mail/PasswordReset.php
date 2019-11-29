@@ -23,7 +23,7 @@ class PasswordReset extends Mailable
     public function __construct($para, $token)
     {
         $this->para = $para;
-        $this->host = 'localhost:4201/#';
+        $this->host = 'localhost:4200/#';
         $this->k = base64_encode('email='.$para.'?token='.$token);
     }
 

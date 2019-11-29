@@ -16,7 +16,7 @@ class UserController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api')->except(['passwordReset', 'passwordResetChange']);
+        // $this->middleware('auth:api')->except(['passwordReset', 'passwordResetChange']);
     }
 
     /**
@@ -194,12 +194,12 @@ class UserController extends Controller
         }
 
         if($request->get('codigo') != $usuario['codigo']){
-            $usuario = Usuario::orWhere(['codigo' => $request->get('codigo')])->first();
+            $usuario = Usuario::where(['codigo' => $request->get('codigo')])->first();
 
             if (!is_null($usuario))
                 return response()->json([
                     'message' => 'Ya existe un usuario con ese codigo',
-                    'data' => [],
+                    'data' => [$usuario],
                     'status' => 'error'
                 ], 200);
 
