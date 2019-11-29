@@ -368,4 +368,47 @@ class UserController extends Controller
             'status' => 'error'
         ], 500);
     }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param string $id
+     * @return \Illuminate\Http\Response
+     */
+    public function passwordChange(Request $request, $id)
+    {
+        if(!$request->has('password') or !$request->has('email'))
+            return response()->json([
+                'message' => 'Faltan datos',
+                'data' => $request->toArray(),
+                'status' => 'errror'
+            ], 200);
+
+        $usuario = Usuario::where(['email' => $request->get('email'), 'id' => $id]);
+
+        if(!$usuario->exists())
+            return response()->json([
+                'message' => 'No existe el usuario',
+                'data' => [$usuario->get()->toArray()],
+                'status' => 'error'
+            ], 200);
+        
+        $update = $usuario->update([
+            'password' => Hash::make($request->get('password')), 
+        ]);
+
+        if($update)
+            return response()->json([
+                'message' => 'Actualización exitosa',
+                'data' => [],
+                'status' => 'ok'
+            ], 200);
+
+        return response()->json([
+            'message' => 'Ha ocurido un error',
+            'data' => [],
+            'status' => 'error'
+        ], 500);
+    }
 }

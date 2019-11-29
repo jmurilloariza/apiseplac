@@ -129,5 +129,6 @@ Route::group(['prefix' => 'rol'], function () {
 
 Route::group(['prefix' => 'password'], function () {
     Route::post('', 'UserController@passwordReset');
+    Route::put('{id}', 'UserController@passwordChange');
     Route::post('change', 'UserController@passwordResetChange');
 });
