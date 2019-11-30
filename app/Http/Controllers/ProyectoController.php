@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\Responsable;
 use App\Models\Actividad;
 use App\Models\ActividadRecurso;
 use App\Models\ActividadUsuario;
@@ -14,6 +15,7 @@ use App\Models\ProyectoPrograma;
 use App\Models\Recurso;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class ProyectoController extends Controller
 {
@@ -631,9 +633,9 @@ class ProyectoController extends Controller
                 'status' => 'error'
             ], 200);
 
-        $actividad = Actividad::where(['id' => $request->get('actividad_id')])->exists();
+        $actividad = Actividad::where(['id' => $request->get('actividad_id')]);
 
-        if(!$actividad)
+        if(!$actividad->exists())
             return response()->json([
                 'message' => 'No existe una actividad asociada a ese id',
                 'data' => [],
@@ -641,9 +643,9 @@ class ProyectoController extends Controller
             ], 200);
 
         foreach ($request->get('responsables') as $r){
-            $usuario = Usuario::where(['id' => $r])->exists();
+            $usuario = Usuario::where(['id' => $r]);
 
-            if(!$usuario)
+            if(!$usuario->exists())
                 return response()->json([
                     'message' => 'No existe un usuario asociado al id '.$r,
                     'data' => [],
@@ -670,6 +672,11 @@ class ProyectoController extends Controller
                     'data' => [],
                     'status' => 'error'
                 ], 200);
+
+            $usuario = $usuario->get()->toArray()[0];
+            $actividad = $actividad->with(['proyecto.plan'])->get()->toArray()[0];
+
+            Mail::to($usuario['email'], 'SEPLAC UFPS')->send(new Responsable($usuario['email'], $actividad));
         }
 
         return response()->json([
@@ -677,10 +684,6 @@ class ProyectoController extends Controller
             'data' => [],
             'status' => 'ok'
         ], 201);
-    }
-
-    public function storeObservationActividad(Request $request){
-
     }
 
     public function showObservationActividad($id){

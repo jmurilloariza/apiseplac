@@ -179,8 +179,6 @@ return [
         
         Askedio\SoftCascade\Providers\GenericServiceProvider::class,
         Spatie\Cors\CorsServiceProvider::class, 
-
-        // Barryvdh\DomPDF\ServiceProvider::class,
     ],
 
     /*

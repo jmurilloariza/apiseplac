@@ -11,13 +11,23 @@
 |
 */
 
+use Mpdf\Mpdf;
+
 Route::get('/', function () {
+    // $html = view('reports.resumenPlan');
+    // $mpdf = new Mpdf([
+    //     'mode' => 'utf-8',
+    //     'format' => 'LETTER'
+    // ]);
+    // $mpdf->WriteHTML($html);
+    // $mpdf->Output();
     return view('reports.resumenPlan');
 });
 
 Route::get('mail', function () {
-    return view('Mails.passwordReset')->with([
+    return view('mails.responsable')->with([
         'k' => '02',
-        'asunto' => 'Restablecimiento de clave personal'
+        'asunto' => 'Restablecimiento de clave personal',
+        'mensaje' => 'Ha sido designado como responsable de la actividad'
     ]);
 });
