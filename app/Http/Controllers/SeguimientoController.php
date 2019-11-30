@@ -93,7 +93,7 @@ class SeguimientoController extends Controller
             'status' => 'error'
         ], 200);
     }
-
+ 
     /**
      * Update the specified resource in storage.
      *
