@@ -7,6 +7,7 @@ use App\Models\ActividadUsuario;
 use App\Models\ProgramaAcademico;
 use App\Models\Rol;
 use App\Models\Usuario;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -378,29 +379,38 @@ class UserController extends Controller
      */
     public function passwordChange(Request $request, $id)
     {
-        if(!$request->has('password') or !$request->has('email'))
+        if(!$request->has('current_password') or !$request->has('new_password') or !$request->has('email'))
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
                 'status' => 'errror'
             ], 200);
 
-        $usuario = Usuario::where(['email' => $request->get('email'), 'id' => $id]);
+        $usuario = User::where(['email' => $request->get('email'), 'id' => $id]);
 
         if(!$usuario->exists())
             return response()->json([
                 'message' => 'No existe el usuario',
-                'data' => [$usuario->get()->toArray()],
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        $values = $usuario->get()->toArray()[0];
+
+        if (!Hash::check($request->get('current_password'), $values['password'])) 
+            return response()->json([
+                'message' => 'Contraseña incorrecta',
+                'data' => [],
                 'status' => 'error'
             ], 200);
         
         $update = $usuario->update([
-            'password' => Hash::make($request->get('password')), 
+            'password' => Hash::make($request->get('new_password')), 
         ]);
 
         if($update)
             return response()->json([
-                'message' => 'Actualización exitosa',
+                'message' => 'Contraseña actualizada',
                 'data' => [],
                 'status' => 'ok'
             ], 200);

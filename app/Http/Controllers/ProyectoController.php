@@ -468,7 +468,7 @@ class ProyectoController extends Controller
             ], 200);
         }
 
-        $indicador = Indicador::where(['id' => $id])->exists();
+        $indicador = Indicador::where(['id' => $request->get('indicador_id')])->exists();
 
         if(!$indicador)
             return response()->json([

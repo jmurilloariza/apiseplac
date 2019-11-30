@@ -110,7 +110,7 @@ class ProgramaController extends Controller
                 'data' => $programa[0],
                 'status' => 'ok'
             ], 200);
-            
+
         return response()->json([
             'message' => 'No existen registros',
             'data' => [],
@@ -127,8 +127,10 @@ class ProgramaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!$request->has('nombre') or !$request->has('codigo')
-            or !$request->has('descripcion') or !$request->has('linea_id'))
+        if (
+            !$request->has('nombre') or !$request->has('codigo')
+            or !$request->has('descripcion') or !$request->has('linea_id')
+        )
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
@@ -137,7 +139,7 @@ class ProgramaController extends Controller
 
         $linea = Linea::where(['id' => $request->get('linea_id')])->exists();
 
-        if(!$linea)
+        if (!$linea)
             return response()->json([
                 'message' => 'No existen registros de una libea con ese id',
                 'data' => [],
@@ -195,7 +197,7 @@ class ProgramaController extends Controller
         $programa = Programa::where(['id' => $id]);
         ProyectoPrograma::where(['programa_id' => $id])->delete();
 
-        if(!$programa->delete())
+        if (!$programa->delete())
             return response()->json([
                 'message' => 'Ocurrió un error',
                 'data' => [],

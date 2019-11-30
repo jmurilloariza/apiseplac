@@ -14,3 +14,10 @@
 Route::get('/', function () {
     return view('reports.resumenPlan');
 });
+
+Route::get('mail', function () {
+    return view('Mails.passwordReset')->with([
+        'k' => '02',
+        'asunto' => 'Restablecimiento de clave personal'
+    ]);
+});

@@ -7,26 +7,24 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class PasswordReset extends Mailable
+class Notification extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $para;
-    public $host;
-    public $k;
     public $asunto;
+    public $mensaje;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($para, $token)
+    public function __construct($para, $asunto, $mensaje)
     {
         $this->para = $para;
-        $this->host = 'localhost:4200/#';
-        $this->k = base64_encode('email='.$para.'?token='.$token);
-        $this->asunto = 'Restablecimiento de clave personal';
+        $this->asunto = $asunto;
+        $this->mensaje = $mensaje;
     }
 
     /**
@@ -36,7 +34,7 @@ class PasswordReset extends Mailable
      */
     public function build()
     {
-        return $this->view('Mails.passwordReset')
+        return $this->view('Mails.notificacion')
             ->from(env('MAIL_USERNAME'), 'SEPLAC UFPS')
             ->subject('SEPLAC UFPS');
     }
