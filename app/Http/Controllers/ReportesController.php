@@ -18,7 +18,7 @@ class ReportesController extends Controller
                 'status' => 'error'
             ], 200);
 
-        $data = $this->resumenPlanPeriodoProgramaRender($request->get('plan_id'),$request->get('periodo'), $request, false);
+        $data = $this->resumenPlanPeriodoProgramaRender($request->get('plan_id'),$request->get('periodo'), false);
 
         return response()->json([
             'message' => 'Reporte',
@@ -34,7 +34,6 @@ class ReportesController extends Controller
             'planesProyectos.proyecto.actividades.seguimientos',
             'planesProyectos.proyecto.programas.programa.linea.eje',
         ])->get()->toArray()[0];
-
 
         $data = [];
         $director = Usuario::where(['programa_academico_id' => $plan['programa_academico']['id'], 'rol_id' => 4])->get()->toArray()[0];

@@ -93,7 +93,7 @@ class SeguimientoController extends Controller
             'status' => 'error'
         ], 200);
     }
- 
+
     /**
      * Update the specified resource in storage.
      *
@@ -237,9 +237,10 @@ class SeguimientoController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  int  $plan_id
+     * @param  string  $todo
      * @return \Illuminate\Http\Response
      */
-    public function calcularPeriodosPendienteSeguimiento($plan_id)
+    public function calcularPeriodosPendienteSeguimiento($plan_id, $todo)
     {
         $plan = Plan::where(['id' => $plan_id]);
 
@@ -282,18 +283,21 @@ class SeguimientoController extends Controller
             $anioInicio++;
         }
 
-        $planesProyectos = PlanProyecto::where(['plan_id' => $plan_id])
-            ->with(['proyecto.actividades.seguimientos', 'plan'])->get()->toArray();
-
         $p = [];
 
-        for ($i = 0; $i < count($planesProyectos); $i++) {
-            $actividades = $planesProyectos[$i]['proyecto']['actividades'];
-            for ($j = 0; $j < count($actividades); $j++) {
-                $seguimientos = $actividades[$j]['seguimientos'];
-                foreach ($seguimientos as $seguimiento) {
-                    for ($k = 0; $k < count($periodos); $k++) 
-                        array_push($p, $seguimiento['periodo_evaluado']);
+        if($todo == '0'){
+            $planesProyectos = PlanProyecto::where(['plan_id' => $plan_id])
+                ->with(['proyecto.actividades.seguimientos', 'plan'])->get()->toArray();
+
+
+            for ($i = 0; $i < count($planesProyectos); $i++) {
+                $actividades = $planesProyectos[$i]['proyecto']['actividades'];
+                for ($j = 0; $j < count($actividades); $j++) {
+                    $seguimientos = $actividades[$j]['seguimientos'];
+                    foreach ($seguimientos as $seguimiento) {
+                        for ($k = 0; $k < count($periodos); $k++)
+                            array_push($p, $seguimiento['periodo_evaluado']);
+                    }
                 }
             }
         }
