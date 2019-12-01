@@ -132,8 +132,10 @@ Route::group(['prefix' => 'password'], function () {
 });
 
 Route::group(['prefix' => 'reportes'], function () {
-    Route::post('cargarResumenGeneralProyecto', 'ReportesController@cargarResumenGeneralProyecto');
     Route::post('resumenPlanPeriodoPrograma', 'ReportesController@resumenPlanPeriodoPrograma');
     Route::get('resumenPlanPeriodoPrograma/{id}/{periodo}', 'ReportesController@resumenPlanPeriodoProgramaRender');
+
+    Route::post('cargarResumenGeneralProyecto', 'ReportesController@cargarResumenGeneralProyecto');
+    Route::get('cargarResumenGeneralProyecto/{proyecto_plan_id}', 'ReportesController@cargarResumenGeneralProyectoRender');
 });
 

@@ -8,6 +8,7 @@
   <body>
     <main>
         <div id="invoice">
+          <div class="date">Reporte de plan por periodo evaluado</div>
           <h1>{{strtoupper($plan['nombre'])}} {{strtoupper($plan['periodo_evaluado'])}}</h1>
           <div class="date">Fecha reporte: {{date('Y-m-d')}}</div>
           <div class="date">Periodo evaluado: {{strtoupper($plan['periodo_evaluado'])}}</div>

@@ -94,7 +94,8 @@ class ReportesController extends Controller
         $html = view('reports.resumenPlan')->with(['plan' => $data['plan']]);
         $mpdf = new Mpdf([
             'mode' => 'utf-8',
-            'format' => 'LETTER'
+            'format' => 'LETTER', 
+            'orientation' => 'P'
         ]);
 
         $mpdf->WriteHTML($html);
@@ -186,9 +187,19 @@ class ReportesController extends Controller
         }
 
         $data['porcentaje_cumplimiento'] = $data['porcentaje_cumplimiento'] / 100;
-
+        
         if(!$render) return $data;
 
-        return response()->json($data);
+        $html = view('reports.resumenProyecto')->with(['proyecto' => $data]);
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'LEGAL', 
+            'orientation' => 'L'
+        ]);
+
+        $mpdf->WriteHTML($html);
+        $mpdf->Output();
     }
+
+
 }
