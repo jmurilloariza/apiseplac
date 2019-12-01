@@ -94,7 +94,7 @@ class ReportesController extends Controller
         $html = view('reports.resumenPlan')->with(['plan' => $data['plan']]);
         $mpdf = new Mpdf([
             'mode' => 'utf-8',
-            'format' => 'LETTER', 
+            'format' => 'LETTER',
             'orientation' => 'P'
         ]);
 
@@ -103,7 +103,7 @@ class ReportesController extends Controller
     }
 
     public function cargarResumenGeneralProyecto(Request $request)
-    { 
+    {
         if (!$request->has('proyecto_plan_id'))
             return response()->json([
                 'message' => 'Faltan datos',
@@ -181,25 +181,28 @@ class ReportesController extends Controller
                 array_push($data_actividad['seguimientos'], $data_seguimiento);
             }
 
-            $data_actividad['promedio_avance'] = $valoracion / count($seguimientos);
-            $data['porcentaje_cumplimiento'] += $valoracion / count($seguimientos) * $actividad['peso'];
+            if (count($seguimientos) > 0) {
+                $data_actividad['promedio_avance'] = $valoracion / count($seguimientos);
+                $data['porcentaje_cumplimiento'] += $valoracion / count($seguimientos) * $actividad['peso'];
+            } else {
+                $data['porcentaje_cumplimiento'] += 0;
+                $data_actividad['promedio_avance'] = $valoracion;
+            }
             array_push($data['actividades'], $data_actividad);
         }
 
         $data['porcentaje_cumplimiento'] = $data['porcentaje_cumplimiento'] / 100;
-        
-        if(!$render) return $data;
+
+        if (!$render) return $data;
 
         $html = view('reports.resumenProyecto')->with(['proyecto' => $data]);
         $mpdf = new Mpdf([
             'mode' => 'utf-8',
-            'format' => 'LEGAL', 
+            'format' => 'LEGAL',
             'orientation' => 'L'
         ]);
 
         $mpdf->WriteHTML($html);
         $mpdf->Output();
     }
-
-
 }
