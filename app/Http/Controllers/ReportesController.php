@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Plan;
+use App\Models\PlanProyecto;
+use App\Models\Proyecto;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Mpdf\Mpdf;
@@ -18,7 +20,7 @@ class ReportesController extends Controller
                 'status' => 'error'
             ], 200);
 
-        $data = $this->resumenPlanPeriodoProgramaRender($request->get('plan_id'),$request->get('periodo'), false);
+        $data = $this->resumenPlanPeriodoProgramaRender($request->get('plan_id'), $request->get('periodo'), false);
 
         return response()->json([
             'message' => 'Reporte',
@@ -94,8 +96,99 @@ class ReportesController extends Controller
             'mode' => 'utf-8',
             'format' => 'LETTER'
         ]);
-        
+
         $mpdf->WriteHTML($html);
         $mpdf->Output();
+    }
+
+    public function cargarResumenGeneralProyecto(Request $request)
+    { 
+        if (!$request->has('proyecto_plan_id'))
+            return response()->json([
+                'message' => 'Faltan datos',
+                'data' => $request->toArray(),
+                'status' => 'error'
+            ], 200);
+
+        $data = $this->cargarResumenGeneralProyectoRender($request->get('proyecto_plan_id'), false);
+
+        return response()->json([
+            'message' => 'Reporte',
+            'data' => $data,
+            'status' => 'ok'
+        ], 200);
+    }
+
+    public function cargarResumenGeneralProyectoRender($proyecto_plan_id, $render = true)
+    {
+        $proyecto_plan = PlanProyecto::where(['id' => $proyecto_plan_id])
+            ->with(['proyecto.programas.programa.linea.eje', 'proyecto.actividades.seguimientos', 'plan']);
+
+        if (!$proyecto_plan->exists())
+            return response()->json([
+                'message' => 'No existe el proyecto',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        $proyecto_plan = $proyecto_plan->get()->toArray()[0];
+
+        $proyecto = $proyecto_plan['proyecto'];
+        $plan = $proyecto_plan['plan'];
+
+        $data = [
+            'nombre' => $proyecto['nombre'],
+            'descripcion' => $proyecto['descripcion'],
+        ];
+
+        $data['programas'] = [];
+        $programas = $proyecto['programas'];
+
+        foreach ($programas as $p) {
+            $programa = $p['programa'];
+            array_push($data['programas'], $programa['nombre']);
+            $data['eje'] = $programa['linea']['eje']['nombre'];
+            $data['linea'] = $programa['linea']['nombre'];
+        }
+
+        $data['plan']['vigencia'] = $plan['periodo_inicio'] . ' al ' . $plan['periodo_fin'];
+        $data['plan']['nombre'] = $plan['nombre'];
+        $data['porcentaje_cumplimiento'] = 0;
+
+        $data['actividades'] = [];
+
+        $actividades = $proyecto['actividades'];
+
+        foreach ($actividades as $actividad) {
+            $data_actividad = [
+                'nombre' => $actividad['nombre'],
+                'peso' => $actividad['peso']
+            ];
+
+            $data_actividad['seguimientos'] = [];
+            $seguimientos = $actividad['seguimientos'];
+
+            $valoracion = 0;
+
+            foreach ($seguimientos as $seguimiento) {
+                $data_seguimiento = [
+                    'periodo' => $seguimiento['periodo_evaluado'],
+                    'valoracion' => $seguimiento['valoracion'],
+                ];
+
+                $valoracion += intval($seguimiento['valoracion']);
+                array_push($data_actividad['seguimientos'], $data_seguimiento);
+            }
+
+            $data_actividad['promedio_avance'] = $valoracion / count($seguimientos);
+            $data['porcentaje_cumplimiento'] += $valoracion / count($seguimientos) * $actividad['peso'];
+            array_push($data['actividades'], $data_actividad);
+        }
+
+        $data['porcentaje_cumplimiento'] = $data['porcentaje_cumplimiento'] / 100;
+
+        if(!$render) return $data;
+
+        return response()->json($data);
     }
 }

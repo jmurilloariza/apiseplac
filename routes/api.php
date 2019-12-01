@@ -11,9 +11,6 @@
 |
 */
 
-use App\Models\Plan;
-use App\Models\Usuario;
-
 Route::group(['middleware' => 'api', 'prefix' => 'auth'], function () {
     Route::post('login', 'AuthController@login')->name('login');
     Route::post('logout', 'AuthController@logout');
@@ -135,6 +132,8 @@ Route::group(['prefix' => 'password'], function () {
 });
 
 Route::group(['prefix' => 'reportes'], function () {
+    Route::post('cargarResumenGeneralProyecto', 'ReportesController@cargarResumenGeneralProyecto');
     Route::post('resumenPlanPeriodoPrograma', 'ReportesController@resumenPlanPeriodoPrograma');
     Route::get('resumenPlanPeriodoPrograma/{id}/{periodo}', 'ReportesController@resumenPlanPeriodoProgramaRender');
 });
+
