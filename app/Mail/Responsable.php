@@ -38,7 +38,7 @@ class Responsable extends Mailable
      */
     public function build()
     {
-        return $this->view('mails.responsable')
+        return $this->view('Mails.responsable')
             ->from(env('MAIL_USERNAME'), 'SEPLAC UFPS')
             ->subject('SEPLAC UFPS');
     }

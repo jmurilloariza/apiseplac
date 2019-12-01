@@ -34,7 +34,7 @@ class PasswordReset extends Mailable
      */
     public function build()
     {
-        return $this->view('mails.passwordReset')
+        return $this->view('Mails.passwordReset')
             ->from(env('MAIL_USERNAME'), 'SEPLAC UFPS')
             ->subject('SEPLAC UFPS');
     }
