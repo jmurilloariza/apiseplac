@@ -1,4 +1,4 @@
-@extends('mails.app')
+@extends('Mails.app')
 
 @section('asunto')
     {{$asunto}}
