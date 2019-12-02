@@ -8,6 +8,7 @@ use App\Models\Evidencias;
 use App\Models\PlanProyecto;
 use App\Models\Seguimiento;
 use App\Models\Plan;
+use App\Models\Proyecto;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
 
@@ -231,6 +232,49 @@ class SeguimientoController extends Controller
             'data' => [],
             'status' => 'ok'
         ], 201);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function terminarSeguimientoProyecto(Request $request)
+    {
+        if(!$request->has('proyecto_plan_id') or !$request->has('periodo'))
+            return response()->json([
+                'message' => 'Faltan datos',
+                'data' => $request->toArray(),
+                'status' => 'error'
+            ], 200);
+
+        $proyecto = PlanProyecto::where(['id' => $request->get('proyecto_plan_id')]);
+
+        if(!$proyecto->exists())
+            return response()->json([
+                'message' => 'No existen registros del proyecto',
+                'data' => [$request->get('proyecto_plan_id')],
+                'status' => 'error'
+            ], 200);
+
+        $proyecto = $proyecto->with(['proyecto.actividades.seguimientos'])->get()->toArray()[0]['proyecto'];
+        $actividades = $proyecto['actividades'];
+
+        foreach ($actividades as $actividad) {
+            $seguimientos = $actividad['seguimientos'];
+
+            foreach ($seguimientos as $item) {
+                if($item['periodo_evaluado'] == $request->get('periodo'))
+                    Seguimiento::where(['id' => $item['id']])->update(['fecha_seguimiento' => date('Y-m-d')]);
+            }
+        }
+
+        return response()->json([
+            'message' => 'Seguimientos terminados para el periodo '.$request->get('periodo'),
+            'data' => [],
+            'status' => 'ok'
+        ], 200);
     }
 
     /**

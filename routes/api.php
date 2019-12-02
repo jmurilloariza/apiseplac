@@ -61,25 +61,26 @@ Route::group(['prefix' => 'plan'], function () {
     Route::group(['prefix' => 'proyecto'], function () {
         Route::post('asignar', 'PlanController@asignarProyectosPlan');
         Route::delete('desasignar/{plan_proyecto}', 'PlanController@desasignarProyectosPlan');
-
+        
         Route::group(['prefix' => 'seguimiento'], function () {
             Route::get('', 'SeguimientoController@index');
             Route::post('', 'SeguimientoController@store');
             Route::get('{id}', 'SeguimientoController@show');
             Route::put('{id}', 'SeguimientoController@update');
             Route::delete('{id}', 'SeguimientoController@destroy');
-
+            
             Route::post('iniciar', 'SeguimientoController@iniciarSeguimientoProyecto');
-
+            Route::post('terminar', 'SeguimientoController@terminarSeguimientoProyecto');
+            
             Route::get('actividad/{actividad_id}', 'SeguimientoController@showByActividad');
             Route::get('periodos/{plan_id}/{todo}', 'SeguimientoController@calcularPeriodosPendienteSeguimiento');
-
+            
             Route::group(['prefix' => 'comentario'], function () {
                 Route::get('{seguimiento_id}', 'SeguimientoController@showComentarioBySeguimiento');
                 Route::post('', 'SeguimientoController@storeComentario');
                 Route::delete('{id}', 'SeguimientoController@destroyComentario');
                 Route::put('{id}', 'SeguimientoController@updateComentario');
-
+                
                 Route::group(['prefix' => 'evidencia'], function () {
                     Route::post('', 'SeguimientoController@storeEvidencia');
                     Route::delete('{id}', 'SeguimientoController@destroyEvidencia');
@@ -138,4 +139,3 @@ Route::group(['prefix' => 'reportes'], function () {
     Route::post('cargarResumenGeneralProyecto', 'ReportesController@cargarResumenGeneralProyecto');
     Route::get('cargarResumenGeneralProyecto/{proyecto_plan_id}', 'ReportesController@cargarResumenGeneralProyectoRender');
 });
-
