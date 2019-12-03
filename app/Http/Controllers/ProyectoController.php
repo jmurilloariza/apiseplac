@@ -517,17 +517,11 @@ class ProyectoController extends Controller
                 'status' => 'error'
             ], 200);
 
-        ActividadRecurso::where(['actividad_id' => $id])->delete();
-        ActividadUsuario::where(['actividad_id' => $id])->delete();
-        Observacion::where(['actividad_id' => $id])->delete();
-
         return response()->json([
             'message' => 'Actualización exitosa',
             'data' => [],
             'status' => 'ok'
         ], 200);
-
-
     }
 
     /**

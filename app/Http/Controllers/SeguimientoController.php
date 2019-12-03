@@ -354,9 +354,10 @@ class SeguimientoController extends Controller
                     }
                 }
             }
+            
+            $periodos = array_diff($periodos, $p);
         }
 
-        $periodos = array_diff($periodos, $p);
 
         return response()->json([
             'message' => 'Consulta exitosa',
