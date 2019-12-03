@@ -26,7 +26,7 @@ class Responsable extends Mailable
     {
         $this->para = $para;
         $this->asunto = 'Asignado como reponsable';
-        $this->plan = $actividad['proyecto']['planes_proyectos']['plan'];
+        $this->plan = $actividad['proyecto']['planes_proyectos'][0]['plan'];
         $this->proyecto = $actividad['proyecto'];
         $this->actividad = $actividad;
     }
