@@ -674,7 +674,7 @@ class ProyectoController extends Controller
                 ], 200);
 
             $usuario = $usuario->get()->toArray()[0];
-            $actividad = $actividad->with(['proyecto.plan'])->get()->toArray()[0];
+            $actividad = $actividad->with(['proyecto.planesProyectos.plan'])->get()->toArray()[0];
 
             Mail::to($usuario['email'], 'SEPLAC UFPS')->send(new Responsable($usuario['email'], $actividad));
         }
