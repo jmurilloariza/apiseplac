@@ -35,6 +35,7 @@
         <thead>
           <tr>
             <th class="desc">Nombre</th>
+            <th class="desc">Peso</th>
             @foreach ($proyecto['actividades'][0]['seguimientos'] as $a)
                 <th class="desc">Periodo</th>
                 <th class="desc">Valoración</th>
@@ -46,6 +47,7 @@
         @foreach ($proyecto['actividades'] as $actividad)
           <tr>
             <td class="desc">{{$actividad['nombre']}}</td> 
+            <td class="desc">{{$actividad['peso']}}</td> 
             @foreach ($actividad['seguimientos'] as $seguimiento)
                 <td class="desc">{{$seguimiento['periodo']}}</td> 
                 <td class="desc">{{$seguimiento['valoracion']}}</td> 

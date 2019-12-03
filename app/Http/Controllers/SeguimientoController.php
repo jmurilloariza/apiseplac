@@ -322,15 +322,15 @@ class SeguimientoController extends Controller
 
         while ($anioInicio <= $anioFin) {
             if ($anioInicio == $inicio && $sinicio == 'II') 
-                array_push($periodos, 'periodo='.$anioInicio . '-' . $semestreInicio.'?fecha_seguimiento='.null);
+                array_push($periodos, 'periodo='.$anioInicio . '-' . $semestreInicio.'?fecha_seguimiento='.'null');
             else {
                 if ($anioInicio == $anioFin && $sfin == 'I')
-                    array_push($periodos, 'periodo='.$anioInicio . '-' . $sfin.'?fecha_seguimiento='.null);
+                    array_push($periodos, 'periodo='.$anioInicio . '-' . $sfin.'?fecha_seguimiento='.'null');
                 else {
-                    array_push($periodos, 'periodo='.$anioInicio . '-' . $semestreInicio.'?fecha_seguimiento='.null);
+                    array_push($periodos, 'periodo='.$anioInicio . '-' . $semestreInicio.'?fecha_seguimiento='.'null');
                     if ($semestreInicio == 'I') $semestreInicio = 'II';
                     else $semestreInicio = 'I';
-                    array_push($periodos, 'periodo='.$anioInicio . '-' . $semestreInicio.'?fecha_seguimiento='.null);
+                    array_push($periodos, 'periodo='.$anioInicio . '-' . $semestreInicio.'?fecha_seguimiento='.'null');
                 }
             }
 
@@ -339,7 +339,6 @@ class SeguimientoController extends Controller
 
         $p = [];
 
-        // if($todo == '0'){
         $planesProyectos = PlanProyecto::where(['plan_id' => $plan_id])
             ->with(['proyecto.actividades.seguimientos', 'plan'])->get()->toArray();
 
@@ -357,7 +356,6 @@ class SeguimientoController extends Controller
         
         $p = array_unique($p);
         $p = array_values($p);
-        // }
         
         for ($i=0; $i < count($periodos); $i++) { 
             $a = explode('=', $periodos[$i])[1];
@@ -376,10 +374,20 @@ class SeguimientoController extends Controller
             $periodos = array_diff($periodos, $p);
 
         $periodos = array_values($periodos);
+        $data = [];
+
+        foreach ($periodos as $periodo) {
+            $p = explode('=', $periodo);
+
+            array_push($data, [
+                'periodo' => explode('?', $p[1])[0], 
+                'fecha_seguimiento' => $p[2]
+            ]);
+        }
 
         return response()->json([
             'message' => 'Consulta exitosa',
-            'data' => $periodos,
+            'data' => $data,
             'status' => 'ok'
         ], 200);
     }
