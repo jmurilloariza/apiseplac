@@ -339,25 +339,25 @@ class SeguimientoController extends Controller
 
         $p = [];
 
-        if($todo == '0'){
-            $planesProyectos = PlanProyecto::where(['plan_id' => $plan_id])
-                ->with(['proyecto.actividades.seguimientos', 'plan'])->get()->toArray();
+        // if($todo == '0'){
+        $planesProyectos = PlanProyecto::where(['plan_id' => $plan_id])
+            ->with(['proyecto.actividades.seguimientos', 'plan'])->get()->toArray();
 
 
-            for ($i = 0; $i < count($planesProyectos); $i++) {
-                $actividades = $planesProyectos[$i]['proyecto']['actividades'];
-                for ($j = 0; $j < count($actividades); $j++) {
-                    $seguimientos = $actividades[$j]['seguimientos'];
-                    foreach ($seguimientos as $seguimiento) {
-                        for ($k = 0; $k < count($periodos); $k++)
-                            array_push($p, 'periodo='.$seguimiento['periodo_evaluado'].'?fecha_seguimiento='.$seguimiento['fecha_seguimiento']);
-                    }
+        for ($i = 0; $i < count($planesProyectos); $i++) {
+            $actividades = $planesProyectos[$i]['proyecto']['actividades'];
+            for ($j = 0; $j < count($actividades); $j++) {
+                $seguimientos = $actividades[$j]['seguimientos'];
+                foreach ($seguimientos as $seguimiento) {
+                    for ($k = 0; $k < count($periodos); $k++)
+                        array_push($p, 'periodo='.$seguimiento['periodo_evaluado'].'?fecha_seguimiento='.$seguimiento['fecha_seguimiento']);
                 }
             }
-            
-            $p = array_unique($p);
-            $p = array_values($p);
         }
+        
+        $p = array_unique($p);
+        $p = array_values($p);
+        // }
         
         for ($i=0; $i < count($periodos); $i++) { 
             $a = explode('=', $periodos[$i])[1];
@@ -371,6 +371,11 @@ class SeguimientoController extends Controller
                 }
             }
         }
+
+        if($todo == '0')
+            $periodos = array_diff($periodos, $p);
+
+        $periodos = array_values($periodos);
 
         return response()->json([
             'message' => 'Consulta exitosa',
