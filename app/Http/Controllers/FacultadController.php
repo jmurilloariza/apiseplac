@@ -330,7 +330,8 @@ class FacultadController extends Controller
                 'data' => [],
                 'status' => 'ok'
             ], 200);
-        else return response()->json([
+        
+        return response()->json([
             'message' => 'Ha ocurido un error',
             'data' => [],
             'status' => 'error'
@@ -363,12 +364,12 @@ class FacultadController extends Controller
                 'data' => [],
                 'status' => 'ok'
             ], 200);
-        else
-            return response()->json([
-                'message' => 'Ocurrió un error',
-                'data' => [],
-                'status' => 'error'
-            ], 200);
+
+        return response()->json([
+            'message' => 'Ocurrió un error',
+            'data' => [],
+            'status' => 'error'
+        ], 200);
     }
 
     /**
@@ -590,11 +591,11 @@ class FacultadController extends Controller
                 'data' => $programaAcademico[0],
                 'status' => 'ok'
             ], 200);
-        else
-            return response()->json([
-                'message' => 'No existen registros',
-                'data' => [],
-                'status' => 'error'
-            ], 200);
+    
+        return response()->json([
+            'message' => 'No existen registros',
+            'data' => [],
+            'status' => 'error'
+        ], 200);
     }
 }

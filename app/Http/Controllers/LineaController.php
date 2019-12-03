@@ -115,12 +115,12 @@ class LineaController extends Controller
                 'data' => $eje[0],
                 'status' => 'ok'
             ], 200);
-        else
-            return response()->json([
-                'message' => 'No existen registros',
-                'data' => [],
-                'status' => 'error'
-            ], 200);
+        
+        return response()->json([
+            'message' => 'No existen registros',
+            'data' => [],
+            'status' => 'error'
+        ], 200);
     }
 
     /**
@@ -181,6 +181,7 @@ class LineaController extends Controller
                 'data' => [$values],
                 'status' => 'ok'
             ], 200);
+
         return response()->json([
             'message' => 'Ha ocurido un error',
             'data' => [],

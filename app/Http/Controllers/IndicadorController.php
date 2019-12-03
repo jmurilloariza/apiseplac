@@ -86,12 +86,12 @@ class IndicadorController extends Controller
                 'data' => $indicador[0],
                 'status' => 'ok'
             ], 200);
-        else
-            return response()->json([
-                'message' => 'No existen registros',
-                'data' => [],
-                'status' => 'error'
-            ], 404);
+        
+        return response()->json([
+            'message' => 'No existen registros',
+            'data' => [],
+            'status' => 'error'
+        ], 404);
     }
 
     /**
