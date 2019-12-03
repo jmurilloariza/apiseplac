@@ -16,6 +16,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ProyectoPrograma[] $planEjeLineaProgramas
  * @property Programa[] $programas
  */
+
+/**
+ * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
+ * @version 1.0
+ */
+
 class Linea extends Model
 {
     use SoftDeletes;

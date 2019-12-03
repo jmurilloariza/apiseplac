@@ -6,12 +6,17 @@ use App\Models\Actividad;
 use App\Models\Indicador;
 use Illuminate\Http\Request;
 
+/**
+ * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
+ * @version 1.0
+ */
+
 class IndicadorController extends Controller
 {
 
     public function __construct()
     {
-        //$this->middleware('auth:api');
+        $this->middleware('auth:api');
     }
 
     /**

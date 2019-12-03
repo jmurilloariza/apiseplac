@@ -3,6 +3,11 @@
 use App\Models\Rol;
 use Illuminate\Database\Seeder;
 
+/**
+ * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
+ * @version 1.0
+ */
+
 class RolesTableSeeder extends Seeder
 {
     /**

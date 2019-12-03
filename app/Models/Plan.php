@@ -15,6 +15,12 @@ use Illuminate\Database\Eloquent\Model;
  * @property ProgramaAcademico $dependencium
  * @property ProyectoPrograma[] $planEjeLineaProgramas
  */
+
+/**
+ * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
+ * @version 1.0
+ */
+
 class Plan extends Model
 {
     /**

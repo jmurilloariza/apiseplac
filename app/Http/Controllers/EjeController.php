@@ -7,12 +7,17 @@ use App\Models\Linea;
 use App\Models\Programa;
 use Illuminate\Http\Request;
 
+/**
+ * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
+ * @version 1.0
+ */
+
 class EjeController extends Controller
 {
 
     public function __construct()
     {
-        // $this->middleware('auth:api');
+        $this->middleware('auth:api');
     }
 
     /**

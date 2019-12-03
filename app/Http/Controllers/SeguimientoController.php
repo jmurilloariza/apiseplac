@@ -8,12 +8,22 @@ use App\Models\Evidencias;
 use App\Models\PlanProyecto;
 use App\Models\Seguimiento;
 use App\Models\Plan;
-use App\Models\Proyecto;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
 
+/**
+ * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
+ * @version 1.0
+ */
+
 class SeguimientoController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
+
     /**
      * Display a listing of the resource.
      *

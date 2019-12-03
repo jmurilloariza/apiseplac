@@ -4,13 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Models\Plan;
 use App\Models\PlanProyecto;
-use App\Models\Proyecto;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Mpdf\Mpdf;
 
+/**
+ * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
+ * @version 1.0
+ */
+
 class ReportesController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
+
     public function resumenPlanPeriodoPrograma(Request $request)
     {
         if (!$request->has('plan_id') or !$request->has('periodo'))

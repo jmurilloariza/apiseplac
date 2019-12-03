@@ -3,6 +3,11 @@
 use App\Models\Linea;
 use Illuminate\Database\Seeder;
 
+/**
+ * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
+ * @version 1.0
+ */
+
 class LineaTableSeed extends Seeder
 {
     /**

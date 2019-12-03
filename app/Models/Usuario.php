@@ -25,6 +25,12 @@ use Illuminate\Notifications\Notifiable;
  * @property Rol $role
  * @property ActividadUsuario[] $actividadesUsuarios
  */
+
+/**
+ * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
+ * @version 1.0
+ */
+
 class Usuario extends Authenticatable
 {
 

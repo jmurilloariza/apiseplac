@@ -12,12 +12,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
+/**
+ * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
+ * @version 1.0
+ */
 class UserController extends Controller
 {
 
     public function __construct()
     {
-        // $this->middleware('auth:api')->except(['passwordReset', 'passwordResetChange']);
+        $this->middleware('auth:api')->except(['passwordReset', 'passwordResetChange']);
     }
 
     /**
@@ -311,7 +315,7 @@ class UserController extends Controller
         if(!$usuario->exists())
             return response()->json([
                 'message' => 'No existe el usuario',
-                'data' => [],
+                'data' => [$request->toArray()],
                 'status' => 'error'
             ], 200);
         

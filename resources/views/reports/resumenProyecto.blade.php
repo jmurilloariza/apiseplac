@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="utf-8">
+    <meta name="author" content="jmurilloariza - Jeferson Murillo Ariza">
     <title>Resumen de proyecto</title>
     <link rel="stylesheet" href="reports/css/reportes.css" media="all" />
   </head>

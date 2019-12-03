@@ -8,8 +8,19 @@ use App\Models\ProgramaAcademico;
 use App\Models\Proyecto;
 use Illuminate\Http\Request;
 
+/**
+ * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
+ * @version 1.0
+ */
+
 class PlanController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -19,7 +30,11 @@ class PlanController extends Controller
     {
         return response()->json([
             'message' => 'Consulta exitosa',
-            'data' => Plan::with(['programaAcademico', 'planesProyectos.proyecto.programas.programa.linea.eje', 'planesProyectos.proyecto.actividades'])->get()->toArray(),
+            'data' => Plan::with([
+                'programaAcademico', 
+                'planesProyectos.proyecto.programas.programa.linea.eje', 
+                'planesProyectos.proyecto.actividades'
+                ])->get()->toArray(),
             'status' => 'ok'
         ], 200);
     }
@@ -90,8 +105,11 @@ class PlanController extends Controller
      */
     public function show($id)
     {
-        $plan = Plan::where(['id' => $id])->with(['programaAcademico', 'planesProyectos.proyecto.programas.programa.linea.eje', 'planesProyectos.proyecto.actividades'])
-            ->get()->toArray();
+        $plan = Plan::where(['id' => $id])->with([
+            'programaAcademico', 
+            'planesProyectos.proyecto.programas.programa.linea.eje', 
+            'planesProyectos.proyecto.actividades'
+            ])->get()->toArray();
 
         if (count($plan) > 0)
             return response()->json([

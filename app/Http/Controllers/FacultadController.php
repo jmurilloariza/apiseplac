@@ -7,6 +7,11 @@ use App\Models\Facultad;
 use App\Models\ProgramaAcademico;
 use Illuminate\Http\Request;
 
+/**
+ * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
+ * @version 1.0
+ */
+
 class FacultadController extends Controller
 {
     /**
@@ -14,7 +19,8 @@ class FacultadController extends Controller
      */
     public function __construct()
     {
-        /*$this->middleware('auth:api');*/ }
+        $this->middleware('auth:api');
+    }
 
     /**
      * Display a listing of the resource.

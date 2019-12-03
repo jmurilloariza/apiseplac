@@ -14,6 +14,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $updated_at
  * @property Actividad $actividade
  */
+
+/**
+ * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
+ * @version 1.0
+ */
+
 class Comentarios extends Model
 {
     use SoftDeletes;

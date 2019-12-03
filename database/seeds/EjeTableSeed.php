@@ -3,6 +3,11 @@
 use App\Models\Eje;
 use Illuminate\Database\Seeder;
 
+/**
+ * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
+ * @version 1.0
+ */
+
 class EjeTableSeed extends Seeder
 {
     /**

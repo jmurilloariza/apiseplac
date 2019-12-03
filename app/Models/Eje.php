@@ -14,6 +14,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Linea[] $lineas
  * @property ProyectoPrograma[] $planEjeLineaProgramas
  */
+
+/**
+ * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
+ * @version 1.0
+ */
+
 class Eje extends Model
 {
 

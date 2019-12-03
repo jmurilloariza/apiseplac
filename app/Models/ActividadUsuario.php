@@ -15,6 +15,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Actividad $actividade
  * @property Usuario $user
  */
+
+/**
+ * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
+ * @version 1.0
+ */
+
 class ActividadUsuario extends Model
 {
 

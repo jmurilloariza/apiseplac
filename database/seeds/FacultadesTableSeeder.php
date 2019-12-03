@@ -3,6 +3,11 @@
 use App\Models\Facultad;
 use Illuminate\Database\Seeder;
 
+/**
+ * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
+ * @version 1.0
+ */
+
 class FacultadesTableSeeder extends Seeder
 {
     /**

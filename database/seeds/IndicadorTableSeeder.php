@@ -3,6 +3,11 @@
 use Illuminate\Database\Seeder;
 use App\Models\Indicador;
 
+/**
+ * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
+ * @version 1.0
+ */
+
 class IndicadorTableSeeder extends Seeder
 {
     /**

@@ -28,6 +28,12 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property Rol $role
  * @property ActividadUsuario[] $actividadesUsuarios
  */
+
+/**
+ * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
+ * @version 1.0
+ */
+
 class User extends Authenticatable implements JWTSubject
 {
 

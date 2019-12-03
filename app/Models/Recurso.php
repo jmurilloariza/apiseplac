@@ -13,6 +13,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $updated_at
  * @property ActividadRecurso[] $actividadesRecursos
  */
+
+/**
+ * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
+ * @version 1.0
+ */
+
 class Recurso extends Model
 {
 

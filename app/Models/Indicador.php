@@ -12,6 +12,12 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $updated_at
  * @property Actividad[] $actividades
  */
+
+/**
+ * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
+ * @version 1.0
+ */
+
 class Indicador extends Model
 {
 

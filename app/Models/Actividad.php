@@ -25,6 +25,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ActividadUsuario[] $actividadesUsuarios
  * @property Observacion[] $observaciones
  */
+
+/**
+ * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
+ * @version 1.0
+ */
+
 class Actividad extends Model
 {
 

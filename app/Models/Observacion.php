@@ -13,6 +13,12 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $updated_at
  * @property Actividad $actividade
  */
+
+/**
+ * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
+ * @version 1.0
+ */
+
 class Observacion extends Model
 {
 

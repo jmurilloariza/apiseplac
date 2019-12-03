@@ -14,6 +14,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ProyectoPrograma $planEjeLineaPrograma
  * @property Actividad[] $actividades
  */
+
+/**
+ * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
+ * @version 1.0
+ */
+
 class Proyecto extends Model
 {
 

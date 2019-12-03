@@ -6,12 +6,17 @@ use App\Models\ActividadRecurso;
 use App\Models\Recurso;
 use Illuminate\Http\Request;
 
+/**
+ * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
+ * @version 1.0
+ */
+
 class RecursoController extends Controller
 {
 
     public function __construct()
     {
-        // $this->middleware('auth:api');
+        $this->middleware('auth:api');
     }
 
     /**

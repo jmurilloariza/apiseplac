@@ -14,6 +14,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Plan[] $plans
  * @property Usuario[] $users
  */
+
+/**
+ * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
+ * @version 1.0
+ */
+
 class ProgramaAcademico extends Model
 {
 

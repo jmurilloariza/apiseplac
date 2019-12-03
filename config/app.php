@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Seplac'),
+    'name' => env('APP_NAME', 'SEPLAC'),
 
     /*
     |--------------------------------------------------------------------------
@@ -54,7 +54,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost'),
+    'url' => env('APP_URL', 'http://seplac.cpsw.ingsistemasufps.co'),
 
     'asset_url' => env('ASSET_URL', null),
 

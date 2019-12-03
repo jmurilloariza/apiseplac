@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+/**
+ * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
+ * @version 1.0
+ */
 class AuthController extends Controller
 {
     /**
