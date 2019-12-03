@@ -479,9 +479,9 @@ class SeguimientoController extends Controller
                 'status' => 'error'
             ], 200);
 
-        $comentario = Comentarios::where(['id' => $id])->exists();
+        $comentario = Comentarios::where(['id' => $id]);
 
-        if(!$comentario)
+        if(!$comentario->exists())
             return response()->json([
                 'message' => 'No existen registros de ese comentario',
                 'data' => [],
