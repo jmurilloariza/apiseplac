@@ -29,7 +29,7 @@ class CreateLineasTable extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->integer('eje_id')->unsigned();;
-            $table->string('nombre', 45);
+            $table->string('nombre', 300);
             $table->string('descripcion', 250);
             $table->string('codigo', 8)->nullable();
             $table->softDeletes();

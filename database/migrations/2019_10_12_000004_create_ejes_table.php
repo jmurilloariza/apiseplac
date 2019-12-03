@@ -28,7 +28,7 @@ class CreateEjesTable extends Migration
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->string('nombre', 45);
+            $table->string('nombre', 300);
             $table->string('descripcion', 250);
             $table->string('codigo', 8)->nullable();
 

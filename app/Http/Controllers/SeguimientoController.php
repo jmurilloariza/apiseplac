@@ -21,7 +21,7 @@ class SeguimientoController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api');
+        // $this->middleware('auth:api');
     }
 
     /**
@@ -322,15 +322,15 @@ class SeguimientoController extends Controller
 
         while ($anioInicio <= $anioFin) {
             if ($anioInicio == $inicio && $sinicio == 'II') 
-                array_push($periodos, $anioInicio . '-' . $semestreInicio);
+                array_push($periodos, 'periodo='.$anioInicio . '-' . $semestreInicio.'?fecha_seguimiento='.null);
             else {
                 if ($anioInicio == $anioFin && $sfin == 'I')
-                    array_push($periodos, $anioInicio . '-' . $sfin);
+                    array_push($periodos, 'periodo='.$anioInicio . '-' . $sfin.'?fecha_seguimiento='.null);
                 else {
-                    array_push($periodos, $anioInicio . '-' . $semestreInicio);
+                    array_push($periodos, 'periodo='.$anioInicio . '-' . $semestreInicio.'?fecha_seguimiento='.null);
                     if ($semestreInicio == 'I') $semestreInicio = 'II';
                     else $semestreInicio = 'I';
-                    array_push($periodos, $anioInicio . '-' . $semestreInicio);
+                    array_push($periodos, 'periodo='.$anioInicio . '-' . $semestreInicio.'?fecha_seguimiento='.null);
                 }
             }
 
@@ -350,14 +350,27 @@ class SeguimientoController extends Controller
                     $seguimientos = $actividades[$j]['seguimientos'];
                     foreach ($seguimientos as $seguimiento) {
                         for ($k = 0; $k < count($periodos); $k++)
-                            array_push($p, $seguimiento['periodo_evaluado']);
+                            array_push($p, 'periodo='.$seguimiento['periodo_evaluado'].'?fecha_seguimiento='.$seguimiento['fecha_seguimiento']);
                     }
                 }
             }
             
-            $periodos = array_diff($periodos, $p);
+            $p = array_unique($p);
+            $p = array_values($p);
         }
+        
+        for ($i=0; $i < count($periodos); $i++) { 
+            $a = explode('=', $periodos[$i])[1];
 
+            for ($j=0; $j < count($p); $j++) { 
+                $b = explode('=', $p[$j])[1];
+
+                if($a == $b){
+                    $periodos[$i] = $p[$j];
+                    break;
+                }
+            }
+        }
 
         return response()->json([
             'message' => 'Consulta exitosa',
