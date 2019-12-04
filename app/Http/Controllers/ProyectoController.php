@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\Responsable;
 use App\Models\Actividad;
+use App\Models\Actividad as AppActividad;
 use App\Models\ActividadRecurso;
 use App\Models\ActividadUsuario;
 use App\Models\Indicador;
@@ -449,7 +450,25 @@ class ProyectoController extends Controller
      */
     public function destroyActividad($id)
     {
-        if (Actividad::find($id)->delete())
+        $actividad = AppActividad::where(['id' => $id]);
+        
+        if (!$actividad->exists())
+            return response()->json([
+                'message' => 'No existen registros de la actividad',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        $seguimientos = $actividad->with(['seguimientos'])->get()->toArray()[0]['seguimientos'];
+
+        if(count($seguimientos) > 0)
+            return response()->json([
+                'message' => 'No es posible eliminar la actividad ya que tiene seguimientos iniciados',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        if ($actividad->delete())
             return response()->json([
                 'message' => 'Actividad eliminada',
                 'data' => [],

@@ -67,7 +67,7 @@ Route::group(['prefix' => 'plan'], function () {
             Route::post('terminar', 'SeguimientoController@terminarSeguimientoProyecto');
             
             Route::get('actividad/{actividad_id}', 'SeguimientoController@showByActividad');
-            Route::get('periodos/{plan_id}/{todo}', 'SeguimientoController@calcularPeriodosPendienteSeguimiento');
+            Route::get('periodos/{plan_proyecto_id}', 'SeguimientoController@calcularPeriodosPendienteSeguimiento');
             
             Route::group(['prefix' => 'comentario'], function () {
                 Route::get('{seguimiento_id}', 'SeguimientoController@showComentarioBySeguimiento');
