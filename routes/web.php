@@ -10,3 +10,9 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+use Illuminate\Support\Facades\Route;
+
+Route::get('welcome', function() {
+   return view('Mails.terminaPeriodo')->with(['asunto' => 'Seguimiento terminado']);
+});

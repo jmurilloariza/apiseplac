@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\TerminaPeriodo;
 use App\Models\Actividad;
 use App\Models\Comentarios;
 use App\Models\Evidencias;
@@ -10,6 +11,7 @@ use App\Models\Seguimiento;
 use App\Models\Plan;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 /**
  * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
@@ -268,18 +270,36 @@ class SeguimientoController extends Controller
                 'status' => 'error'
             ], 200);
 
-        $proyecto = $proyecto->with(['proyecto.actividades.seguimientos'])->get()->toArray()[0]['proyecto'];
+        $proyecto = $proyecto->with(['proyecto.actividades.seguimientos', 'proyecto.actividades.actividadesUsuarios.usuario'])
+            ->get()->toArray()[0]['proyecto'];
+
         $actividades = $proyecto['actividades'];
+        $usuarios = [];
 
         foreach ($actividades as $actividad) {
             $seguimientos = $actividad['seguimientos'];
-
+            
             foreach ($seguimientos as $item) {
                 if($item['periodo_evaluado'] == $request->get('periodo'))
-                    Seguimiento::where(['id' => $item['id']])->update(['fecha_seguimiento' => date('Y-m-d')]);
+                Seguimiento::where(['id' => $item['id']])->update(['fecha_seguimiento' => date('Y-m-d')]);
+            }
+
+            $responsables = $actividad['actividades_usuarios'];
+            
+            foreach ($responsables as $r) {
+                array_push($usuarios, $r['usuario']['email']);
             }
         }
 
+        $usuarios = array_unique($usuarios);
+
+        foreach ($usuarios as $usuario) {
+            Mail::to($usuario, 'SEPLAC UFPS')->send(new TerminaPeriodo($usuario, [
+                'nombre_proyecto' => $proyecto['nombre'], 
+                'periodo' => $request->get('periodo')
+            ]));
+        }
+        
         return response()->json([
             'message' => 'Seguimientos terminados para el periodo '.$request->get('periodo'),
             'data' => [],

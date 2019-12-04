@@ -132,10 +132,8 @@ class ProgramaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (
-            !$request->has('nombre') or !$request->has('codigo')
-            or !$request->has('descripcion') or !$request->has('linea_id')
-        )
+        if (!$request->has('nombre') or !$request->has('codigo')
+            or !$request->has('descripcion') or !$request->has('linea_id'))
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
