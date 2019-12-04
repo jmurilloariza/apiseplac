@@ -294,18 +294,13 @@ class SeguimientoController extends Controller
      * @param  string  $todo
      * @return \Illuminate\Http\Response
      */
-    public function calcularPeriodosPendienteSeguimiento($plan_id, $todo)
+    public function calcularPeriodosPendienteSeguimiento($proyecto_plan_id, $todo)
     {
-        $plan = Plan::where(['id' => $plan_id]);
 
-        if (!$plan->exists())
-            return response()->json([
-                'message' => 'No existen registros de ese plan',
-                'data' => [],
-                'status' => 'error'
-            ], 200);
+        $planesProyectos = PlanProyecto::where(['id' => $proyecto_plan_id])
+            ->with(['proyecto.actividades.seguimientos', 'plan'])->get()->toArray()[0];
 
-        $plan = $plan->get()->toArray();
+        $plan = $planesProyectos['plan'];
 
         $periodo_inicio = explode('-', $plan[0]['periodo_inicio']);
         $anioInicio = intval($periodo_inicio[0]);
@@ -338,18 +333,14 @@ class SeguimientoController extends Controller
         }
 
         $p = [];
+        $actividades = $planesProyectos['proyecto']['actividades'];
 
-        $planesProyectos = PlanProyecto::where(['plan_id' => $plan_id])
-            ->with(['proyecto.actividades.seguimientos', 'plan'])->get()->toArray();
+        for ($j = 0; $j < count($actividades); $j++) {
+            $seguimientos = $actividades[$j]['seguimientos'];
 
-
-        for ($i = 0; $i < count($planesProyectos); $i++) {
-            $actividades = $planesProyectos[$i]['proyecto']['actividades'];
-            for ($j = 0; $j < count($actividades); $j++) {
-                $seguimientos = $actividades[$j]['seguimientos'];
-                foreach ($seguimientos as $seguimiento) {
-                    for ($k = 0; $k < count($periodos); $k++)
-                        array_push($p, 'periodo='.$seguimiento['periodo_evaluado'].'?fecha_seguimiento='.$seguimiento['fecha_seguimiento']);
+            foreach ($seguimientos as $seguimiento) {
+                for ($k = 0; $k < count($periodos); $k++){
+                    array_push($p, 'periodo='.$seguimiento['periodo_evaluado'].'?fecha_seguimiento='.$seguimiento['fecha_seguimiento']);
                 }
             }
         }
@@ -370,8 +361,7 @@ class SeguimientoController extends Controller
             }
         }
 
-        if($todo == '0')
-            $periodos = array_diff($periodos, $p);
+        if($todo == '0') $periodos = array_diff($periodos, $p);
 
         $periodos = array_values($periodos);
         $data = [];
