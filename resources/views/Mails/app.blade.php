@@ -38,7 +38,7 @@
                     <tbody>
                       <tr>
                         <td width="215">
-                          <a href="http://{{$host??env('HOST_CLIENT')}}/#" target="_blank">
+                          <a href="{{$host??env('HOST_CLIENT')}}/#" target="_blank">
                             <img style="padding-left:10px" src="http://divisist2.ufps.edu.co/assets/email/images/ufps_logo_205.jpg" width="205" height="52" border="0" alt="" class="CToWUd">
                           </a>
                         </td>
