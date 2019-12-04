@@ -197,7 +197,15 @@ class LineaController extends Controller
      */
     public function destroy($id)
     {
-        $linea = Linea::find($id);
+        $linea = Linea::where(['id' => $id]);
+
+        if(!$linea->exists())
+            return response()->json([
+                'message' => 'NO existe la linea',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
         $programas = $linea->with(['programas.proyectos'])->get()->toArray()[0]['programas'];
 
         for ($i = 0, $long = count($programas); $i < $long; $i++) {

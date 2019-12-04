@@ -168,7 +168,15 @@ class EjeController extends Controller
      */
     public function destroy($id)
     {
-        $eje = Eje::find($id);
+        $eje = Eje::where(['id' => $id]);
+
+        if(!$eje->exists())
+            return response()->json([
+                'message' => 'NO existe el eje',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
         $relaciones = $eje->with(['lineas.programas.proyectos'])->get()->toArray()[0];
         
         for ($i = 0, $long = count($relaciones['lineas']); $i < $long; $i++) {
