@@ -51,6 +51,7 @@ Route::group(['prefix' => 'plan'], function () {
     Route::get('{plan}', 'PlanController@show');
     Route::post('{id}', 'PlanController@update');
     Route::delete('{id}', 'PlanController@destroy');
+    Route::get('periodos/{plan_id}', 'SeguimientoController@obtenerPeriodosPlan');
 
     Route::group(['prefix' => 'proyecto'], function () {
         Route::post('asignar', 'PlanController@asignarProyectosPlan');

@@ -291,65 +291,17 @@ class SeguimientoController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  int  $plan_id
-     * @param  string  $todo
      * @return \Illuminate\Http\Response
      */
     public function calcularPeriodosPendienteSeguimiento($proyecto_plan_id)
     {
-
         $planesProyectos = PlanProyecto::where(['id' => $proyecto_plan_id])
             ->with(['proyecto.actividades.seguimientos', 'plan'])->get()->toArray()[0];
 
         $plan = $planesProyectos['plan'];
+        $periodos = $this->calcularTodosPeriodosPlan($plan['id']);
 
-        $periodo_inicio = explode('-', $plan['periodo_inicio']);
-        $anioInicio = intval($periodo_inicio[0]);
-        $semestreInicio =  $periodo_inicio[1];
-
-        $periodo_fin = explode('-', $plan['periodo_fin']);
-        $anioFin = intval($periodo_fin[0]);
-        $semestreFin = $periodo_fin[1];
-
-        $periodos = [];
-        $inicio = $anioInicio;
-        $sinicio = $semestreInicio;
-        $sfin = $semestreFin;
-
-        // while ($anioInicio <= $anioFin) {
-        //     if ($anioInicio == $inicio && $sinicio == 'II') 
-        //         array_push($periodos, 'periodo='.$anioInicio . '-' . $semestreInicio.'?fecha_seguimiento='.'null');
-        //     else {
-        //         if ($anioInicio == $anioFin && $sfin == 'I')
-        //             array_push($periodos, 'periodo='.$anioInicio . '-' . $sfin.'?fecha_seguimiento='.'null');
-        //         else {
-        //             array_push($periodos, 'periodo='.$anioInicio . '-' . $semestreInicio.'?fecha_seguimiento='.'null');
-        //             if ($semestreInicio == 'I') $semestreInicio = 'II';
-        //             else $semestreInicio = 'I';
-        //             array_push($periodos, 'periodo='.$anioInicio . '-' . $semestreInicio.'?fecha_seguimiento='.'null');
-        //         }
-        //     }
-
-        //     $anioInicio++;
-        // }
-
-        while ($anioInicio <= $anioFin) {
-            if ($anioInicio == $inicio && $sinicio == 'II') 
-                array_push($periodos, $anioInicio . '-' . $semestreInicio);
-            else {
-                if ($anioInicio == $anioFin && $sfin == 'I')
-                    array_push($periodos, $anioInicio . '-' . $sfin);
-                else {
-                    array_push($periodos, $anioInicio . '-' . $semestreInicio);
-                    if ($semestreInicio == 'I') $semestreInicio = 'II';
-                    else $semestreInicio = 'I';
-                    array_push($periodos, $anioInicio . '-' . $semestreInicio);
-                }
-            }
-
-            $anioInicio++;
-        }
-
-        $p = [];
+        
         $data = [];
         $actividades = $planesProyectos['proyecto']['actividades'];
 
@@ -376,52 +328,56 @@ class SeguimientoController extends Controller
             ]);
         }
 
-        // for ($j = 0; $j < count($actividades); $j++) {
-        //     $seguimientos = $actividades[$j]['seguimientos'];
-
-        //     foreach ($seguimientos as $seguimiento) {
-        //         for ($k = 0; $k < count($periodos); $k++){
-        //             array_push($p, 'periodo='.$seguimiento['periodo_evaluado'].'?fecha_seguimiento='.$seguimiento['fecha_seguimiento']);
-        //         }
-        //     }
-        // }
-        
-        
-        // $p = array_unique($p);
-        // $p = array_values($p);
-        
-        // for ($i=0; $i < count($periodos); $i++) { 
-        //     $a = explode('=', $periodos[$i])[1];
-
-        //     for ($j=0; $j < count($p); $j++) { 
-        //         $b = explode('=', $p[$j])[1];
-
-        //         if($a == $b){
-        //             $periodos[$i] = $p[$j];
-        //             break;
-        //         }
-        //     }
-        // }
-
-        // if($todo == '0') $periodos = array_diff($periodos, $p);
-
-        // $periodos = array_values($periodos);
-        // $data = [];
-
-        // foreach ($periodos as $periodo) {
-        //     $p = explode('=', $periodo);
-
-        //     array_push($data, [
-        //         'periodo' => explode('?', $p[1])[0], 
-        //         'fecha_seguimiento' => $p[2]
-        //     ]);
-        // }
-
         return response()->json([
             'message' => 'Consulta exitosa',
             'data' => $data,
             'status' => 'ok'
         ], 200);
+    }
+
+    public function obtenerPeriodosPlan($plan_id){
+        $periodos = $this->calcularTodosPeriodosPlan($plan_id);
+        return response()->json([
+            'message' => 'Consulta exitosa', 
+            'data' => $periodos, 
+            'status' => 'ok'
+        ], 200);
+    }
+
+    private function calcularTodosPeriodosPlan($plan_id){
+        $plan = Plan::where(['id' => $plan_id])->get()->toArray()[0];
+
+        $periodo_inicio = explode('-', $plan['periodo_inicio']);
+        $anioInicio = intval($periodo_inicio[0]);
+        $semestreInicio =  $periodo_inicio[1];
+
+        $periodo_fin = explode('-', $plan['periodo_fin']);
+        $anioFin = intval($periodo_fin[0]);
+        $semestreFin = $periodo_fin[1];
+
+        $periodos = [];
+        $inicio = $anioInicio;
+        $sinicio = $semestreInicio;
+        $sfin = $semestreFin;
+
+        while ($anioInicio <= $anioFin) {
+            if ($anioInicio == $inicio && $sinicio == 'II') 
+                array_push($periodos, $anioInicio . '-' . $semestreInicio);
+            else {
+                if ($anioInicio == $anioFin && $sfin == 'I')
+                    array_push($periodos, $anioInicio . '-' . $sfin);
+                else {
+                    array_push($periodos, $anioInicio . '-' . $semestreInicio);
+                    if ($semestreInicio == 'I') $semestreInicio = 'II';
+                    else $semestreInicio = 'I';
+                    array_push($periodos, $anioInicio . '-' . $semestreInicio);
+                }
+            }
+
+            $anioInicio++;
+        }
+
+        return $periodos;
     }
 
     /**
