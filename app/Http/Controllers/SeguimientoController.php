@@ -302,11 +302,11 @@ class SeguimientoController extends Controller
 
         $plan = $planesProyectos['plan'];
 
-        $periodo_inicio = explode('-', $plan[0]['periodo_inicio']);
+        $periodo_inicio = explode('-', $plan['periodo_inicio']);
         $anioInicio = intval($periodo_inicio[0]);
         $semestreInicio =  $periodo_inicio[1];
 
-        $periodo_fin = explode('-', $plan[0]['periodo_fin']);
+        $periodo_fin = explode('-', $plan['periodo_fin']);
         $anioFin = intval($periodo_fin[0]);
         $semestreFin = $periodo_fin[1];
 
