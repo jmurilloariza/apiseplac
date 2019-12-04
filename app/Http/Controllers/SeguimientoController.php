@@ -274,7 +274,7 @@ class SeguimientoController extends Controller
             ->get()->toArray()[0]['proyecto'];
 
         $actividades = $proyecto['actividades'];
-        $usuarios = [];
+        //$usuarios = [];
 
         foreach ($actividades as $actividad) {
             $seguimientos = $actividad['seguimientos'];
@@ -284,13 +284,13 @@ class SeguimientoController extends Controller
                 Seguimiento::where(['id' => $item['id']])->update(['fecha_seguimiento' => date('Y-m-d')]);
             }
 
-            $responsables = $actividad['actividades_usuarios'];
+            //$responsables = $actividad['actividades_usuarios'];
             
-            foreach ($responsables as $r) {
+            /*foreach ($responsables as $r) {
                 array_push($usuarios, $r['usuario']['email']);
-            }
+            }*/
         }
-
+/*
         $usuarios = array_unique($usuarios);
 
         foreach ($usuarios as $usuario) {
@@ -299,7 +299,7 @@ class SeguimientoController extends Controller
                 'periodo' => $request->get('periodo')
             ]));
         }
-        
+       */ 
         return response()->json([
             'message' => 'Seguimientos terminados para el periodo '.$request->get('periodo'),
             'data' => [],
