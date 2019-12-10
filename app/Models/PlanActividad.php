@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @version 1.0
  */
 
-class PlanProyecto extends Model
+class PlanActividad extends Model
 {
     use SoftDeletes;
 
@@ -19,12 +19,12 @@ class PlanProyecto extends Model
      * 
      * @var string
      */
-    protected $table = 'plan_proyectos';
+    protected $table = 'plan_actividad';
 
     /**
      * @var array
      */
-    protected $fillable = ['id', 'proyecto_id', 'plan_id'];
+    protected $fillable = ['id', 'actividades_id', 'plan_id', 'fecha_inicio', 'fecha_fin', 'costo'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -37,8 +37,8 @@ class PlanProyecto extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function proyecto()
+    public function actividad()
     {
-        return $this->belongsTo(Proyecto::class, 'proyecto_id');
+        return $this->belongsTo(Proyecto::class, 'actividades_id');
     }
 }

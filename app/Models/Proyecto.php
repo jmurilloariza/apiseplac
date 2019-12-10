@@ -35,7 +35,7 @@ class Proyecto extends Model
     /**
      * @var array
      */
-    protected $fillable = ['id', 'nombre', 'descripcion', 'objetivo', 'programa_academico_id', 'deleted_at', 'created_at', 'updated_at'];
+    protected $fillable = ['id', 'nombre', 'descripcion', 'objetivo', 'programa_academico_id', 'fecha_cierre', 'deleted_at', 'created_at', 'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

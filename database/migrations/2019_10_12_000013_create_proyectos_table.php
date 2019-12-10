@@ -28,10 +28,11 @@ class CreateProyectosTable extends Migration
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
+            $table->integer('programa_academico_id')->unsigned();
             $table->string('nombre', 250);
             $table->string('objetivo', 200);
             $table->string('descripcion', 500);
-            $table->integer('programa_academico_id')->unsigned();
+            $table->date('fecha_cierre');
 
             $table->softDeletes();
             $table->timestamps();

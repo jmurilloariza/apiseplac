@@ -20,7 +20,7 @@ class CreateSeguimientoTable extends Migration
     {
         Schema::create('seguimiento', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('actividad_id')->unsigned();
+            $table->integer('plan_actividad_id')->unsigned();
             $table->string('periodo_evaluado', 45)->nullable();
             $table->date('fecha_seguimiento')->nullable();
             $table->integer('valoracion')->nullable();
@@ -29,10 +29,10 @@ class CreateSeguimientoTable extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index(["actividad_id"], 'fk_actividad_seguimiento');
+            $table->index(["plan_actividad_id"], 'fk_actividad_seguimiento');
 
-            $table->foreign('actividad_id', 'fk_actividad_seguimiento')
-                ->references('id')->on('actividades')
+            $table->foreign('plan_actividad_id', 'fk_actividad_seguimiento')
+                ->references('id')->on('plan_actividad')
                 ->onDelete('no action')
                 ->onUpdate('no action');
         });

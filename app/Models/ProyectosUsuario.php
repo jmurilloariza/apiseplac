@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
- * @property int $actividad_id
+ * @property int $proyectos_id
  * @property int $usuario_id
  * @property string $deleted_at
  * @property string $created_at
@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @version 1.0
  */
 
-class ActividadUsuario extends Model
+class ProyectosUsuario extends Model
 {
 
     use SoftDeletes;
@@ -31,19 +31,19 @@ class ActividadUsuario extends Model
      *
      * @var string
      */
-    protected $table = 'actividades_usuarios';
+    protected $table = 'proyectos_usuarios';
 
     /**
      * @var array
      */
-    protected $fillable = ['id', 'actividad_id', 'usuario_id', 'deleted_at', 'created_at', 'updated_at'];
+    protected $fillable = ['id', 'proyectos_id', 'usuario_id', 'deleted_at', 'created_at', 'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function actividad()
+    public function proyecto()
     {
-        return $this->belongsTo(Actividad::class, 'actividad_id');
+        return $this->belongsTo(Proyecto::class, 'proyectos_id');
     }
 
     /**

@@ -24,14 +24,14 @@ class Seguimiento extends Model
     /**
      * @var array
      */
-    protected $fillable = ['id', 'actividad_id', 'periodo_evaluado', 'fecha_seguimiento', 'valoracion', 'situacion_actual', 'deleted_at', 'created_at', 'updated_at'];
+    protected $fillable = ['id', 'plan_actividad_id', 'periodo_evaluado', 'fecha_seguimiento', 'valoracion', 'situacion_actual', 'deleted_at', 'created_at', 'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function actividad()
+    public function planActividad()
     {
-        return $this->belongsTo(Actividad::class, 'actividad_id');
+        return $this->belongsTo(PlanActividad::class, 'plan_actividad_id');
     }
 
     /**

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Schema;
  * @version 1.0
  */
 
-class CreatePlanProyectos extends Migration
+class CreatePlanActividades extends Migration
 {
     /**
      * Run the migrations.
@@ -18,19 +18,22 @@ class CreatePlanProyectos extends Migration
      */
     public function up()
     {
-        Schema::create('plan_proyectos', function (Blueprint $table) {
+        Schema::create('plan_actividad', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->integer('proyecto_id')->unsigned();
+            $table->integer('actividades_id')->unsigned();
             $table->integer('plan_id')->unsigned();
+            $table->date('fecha_inicio')->nullable();
+            $table->date('fecha_fin')->nullable();
+            $table->double('costo')->nullable();
 
             $table->softDeletes();
             $table->timestamps();
 
-            $table->index(["proyecto_id"], 'fk_proyecto_id_idx_p');
+            $table->index(["actividades_id"], 'fk_actividad_id_idx_p');
 
-            $table->foreign('proyecto_id', 'fk_proyecto_id_idx_p')
-                ->references('id')->on('proyectos')
+            $table->foreign('actividades_id', 'fk_actividad_id_idx_p')
+                ->references('id')->on('actividades')
                 ->onDelete('no action')
                 ->onUpdate('no action');
 

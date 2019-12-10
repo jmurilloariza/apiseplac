@@ -9,13 +9,13 @@ use Illuminate\Database\Migrations\Migration;
  * @version 1.0
  */
 
-class CreateActividadesUsuariosTable extends Migration
+class CreateProyectosUsuariosTable extends Migration
 {
     /**
      * Schema table name to migrate
      * @var string
      */
-    public $tableName = 'actividades_usuarios';
+    public $tableName = 'proyectos_usuarios';
 
     /**
      * Run the migrations.
@@ -28,7 +28,7 @@ class CreateActividadesUsuariosTable extends Migration
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->integer('actividad_id')->unsigned();
+            $table->integer('proyecto_id')->unsigned();
             $table->integer('usuario_id')->unsigned();
 
             $table->softDeletes();
@@ -36,11 +36,11 @@ class CreateActividadesUsuariosTable extends Migration
 
             $table->index(["usuario_id"], 'fk_usuario');
 
-            $table->index(["actividad_id"], 'fk_actividad');
+            $table->index(["proyecto_id"], 'fk_actividad');
 
 
-            $table->foreign('actividad_id', 'fk_actividad')
-                ->references('id')->on('actividades')
+            $table->foreign('proyecto_id', 'fk_actividad')
+                ->references('id')->on('proyectos')
                 ->onDelete('no action')
                 ->onUpdate('no action');
 
