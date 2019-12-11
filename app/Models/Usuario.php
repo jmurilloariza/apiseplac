@@ -89,8 +89,8 @@ class Usuario extends Authenticatable
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function actividadesUsuarios()
+    public function proyectosUsuarios()
     {
-        return $this->hasMany(ActividadUsuario::class, 'usuario_id');
+        return $this->hasMany(ProyectosUsuario::class, 'usuario_id');
     }
 }

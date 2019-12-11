@@ -4,15 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Mail\Responsable;
 use App\Models\Actividad;
-use App\Models\Actividad as AppActividad;
 use App\Models\ActividadRecurso;
-use App\Models\ActividadUsuario;
 use App\Models\Indicador;
 use App\Models\Observacion;
 use App\Models\Programa;
 use App\Models\ProgramaAcademico;
 use App\Models\Proyecto;
 use App\Models\ProyectoPrograma;
+use App\Models\ProyectosUsuario;
 use App\Models\Recurso;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
@@ -20,7 +19,7 @@ use Illuminate\Support\Facades\Mail;
 
 /**
  * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
- * @version 1.0
+ * @version 2.0
  */
 
 class ProyectoController extends Controller
@@ -399,7 +398,7 @@ class ProyectoController extends Controller
     public function showActividad($id)
     {
         $actividad = Actividad::where(['id' => $id])
-            ->with(['indicador', 'proyecto', 'actividadesRecursos.recurso', 'actividadesUsuarios.usuario'])
+            ->with(['indicador', 'proyecto', 'actividadesRecursos.recurso'])
             ->get()->toArray();
 
         if (count($actividad) > 0)
@@ -419,19 +418,19 @@ class ProyectoController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $usaurio_id
+     * @param  int  $usuario_id
      * @return \Illuminate\Http\Response
      */
-    public function showActividadByUsuario($usaurio_id)
+    public function showProyectosByUsuario($usuario_id)
     {
-        $actividad = ActividadUsuario::where(['usuario_id' => $usaurio_id])
-            ->with(['actividad.indicador', 'actividad.proyecto', 'actividad.actividadesRecursos.recurso'])
+        $proyectos = ProyectosUsuario::where(['usuario_id' => $usuario_id])
+            ->with(['proyecto', 'actividades.actividadesRecursos.recurso'])
             ->get()->toArray();
 
-        if (count($actividad) > 0)
+        if (count($proyectos) > 0)
             return response()->json([
                 'message' => 'Consulta exitosa',
-                'data' => $actividad,
+                'data' => $proyectos,
                 'status' => 'ok'
             ], 200);
 
@@ -450,7 +449,7 @@ class ProyectoController extends Controller
      */
     public function destroyActividad($id)
     {
-        $actividad = AppActividad::where(['id' => $id]);
+        $actividad = Actividad::where(['id' => $id]);
         
         if (!$actividad->exists())
             return response()->json([
@@ -568,8 +567,8 @@ class ProyectoController extends Controller
      * @param $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function eliminarUsuarioActividad($id){
-        if(ActividadUsuario::where(['id' => $id])->delete())
+    public function eliminarResponsableProyecto($id){
+        if(ProyectosUsuario::where(['id' => $id])->delete())
             return response()->json([
                 'message' => 'Usuario desagregado',
                 'data' => [],
@@ -649,19 +648,19 @@ class ProyectoController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function agregarUsuarioActividad(Request $request){
-        if(!$request->has('actividad_id') OR !$request->has('responsables'))
+    public function agregarUsuarioResponsable(Request $request){
+        if(!$request->has('proyecto_id') OR !$request->has('responsables'))
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
                 'status' => 'error'
             ], 200);
 
-        $actividad = Actividad::where(['id' => $request->get('actividad_id')]);
+        $proyecto = Proyecto::where(['id' => $request->get('proyecto_id')]);
 
-        if(!$actividad->exists())
+        if(!$proyecto->exists())
             return response()->json([
-                'message' => 'No existe una actividad asociada a ese id',
+                'message' => 'No existe un proyecto asociado a ese id',
                 'data' => [],
                 'status' => 'error'
             ], 200);
@@ -676,21 +675,21 @@ class ProyectoController extends Controller
                     'status' => 'error'
                 ], 200);
 
-            $exists = ActividadUsuario::where(['actividad_id' => $request->get('actividad_id'), 'usuario_id' => $r])->exists();
+            $exists = ProyectosUsuario::where(['proyecto_id' => $request->get('proyecto_id'), 'usuario_id' => $r])->exists();
 
             if($exists)
                 return response()->json([
-                    'message' => 'El usuario ya está asignado a la actividad',
+                    'message' => 'El usuario ya está asignado al proyecto',
                     'data' => [],
                     'status' => 'error'
                 ], 200);
 
-            $actividadUsuario = new ActividadUsuario([
-                'actividad_id' => $request->get('actividad_id'),
+            $proyectoUsuario = new ProyectosUsuario([
+                'proyecto_id' => $request->get('proyecto_id'),
                 'usuario_id' => $r
             ]);
 
-            if(!$actividadUsuario->save())
+            if(!$proyectoUsuario->save())
                 return response()->json([
                     'message' => 'Ha ocurido un error',
                     'data' => [],
@@ -698,9 +697,9 @@ class ProyectoController extends Controller
                 ], 200);
 
             $usuario = $usuario->get()->toArray()[0];
-            $actividad = $actividad->with(['proyecto.planesProyectos.plan'])->get()->toArray()[0];
+            $proyecto = $proyecto->with(['proyecto.planesProyectos.plan'])->get()->toArray()[0];
 
-            Mail::to($usuario['email'], 'SEPLAC UFPS')->send(new Responsable($usuario['email'], $actividad));
+            Mail::to($usuario['email'], 'SEPLAC UFPS')->send(new Responsable($usuario['email'], $proyecto));
         }
 
         return response()->json([

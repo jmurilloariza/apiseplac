@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Mail\PasswordReset;
-use App\Models\ActividadUsuario;
 use App\Models\ProgramaAcademico;
+use App\Models\ProyectosUsuario;
 use App\Models\Rol;
 use App\Models\Usuario;
 use App\User;
@@ -33,7 +33,7 @@ class UserController extends Controller
     {
         return response()->json([
             'message' => 'Consulta exitosa',
-            'data' => Usuario::with(['programaAcademico', 'rol', 'actividadesUsuarios'])->get()->toArray(),
+            'data' => Usuario::with(['programaAcademico', 'rol', 'proyectosUsuarios.proyecto'])->get()->toArray(),
             'status' => 'ok'
         ], 200);
     }
@@ -119,12 +119,12 @@ class UserController extends Controller
      */
     public function show($codigo)
     {
-        $eje = Usuario::where(['codigo' => $codigo])->with(['programaAcademico', 'rol', 'actividadesUsuarios'])->get()->toArray();
+        $usuario = Usuario::where(['codigo' => $codigo])->with(['programaAcademico', 'rol', 'proyectosUsuarios.proyecto'])->get()->toArray();
 
-        if (count($eje) > 0)
+        if (count($usuario) > 0)
             return response()->json([
                 'message' => 'Consulta exitosa',
-                'data' => $eje[0],
+                'data' => $usuario[0],
                 'status' => 'ok'
             ], 200);
 
@@ -252,7 +252,7 @@ class UserController extends Controller
         $usuario = Usuario::where(['id' => $id]);
 
         if ($usuario->delete()) {
-            ActividadUsuario::where(['usuario_id' => $id])->delete();
+            ProyectosUsuario::where(['usuario_id' => $id])->delete();
             return response()->json([
                 'message' => 'Usuario eliminado',
                 'data' => [],

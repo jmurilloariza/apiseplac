@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
- * @version 1.0
+ * @version 2.0
  */
 
 class ProyectosUsuario extends Model

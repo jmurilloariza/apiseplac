@@ -250,31 +250,38 @@ class PlanController extends Controller
         if (!$plan->exists())
             return response()->json([
                 'message' => 'No existen registros de ese plan',
-                'data' => [$request->toArray(), !$request->has('plan_id') or !$request->has('proyectos')],
+                'data' => [],
                 'status' => 'error'
             ], 200);
 
         $proyectos = $request->get('proyectos');
 
         foreach ($proyectos as $pr) {
-            if (!Proyecto::where(['id' => $pr])->exists())
+            $proyecto = Proyecto::where(['id' => $pr]);
+
+            if (!$proyecto->exists())
                 return response()->json([
                     'message' => 'No existen registros de un plan con el identificador ' . $pr,
                     'data' => [],
                     'status' => 'error'
                 ], 200);
 
-            $proyecto = new PlanProyecto([
-                'plan_id' => $request->get('plan_id'),
-                'proyecto_id' => $pr
-            ]);
+            $proyecto = $proyecto->with(['actividades'])->get()->toArray()[0];
+            $actividades = $proyecto['actividades'];
 
-            if (!$proyecto->save())
-                return response()->json([
-                    'message' => 'Ha ocurido un error',
-                    'data' => [],
-                    'status' => 'error'
-                ], 200);
+            for ($i=0, $long = count($actividades); $i < $long; $i++) { 
+                $proyecto = new PlanProyecto([
+                    'plan_id' => $request->get('plan_id'),
+                    'actividades_id' => $actividades[$i]['id']
+                ]);
+    
+                if (!$proyecto->save())
+                    return response()->json([
+                        'message' => 'Ha ocurido un error',
+                        'data' => [],
+                        'status' => 'error'
+                    ], 200);
+            }
         }
 
         return response()->json([

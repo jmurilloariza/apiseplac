@@ -94,6 +94,12 @@ Route::group(['prefix' => 'proyecto'], function () {
     Route::put('{proyecto}', 'ProyectoController@update');
     Route::delete('{proyecto}', 'ProyectoController@destroy');
     Route::get('getProgramaAcademico/{programa_academico_id}', 'ProyectoController@showByPogramaAcademico');
+    
+    Route::group(['prefix' => 'responsable'], function () {
+        Route::delete('{id}', 'ProyectoController@eliminarResponsableProyecto');
+        Route::post('', 'ProyectoController@agregarUsuarioResponsable');
+        Route::get('{usaurio_id}', 'ProyectoController@showProyectosByUsuario');
+    });
 
     Route::group(['prefix' => 'actividad'], function () {
         Route::post('', 'ProyectoController@storeActividad');
@@ -104,12 +110,6 @@ Route::group(['prefix' => 'proyecto'], function () {
         Route::group(['prefix' => 'recurso'], function () {
             Route::post('', 'ProyectoController@agregarRecursosActividad');
             Route::delete('{id}', 'ProyectoController@eliminarActividadRecurso');
-        });
-
-        Route::group(['prefix' => 'responsable'], function () {
-            Route::delete('{id}', 'ProyectoController@eliminarUsuarioActividad');
-            Route::post('', 'ProyectoController@agregarUsuarioActividad');
-            Route::get('{usaurio_id}', 'ProyectoController@showActividadByUsuario');
         });
 
         Route::group(['prefix' => 'observacion'], function () {
