@@ -27,7 +27,7 @@ class ProyectoController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api');
+        // $this->middleware('auth:api');
     }
 
     /**
@@ -42,7 +42,7 @@ class ProyectoController extends Controller
             'data' => Proyecto::with([
                 'programas',
                 'actividades.actividadesRecursos.recurso',
-                'planesProyectos.proyecto',
+                'responsables.usuario',
                 'programaAcademico',
             ])->get()->toArray(),
             'status' => 'ok'
@@ -58,7 +58,7 @@ class ProyectoController extends Controller
     public function store(Request $request)
     {
         if (!$request->has('nombre') or !$request->has('programa_academico_id') or !$request->has('descripcion') or
-            !$request->has('objetivo') or !$request->has('programas'))
+            !$request->has('objetivo') or !$request->has('programas') or !$request->has('usuario_id') )
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(), 
@@ -111,6 +111,22 @@ class ProyectoController extends Controller
                 ], 200);
         }
 
+        $usuario = Usuario::where(['id' => $request->get('usuario_id')])->exists();
+
+        if(!$usuario)
+            return response()->json([
+                'message' => 'No existe un usuario con ese id',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        $proyectoUsuario = new ProyectosUsuario([
+            'proyecto_id' => $proyecto->id, 
+            'usuario_id' => $request->get('usuario_id')
+        ]);
+
+        $proyectoUsuario->save();
+
         return response()->json([
             'message' => 'Proyecto creado',
             'data' => [],
@@ -129,7 +145,7 @@ class ProyectoController extends Controller
         $proyecto = Proyecto::where(['id' => $id])->with([
             'programas',
             'actividades.actividadesRecursos.recurso',
-            'planesProyectos.proyecto',
+            'responsables.usuario',
             'programaAcademico',
             ])->get()->toArray();
 
@@ -248,16 +264,20 @@ class ProyectoController extends Controller
         $relaciones = $proyecto->with([
             'programas',
             'actividades.actividadesRecursos.recurso',
-            'planesProyectos.proyecto',
+            'actividades.planActividad',
             'programaAcademico',
         ])->get()->toArray()[0];
 
-        if(count($relaciones['planes_proyectos']) > 0)
-            return response()->json([
-                'message' => 'El proyeto está asociado a un plan',
-                'data' => [],
-                'status' => 'error'
-            ], 200);
+        $actividades = $relaciones['actividades'];
+
+        foreach ($actividades as $actividad) {
+            if(count($actividad['plan_actividad']) > 0)
+                return response()->json([
+                    'message' => 'El proyeto está asociado a un plan',
+                    'data' => [],
+                    'status' => 'error'
+                ], 200);
+        }
 
         ProyectoPrograma::where(['proyecto_id' => $id])->delete();
         Actividad::where(['proyecto_id' => $id])->delete();
@@ -282,19 +302,12 @@ class ProyectoController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function showByPogramaAcademico($programaAcademico){
-        $proyectos = Proyecto::with(['programas', 'actividades', 'programaAcademico', 'planesProyectos.proyecto'])
+        $proyectos = Proyecto::with(['programas', 'actividades.planActividad.plan', 'programaAcademico', 'responsables.usuario'])
             ->where(['programa_academico_id' => $programaAcademico])->get()->toArray();
-
-        $data = [];
-
-        foreach ($proyectos as $proyecto){
-            if(count($proyecto['planes_proyectos']) == 0)
-                array_push( $data, $proyecto);
-        }
 
         return response()->json([
             'message' => 'Consulta exitosa',
-            'data' => $data,
+            'data' => $proyectos,
             'status' => 'ok'
         ], 200);
     }
@@ -696,10 +709,10 @@ class ProyectoController extends Controller
                     'status' => 'error'
                 ], 200);
 
-            $usuario = $usuario->get()->toArray()[0];
-            $proyecto = $proyecto->with(['proyecto.planesProyectos.plan'])->get()->toArray()[0];
+            // $usuario = $usuario->get()->toArray()[0];
+            // $proyecto = $proyecto->with(['proyecto.planesProyectos.plan'])->get()->toArray()[0];
 
-            Mail::to($usuario['email'], 'SEPLAC UFPS')->send(new Responsable($usuario['email'], $proyecto));
+            // Mail::to($usuario['email'], 'SEPLAC UFPS')->send(new Responsable($usuario['email'], $proyecto));
         }
 
         return response()->json([

@@ -33,6 +33,7 @@ class CreatePlanTable extends Migration
             $table->string('url_documento', 256);
             $table->string('periodo_inicio', 8);
             $table->string('periodo_fin', 8);
+            $table->date('fecha_cierre')->nullable();
             $table->timestamps();
 
             $table->softDeletes();

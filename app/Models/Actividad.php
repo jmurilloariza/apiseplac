@@ -78,9 +78,17 @@ class Actividad extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
+    public function planActividad()
+    {
+        return $this->hasMany(PlanActividad::class, 'actividad_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function actividadesUsuarios()
     {
-        return $this->hasMany(ActividadUsuario::class, 'actividad_id');
+        return $this->hasMany(ActividadUsuario::class, 'actividades_id');
     }
 
     /**

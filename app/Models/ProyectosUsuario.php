@@ -36,14 +36,14 @@ class ProyectosUsuario extends Model
     /**
      * @var array
      */
-    protected $fillable = ['id', 'proyectos_id', 'usuario_id', 'deleted_at', 'created_at', 'updated_at'];
+    protected $fillable = ['id', 'proyecto_id', 'usuario_id', 'deleted_at', 'created_at', 'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function proyecto()
     {
-        return $this->belongsTo(Proyecto::class, 'proyectos_id');
+        return $this->belongsTo(Proyecto::class, 'proyecto_id');
     }
 
     /**

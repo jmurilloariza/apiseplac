@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Plan;
+use App\Models\PlanActividad;
 use App\Models\PlanProyecto;
 use App\Models\ProgramaAcademico;
 use App\Models\Proyecto;
+use App\Models\Seguimiento;
 use Illuminate\Http\Request;
 
 /**
@@ -18,7 +20,7 @@ class PlanController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api');
+        // $this->middleware('auth:api');
     }
 
     /**
@@ -107,14 +109,56 @@ class PlanController extends Controller
     {
         $plan = Plan::where(['id' => $id])->with([
             'programaAcademico', 
-            'planesProyectos.proyecto.programas.programa.linea.eje', 
-            'planesProyectos.proyecto.actividades'
-            ])->get()->toArray();
+            'planesActividades.actividad.indicador', 
+            'planesActividades.actividad.proyecto.programas.programa.linea.eje'
+        ])->get()->toArray()[0];
+
+        $planesActividades = $plan['planes_actividades'];
+        $proyectos = [];
+
+        for ($i = 0, $long = count($planesActividades); $i < $long; $i++) { 
+            $actividad = $planesActividades[$i]['actividad'];
+            $proyecto = $actividad['proyecto'];
+            $encontro = false;
+
+            $actividad_data = [
+                'nombre' => $actividad['nombre'], 
+                'descripcion' => $actividad['descripcion'], 
+                'fecha_inicio' => $planesActividades[$i]['fecha_inicio'], 
+                'fecha_fin' => $planesActividades[$i]['fecha_inicio'], 
+                'costo' => $planesActividades[$i]['costo'], 
+                'unidad_medida' => $actividad['descripcion'], 
+                'peso' => $planesActividades[$i]['peso'],
+                'incidacor' => $actividad['indicador']
+            ];
+
+            for ($j=0; $j < count($proyectos); $j++) { 
+                $encontro = $proyectos[$j]['id'] == $proyecto['id'];
+
+                if($proyectos[$j]['id'] == $proyecto['id']){
+                    array_push($proyectos[$j]['actividades'], $actividad_data);
+                    break;
+                }
+            }
+
+            if(!$encontro){
+                $proyecto['actividades'] = [$actividad_data];
+                array_push($proyectos, $proyecto);
+            }
+        }
+
+        $data = [];
+        $data['nombre'] = $plan['nombre'];
+        $data['url_documento'] = $plan['url_documento'];
+        $data['periodo_inicio'] = $plan['periodo_inicio'];
+        $data['periodo_fin'] = $plan['periodo_fin'];
+        $data['programa_academico'] = $plan['programa_academico'];
+        $data['proyectos'] = $proyectos;
 
         if (count($plan) > 0)
             return response()->json([
                 'message' => 'Consulta exitosa',
-                'data' => $plan[0],
+                'data' => $data,
                 'status' => 'ok'
             ], 200);
 
@@ -255,6 +299,7 @@ class PlanController extends Controller
             ], 200);
 
         $proyectos = $request->get('proyectos');
+        $plan = $plan->get()->toArray()[0];
 
         foreach ($proyectos as $pr) {
             $proyecto = Proyecto::where(['id' => $pr]);
@@ -270,9 +315,13 @@ class PlanController extends Controller
             $actividades = $proyecto['actividades'];
 
             for ($i=0, $long = count($actividades); $i < $long; $i++) { 
-                $proyecto = new PlanProyecto([
+                $proyecto = new PlanActividad([
                     'plan_id' => $request->get('plan_id'),
-                    'actividades_id' => $actividades[$i]['id']
+                    'actividades_id' => $actividades[$i]['id'], 
+                    'fecha_inicio' => $actividades[$i]['fecha_inicio'], 
+                    'fecha_fin' => $actividades[$i]['fecha_fin'], 
+                    'costo' => $actividades[$i]['costo'], 
+                    'peso' => $actividades[$i]['peso']
                 ]);
     
                 if (!$proyecto->save())
@@ -281,6 +330,16 @@ class PlanController extends Controller
                         'data' => [],
                         'status' => 'error'
                     ], 200);
+
+                $seguimiento = new Seguimiento([
+                    'plan_actividad_id' => $actividades[$i]['id'],
+                    'periodo_evaluado' => $plan['periodo_inicio'],
+                    'fecha_seguimiento' => null,
+                    'valoracion' => 0,
+                    'situacion_actual' => 'Bajo'
+                ]);
+
+                $seguimiento->save();
             }
         }
 
@@ -292,7 +351,8 @@ class PlanController extends Controller
     }
 
     public function desasignarProyectosPlan($plan_proyecto){
-        $planProyecto = PlanProyecto::where(['id' => $plan_proyecto])->with(['proyecto.actividades.seguimientos']);
+        $planProyecto = PlanProyecto::where(['id' => $plan_proyecto])
+            ->with(['proyecto.actividades.seguimientos']);
 
         if(!$planProyecto->exists())
             return response()->json([

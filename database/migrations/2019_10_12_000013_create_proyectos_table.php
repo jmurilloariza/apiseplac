@@ -32,7 +32,6 @@ class CreateProyectosTable extends Migration
             $table->string('nombre', 250);
             $table->string('objetivo', 200);
             $table->string('descripcion', 500);
-            $table->date('fecha_cierre');
 
             $table->softDeletes();
             $table->timestamps();

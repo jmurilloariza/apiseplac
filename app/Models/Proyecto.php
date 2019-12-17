@@ -54,18 +54,18 @@ class Proyecto extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function planesProyectos()
-    {
-        return $this->hasMany(PlanProyecto::class, 'proyecto_id');
-    }
-
-    /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function programaAcademico()
     {
         return $this->belongsTo(ProgramaAcademico::class, 'programa_academico_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function responsables()
+    {
+        return $this->hasMany(ProyectosUsuario::class, 'proyecto_id');
     }
 }

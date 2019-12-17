@@ -26,6 +26,7 @@ class CreatePlanActividades extends Migration
             $table->date('fecha_inicio')->nullable();
             $table->date('fecha_fin')->nullable();
             $table->double('costo')->nullable();
+            $table->integer('peso');
 
             $table->softDeletes();
             $table->timestamps();
