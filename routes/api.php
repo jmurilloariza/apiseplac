@@ -2,7 +2,7 @@
 
 /**
  * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
- * @version 1.0
+ * @version 2.0
  */
 
 use Illuminate\Support\Facades\Route;
@@ -58,6 +58,12 @@ Route::group(['prefix' => 'plan'], function () {
     Route::group(['prefix' => 'proyecto'], function () {
         Route::post('asignar', 'PlanController@asignarProyectosPlan');
         Route::delete('desasignar/{plan_proyecto}', 'PlanController@desasignarProyectosPlan');
+        Route::get('{proyecto_id}/{plan_id}', 'ProyectoController@showProyectoPlan');
+
+        Route::group(['prefix' => 'actividad'], function () {
+            Route::put('{plan_actividad_id}', 'ProyectoController@updateActividadPlanProyecto');
+            Route::get('ver/{id}', 'ProyectoController@showPlanActividad');
+        });
         
         Route::group(['prefix' => 'seguimiento'], function () {
             Route::get('', 'SeguimientoController@index');
@@ -68,9 +74,12 @@ Route::group(['prefix' => 'plan'], function () {
             
             Route::post('iniciar', 'SeguimientoController@iniciarSeguimientoProyecto');
             Route::post('terminar', 'SeguimientoController@terminarSeguimientoProyecto');
-            
-            Route::get('actividad/{actividad_id}', 'SeguimientoController@showByActividad');
             Route::get('periodos/{plan_proyecto_id}', 'SeguimientoController@calcularPeriodosPendienteSeguimiento');
+            
+            Route::group(['prefix' => 'actividad'], function () {
+                Route::get('{plan_actividad_id}', 'SeguimientoController@showByActividad');
+                Route::get('anteriores/{plan_actividad_id}', 'SeguimientoController@showByActividadPeriodoAtras');
+            });
             
             Route::group(['prefix' => 'comentario'], function () {
                 Route::get('{seguimiento_id}', 'SeguimientoController@showComentarioBySeguimiento');

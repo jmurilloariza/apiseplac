@@ -24,7 +24,7 @@ class PlanActividad extends Model
     /**
      * @var array
      */
-    protected $fillable = ['id', 'actividades_id', 'plan_id', 'fecha_inicio', 'fecha_fin', 'costo', 'peso'];
+    protected $fillable = ['id', 'actividades_id', 'plan_id', 'fecha_inicio', 'fecha_fin', 'costo', 'peso', 'estado'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -40,5 +40,14 @@ class PlanActividad extends Model
     public function actividad()
     {
         return $this->belongsTo(Actividad::class, 'actividades_id');
+    }
+
+    
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function seguimientos()
+    {
+        return $this->hasMany(Seguimiento::class, 'plan_actividad_id');
     }
 }

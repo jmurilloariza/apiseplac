@@ -7,12 +7,14 @@ use App\Models\Actividad;
 use App\Models\ActividadRecurso;
 use App\Models\Indicador;
 use App\Models\Observacion;
+use App\Models\PlanActividad;
 use App\Models\Programa;
 use App\Models\ProgramaAcademico;
 use App\Models\Proyecto;
 use App\Models\ProyectoPrograma;
 use App\Models\ProyectosUsuario;
 use App\Models\Recurso;
+use App\Models\Seguimiento;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -135,7 +137,69 @@ class ProyectoController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified resource. adentro
+     *
+     * @param  int  $proyecto_id
+     * @param  int  $plan_id
+     * @return \Illuminate\Http\Response
+     */
+    public function showProyectoPlan($proyecto_id, $plan_id){
+        $proyecto = Proyecto::where(['id' => $proyecto_id])->with([
+            'programas',
+            'actividades.actividadesRecursos.recurso',
+            'responsables.usuario',
+            'actividades.planActividad.plan',
+            'programaAcademico',
+        ])->get()->toArray()[0];
+
+        $actividades = $proyecto['actividades'];
+        $actividadesVinculadas = [];
+        
+        for ($i=0; $i < count($actividades); $i++) { 
+            $actividad = $actividades[$i];
+            $planesActividades = $actividad['plan_actividad'];
+
+            foreach ($planesActividades as $planActividad) {
+                if($planActividad['plan_id'] == $plan_id){
+                    $data_actividad = [
+                        'id' => $planActividad['id'],
+                        'proyecto_id' => $actividad['proyecto_id'],
+                        'indicador_id' => $actividad['indicador_id'],
+                        'nombre' => $actividad['nombre'],
+                        'descripcion' => $actividad['descripcion'],
+                        'fecha_inicio' => $planActividad['fecha_inicio'],
+                        'fecha_fin' => $planActividad['fecha_fin'],
+                        'costo' => $planActividad['costo'],
+                        'unidad_medida' => $actividad['unidad_medida'],
+                        'peso' => $planActividad['peso'],
+                        'estado' => $planActividad['estado'],
+                        'actividades_recursos' => $actividad['actividades_recursos']
+                    ];
+
+                    array_push($actividadesVinculadas, $data_actividad);
+                    break;
+                }
+            }
+        }
+
+        $proyecto['actividades'] = $actividadesVinculadas;
+
+        if (count($proyecto) > 0)
+            return response()->json([
+                'message' => 'Consulta exitosa',
+                'data' => $proyecto,
+                'status' => 'ok'
+            ], 200);
+
+        return response()->json([
+            'message' => 'No existen registros',
+            'data' => [],
+            'status' => 'error'
+        ], 404);
+    }
+
+    /**
+     * Display the specified resource. por fuera
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
@@ -146,13 +210,14 @@ class ProyectoController extends Controller
             'programas',
             'actividades.actividadesRecursos.recurso',
             'responsables.usuario',
+            'actividades',
             'programaAcademico',
-            ])->get()->toArray();
+        ])->get()->toArray()[0];
 
         if (count($proyecto) > 0)
             return response()->json([
                 'message' => 'Consulta exitosa',
-                'data' => $proyecto[0],
+                'data' => $proyecto,
                 'status' => 'ok'
             ], 200);
 
@@ -431,14 +496,48 @@ class ProyectoController extends Controller
     /**
      * Display the specified resource.
      *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function showPlanActividad($id)
+    {
+        $actividad = PlanActividad::where(['id' => $id])
+            ->with(['actividad.indicador', 'actividad.proyecto', 'actividad.actividadesRecursos.recurso'])
+            ->get()->toArray();
+
+        if (count($actividad) > 0)
+            return response()->json([
+                'message' => 'Consulta exitosa',
+                'data' => $actividad[0],
+                'status' => 'ok'
+            ], 200);
+
+        return response()->json([
+            'message' => 'No existen registros',
+            'data' => [],
+            'status' => 'error'
+        ], 404);
+    }
+
+    /**
+     * Display the specified resource.
+     *
      * @param  int  $usuario_id
      * @return \Illuminate\Http\Response
      */
     public function showProyectosByUsuario($usuario_id)
     {
         $proyectos = ProyectosUsuario::where(['usuario_id' => $usuario_id])
-            ->with(['proyecto', 'actividades.actividadesRecursos.recurso'])
+            ->with(['proyecto.actividades.actividadesRecursos.recurso', 'proyecto.actividades.planActividad.plan'])
             ->get()->toArray();
+
+        $data = [];
+
+        foreach ($proyectos as $proyecto) {
+            foreach ($proyecto['actividades'] as $actividad) {
+                
+            }
+        }
 
         if (count($proyectos) > 0)
             return response()->json([
@@ -471,14 +570,18 @@ class ProyectoController extends Controller
                 'status' => 'error'
             ], 200);
 
-        $seguimientos = $actividad->with(['seguimientos'])->get()->toArray()[0]['seguimientos'];
+        $planesActividades = $actividad->with(['planActividad.seguimientos'])->get()->toArray()[0];
 
-        if(count($seguimientos) > 0)
-            return response()->json([
-                'message' => 'No es posible eliminar la actividad ya que tiene seguimientos iniciados',
-                'data' => [],
-                'status' => 'error'
-            ], 200);
+        for ($i=0; $i < count($planesActividades['plan_actividad']); $i++) { 
+            $seguimientos = $planesActividades['plan_actividad'][$i]['seguimientos'];
+            
+            if(count($seguimientos) > 0)
+                return response()->json([
+                    'message' => 'No es posible eliminar la actividad ya que tiene seguimientos iniciados',
+                    'data' => [],
+                    'status' => 'error'
+                ], 200);
+        }
 
         if ($actividad->delete())
             return response()->json([
@@ -491,6 +594,54 @@ class ProyectoController extends Controller
             'message' => 'Ocurrió un error',
             'data' => [],
             'status' => 'error'
+        ], 200);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $plan_actividad_id
+     * @return \Illuminate\Http\Response
+     */
+    public function updateActividadPlanProyecto(Request $request , $plan_actividad_id){
+        if (!$request->has('estado') or !$request->has('peso') or !$request->has('costo')){
+            return response()->json([
+                'message' => 'Faltan datos',
+                'data' => $request->toArray(),
+                'status' => 'error'
+            ], 200);
+        }
+
+        $planActividad = PlanActividad::where(['id' => $plan_actividad_id]);
+
+        if(!$planActividad->exists())
+            return response()->json([
+                'message' => 'No existen registros de esa actividad',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        $update = $planActividad->update([
+            'peso' => $request->get('peso'), 
+            'estado' => $request->get('estado'), 
+            'costo' => $request->get('costo'), 
+        ]);
+
+        if(!$update)
+            return response()->json([
+                'message' => 'Ha ocurido un error',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        $seguimientos = Seguimiento::where(['plan_actividad_id' => $plan_actividad_id, 'periodo_evaluado' => date('Y')]);
+        $seguimientos->update(['estado' => $request->get('estado')]);
+
+        return response()->json([
+            'message' => 'Actualización exitosa',
+            'data' => [],
+            'status' => 'ok'
         ], 200);
     }
 

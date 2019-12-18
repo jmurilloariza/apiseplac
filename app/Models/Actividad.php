@@ -22,7 +22,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Indicador $indicadore
  * @property Proyecto $proyecto
  * @property ActividadRecurso[] $actividadesRecursos
- * @property ActividadUsuario[] $actividadesUsuarios
  * @property Observacion[] $observaciones
  */
 
@@ -37,7 +36,7 @@ class Actividad extends Model
     use SoftDeletes;
 
     use \Askedio\SoftCascade\Traits\SoftCascadeTrait;
-    protected $softCascade = ['actividadesRecursos', 'actividadesUsuarios'];
+    protected $softCascade = ['actividadesRecursos', 'proyectos'];
 
     /**
      * The table associated with the model.
@@ -80,22 +79,7 @@ class Actividad extends Model
      */
     public function planActividad()
     {
-        return $this->hasMany(PlanActividad::class, 'actividad_id');
+        return $this->hasMany(PlanActividad::class, 'actividades_id');
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function actividadesUsuarios()
-    {
-        return $this->hasMany(ActividadUsuario::class, 'actividades_id');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function seguimientos()
-    {
-        return $this->hasMany(Seguimiento::class, 'actividad_id');
-    }
 }

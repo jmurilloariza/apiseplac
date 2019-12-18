@@ -8,6 +8,7 @@ use App\Models\Evidencias;
 use App\Models\PlanProyecto;
 use App\Models\Seguimiento;
 use App\Models\Plan;
+use App\Models\PlanActividad;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
 
@@ -114,7 +115,7 @@ class SeguimientoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!$request->has('actividad_id') or !$request->has('periodo_evaluado') or !$request->has('fecha_seguimiento') or
+        if (!$request->has('periodo_evaluado') or !$request->has('fecha_seguimiento') or
             !$request->has('valoracion') or !$request->has('situacion_actual'))
             return response()->json([
                 'message' => 'Faltan datos',
@@ -166,12 +167,39 @@ class SeguimientoController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $actividad_id
+     * @param  int  $plan_actividad_id
      * @return \Illuminate\Http\Response
      */
-    public function showByActividad($actividad_id)
+    public function showByActividad($plan_actividad_id)
     {
-        $seguimiento = Seguimiento::where(['actividad_id' => $actividad_id])->with(['actividad', 'comentarios.evidencias'])->get()->toArray();
+        $seguimiento = Seguimiento::where(['plan_actividad_id' => $plan_actividad_id, 'periodo_evaluado' => date('Y')])
+            ->with(['planActividad.actividad', 'comentarios.evidencias'])->get()->toArray();
+
+        return response()->json([
+            'message' => 'Consulta exitosa',
+            'data' => $seguimiento,
+            'status' => 'ok'
+        ], 200);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $plan_actividad_id
+     * @return \Illuminate\Http\Response
+     */
+    public function showByActividadPeriodoAtras($plan_actividad_id)
+    {
+        $plan = PlanActividad::where(['id' => $plan_actividad_id])->with(['plan'])->get()->toArray()[0]['plan'];
+        $anioInicio = $plan['periodo_inicio'];
+        $anios = [];
+
+        for ($i=intval($anioInicio), $long = intval(date('Y')); $i <= $long; $i++) 
+            array_push($anios, $i.'');
+
+        $seguimiento = Seguimiento::where(['plan_actividad_id' => $plan_actividad_id])
+            ->whereIn('periodo_evaluado', $anios)
+            ->with(['planActividad.actividad', 'comentarios.evidencias'])->get()->toArray();
 
         return response()->json([
             'message' => 'Consulta exitosa',
@@ -188,60 +216,60 @@ class SeguimientoController extends Controller
      */
     public function iniciarSeguimientoProyecto(Request $request)
     {
-        if (!$request->has('plan_proyecto_id') or !$request->has('periodo_evaluado'))
-            return response()->json([
-                'message' => 'Faltan datos',
-                'data' => $request->toArray(),
-                'status' => 'error'
-            ], 200);
+        // if (!$request->has('plan_proyecto_id') or !$request->has('periodo_evaluado'))
+        //     return response()->json([
+        //         'message' => 'Faltan datos',
+        //         'data' => $request->toArray(),
+        //         'status' => 'error'
+        //     ], 200);
 
-        $planProyecto = PlanProyecto::where(['id' => $request->get('plan_proyecto_id')])
-            ->with(['proyecto.actividades.seguimientos', 'plan']);
+        // $planProyecto = PlanProyecto::where(['id' => $request->get('plan_proyecto_id')])
+        //     ->with(['proyecto.actividades.seguimientos', 'plan']);
 
-        if (!$planProyecto->exists())
-            return response()->json([
-                'message' => 'No existen registros',
-                'data' => [],
-                'status' => 'error'
-            ], 200);
+        // if (!$planProyecto->exists())
+        //     return response()->json([
+        //         'message' => 'No existen registros',
+        //         'data' => [],
+        //         'status' => 'error'
+        //     ], 200);
 
-        $planProyecto = $planProyecto->get()->toArray()[0];
-        $actividades  = $planProyecto['proyecto']['actividades'];
+        // $planProyecto = $planProyecto->get()->toArray()[0];
+        // $actividades  = $planProyecto['proyecto']['actividades'];
 
-        for ($i = 0; $i < count($actividades); $i++) {
-            $seguimientos = $actividades[$i]['seguimientos'];
-            for ($j=0; $j < count($seguimientos); $j++) { 
-                $seguimiento = $seguimientos[$j];
-                if($seguimiento['fecha_seguimiento'] == null)
-                    return response()->json([
-                        'message' => 'No es posible iniciar el seguimiento porque hay un seguimiento vigente del periodo '.$seguimiento['periodo_evaluado'],
-                        'data' => [],
-                        'status' => 'error'
-                    ], 200);
-            }
-        }
+        // for ($i = 0; $i < count($actividades); $i++) {
+        //     $seguimientos = $actividades[$i]['seguimientos'];
+        //     for ($j=0; $j < count($seguimientos); $j++) { 
+        //         $seguimiento = $seguimientos[$j];
+        //         if($seguimiento['fecha_seguimiento'] == null)
+        //             return response()->json([
+        //                 'message' => 'No es posible iniciar el seguimiento porque hay un seguimiento vigente del periodo '.$seguimiento['periodo_evaluado'],
+        //                 'data' => [],
+        //                 'status' => 'error'
+        //             ], 200);
+        //     }
+        // }
 
-        for ($i = 0; $i < count($actividades); $i++) {
-            $seguimiento = new Seguimiento([
-                'actividad_id' => $actividades[$i]['id'],
-                'periodo_evaluado' => $request->get('periodo_evaluado'), 
-                'valoracion' => 0, 
-                'situacion_actual' => 'Bajo'
-            ]);
+        // for ($i = 0; $i < count($actividades); $i++) {
+        //     $seguimiento = new Seguimiento([
+        //         'actividad_id' => $actividades[$i]['id'],
+        //         'periodo_evaluado' => $request->get('periodo_evaluado'), 
+        //         'valoracion' => 0, 
+        //         'situacion_actual' => 'Bajo'
+        //     ]);
 
-            if (!$seguimiento->save())
-                return response()->json([
-                    'message' => 'Ha ocurido un error',
-                    'data' => [],
-                    'status' => 'error'
-                ], 200);
-        }
+        //     if (!$seguimiento->save())
+        //         return response()->json([
+        //             'message' => 'Ha ocurido un error',
+        //             'data' => [],
+        //             'status' => 'error'
+        //         ], 200);
+        // }
 
-        return response()->json([
-            'message' => 'Seguimiento para el periodo ' . $request->get('periodo_evaluado') . ' iniciado',
-            'data' => [],
-            'status' => 'ok'
-        ], 201);
+        // return response()->json([
+        //     'message' => 'Seguimiento para el periodo ' . $request->get('periodo_evaluado') . ' iniciado',
+        //     'data' => [],
+        //     'status' => 'ok'
+        // ], 201);
     }
 
     /**
@@ -252,41 +280,41 @@ class SeguimientoController extends Controller
      */
     public function terminarSeguimientoProyecto(Request $request)
     {
-        if(!$request->has('proyecto_plan_id') or !$request->has('periodo'))
-            return response()->json([
-                'message' => 'Faltan datos',
-                'data' => $request->toArray(),
-                'status' => 'error'
-            ], 200);
+        // if(!$request->has('proyecto_plan_id') or !$request->has('periodo'))
+        //     return response()->json([
+        //         'message' => 'Faltan datos',
+        //         'data' => $request->toArray(),
+        //         'status' => 'error'
+        //     ], 200);
 
-        $proyecto = PlanProyecto::where(['id' => $request->get('proyecto_plan_id')]);
+        // $proyecto = PlanProyecto::where(['id' => $request->get('proyecto_plan_id')]);
 
-        if(!$proyecto->exists())
-            return response()->json([
-                'message' => 'No existen registros del proyecto',
-                'data' => [$request->get('proyecto_plan_id')],
-                'status' => 'error'
-            ], 200);
+        // if(!$proyecto->exists())
+        //     return response()->json([
+        //         'message' => 'No existen registros del proyecto',
+        //         'data' => [$request->get('proyecto_plan_id')],
+        //         'status' => 'error'
+        //     ], 200);
 
-        $proyecto = $proyecto->with(['proyecto.actividades.seguimientos'])
-            ->get()->toArray()[0]['proyecto'];
+        // $proyecto = $proyecto->with(['proyecto.actividades.seguimientos'])
+        //     ->get()->toArray()[0]['proyecto'];
 
-        $actividades = $proyecto['actividades'];
+        // $actividades = $proyecto['actividades'];
 
-        foreach ($actividades as $actividad) {
-            $seguimientos = $actividad['seguimientos'];
+        // foreach ($actividades as $actividad) {
+        //     $seguimientos = $actividad['seguimientos'];
             
-            foreach ($seguimientos as $item) {
-                if($item['periodo_evaluado'] == $request->get('periodo'))
-                Seguimiento::where(['id' => $item['id']])->update(['fecha_seguimiento' => date('Y-m-d')]);
-            }
-        }
+        //     foreach ($seguimientos as $item) {
+        //         if($item['periodo_evaluado'] == $request->get('periodo'))
+        //         Seguimiento::where(['id' => $item['id']])->update(['fecha_seguimiento' => date('Y-m-d')]);
+        //     }
+        // }
 
-        return response()->json([
-            'message' => 'Seguimientos terminados para el periodo '.$request->get('periodo'),
-            'data' => [],
-            'status' => 'ok'
-        ], 200);
+        // return response()->json([
+        //     'message' => 'Seguimientos terminados para el periodo '.$request->get('periodo'),
+        //     'data' => [],
+        //     'status' => 'ok'
+        // ], 200);
     }
 
     /**
@@ -297,44 +325,44 @@ class SeguimientoController extends Controller
      */
     public function calcularPeriodosPendienteSeguimiento($proyecto_plan_id)
     {
-        $planesProyectos = PlanProyecto::where(['id' => $proyecto_plan_id])
-            ->with(['proyecto.actividades.seguimientos', 'plan'])->get()->toArray()[0];
+        // $planesProyectos = PlanProyecto::where(['id' => $proyecto_plan_id])
+        //     ->with(['proyecto.actividades.seguimientos', 'plan'])->get()->toArray()[0];
 
-        $plan = $planesProyectos['plan'];
-        $periodos = $this->calcularTodosPeriodosPlan($plan['id']);
+        // $plan = $planesProyectos['plan'];
+        // $periodos = $this->calcularTodosPeriodosPlan($plan['id']);
 
         
-        $data = [];
-        $actividades = $planesProyectos['proyecto']['actividades'];
+        // $data = [];
+        // $actividades = $planesProyectos['proyecto']['actividades'];
 
-        for ($i=0, $long = count($periodos); $i < $long; $i++) { 
-            $valoracion = 0;
-            $fecha_seguimiento = '';
+        // for ($i=0, $long = count($periodos); $i < $long; $i++) { 
+        //     $valoracion = 0;
+        //     $fecha_seguimiento = '';
 
-            for ($j = 0; $j < count($actividades); $j++) {
-                $seguimientos = $actividades[$j]['seguimientos'];
+        //     for ($j = 0; $j < count($actividades); $j++) {
+        //         $seguimientos = $actividades[$j]['seguimientos'];
                 
-                foreach ($seguimientos as $seguimiento) {
-                    if($seguimiento['periodo_evaluado'] == $periodos[$i]){
-                        $valoracion += $seguimiento['valoracion'] * $actividades[$j]['peso'];
-                        $fecha_seguimiento = $seguimiento['fecha_seguimiento'];
-                        break;
-                    }
-                }
-            }
+        //         foreach ($seguimientos as $seguimiento) {
+        //             if($seguimiento['periodo_evaluado'] == $periodos[$i]){
+        //                 $valoracion += $seguimiento['valoracion'] * $actividades[$j]['peso'];
+        //                 $fecha_seguimiento = $seguimiento['fecha_seguimiento'];
+        //                 break;
+        //             }
+        //         }
+        //     }
 
-            array_push($data, [
-                'periodo' => $periodos[$i], 
-                'fecha_seguimiento' => $fecha_seguimiento, 
-                'valoracion' => $valoracion > 0 ? $valoracion/100: 0
-            ]);
-        }
+        //     array_push($data, [
+        //         'periodo' => $periodos[$i], 
+        //         'fecha_seguimiento' => $fecha_seguimiento, 
+        //         'valoracion' => $valoracion > 0 ? $valoracion/100: 0
+        //     ]);
+        // }
 
-        return response()->json([
-            'message' => 'Consulta exitosa',
-            'data' => $data,
-            'status' => 'ok'
-        ], 200);
+        // return response()->json([
+        //     'message' => 'Consulta exitosa',
+        //     'data' => $data,
+        //     'status' => 'ok'
+        // ], 200);
     }
 
     public function obtenerPeriodosPlan($plan_id){
@@ -396,9 +424,9 @@ class SeguimientoController extends Controller
                 'status' => 'error'
             ], 200);
 
-        $seguimiento = Seguimiento::where(['id' => $request->get('seguimiento_id')])->exists();
+        $seguimiento = Seguimiento::where(['id' => $request->get('seguimiento_id')]);
 
-        if(!$seguimiento)
+        if(!$seguimiento->exists())
             return response()->json([
                 'message' => 'No existen registros de ese seguimiento',
                 'data' => [],
@@ -426,7 +454,8 @@ class SeguimientoController extends Controller
                 'data' => [],
                 'status' => 'error'
             ], 200);
-
+        
+        $seguimiento->update(['fecha_seguimiento' => date('Y-m-d')]);
 
         return response()->json([
             'message' => 'Comentario registrado',
