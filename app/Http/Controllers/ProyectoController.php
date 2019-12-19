@@ -21,7 +21,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
 /**
- * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
+ * @author jmurilloariza - jefersonmanuelma@ufps.edu.co
  * @version 2.0
  */
 
@@ -64,7 +64,7 @@ class ProyectoController extends Controller
             !$request->has('objetivo') or !$request->has('programas') or !$request->has('usuario_id') )
             return response()->json([
                 'message' => 'Faltan datos',
-                'data' => $request->toArray(), 
+                'data' => $request->toArray(),
                 'status' => 'error'
             ], 200);
 
@@ -80,7 +80,7 @@ class ProyectoController extends Controller
         $proyecto = new Proyecto([
             'nombre' => $request->get('nombre'),
             'descripcion' => $request->get('descripcion'),
-            'objetivo' => $request->get('objetivo'), 
+            'objetivo' => $request->get('objetivo'),
             'programa_academico_id' => $request->get('programa_academico_id')
         ]);
 
@@ -124,7 +124,7 @@ class ProyectoController extends Controller
             ], 200);
 
         $proyectoUsuario = new ProyectosUsuario([
-            'proyecto_id' => $proyecto->id, 
+            'proyecto_id' => $proyecto->id,
             'usuario_id' => $request->get('usuario_id')
         ]);
 
@@ -155,8 +155,8 @@ class ProyectoController extends Controller
 
         $actividades = $proyecto['actividades'];
         $actividadesVinculadas = [];
-        
-        for ($i=0; $i < count($actividades); $i++) { 
+
+        for ($i=0; $i < count($actividades); $i++) {
             $actividad = $actividades[$i];
             $planesActividades = $actividad['plan_actividad'];
 
@@ -242,7 +242,7 @@ class ProyectoController extends Controller
             !$request->has('objetivo') or !$request->has('programas'))
             return response()->json([
                 'message' => 'Faltan datos',
-                'data' => $request->toArray(), 
+                'data' => $request->toArray(),
                 'status' => 'error'
             ], 200);
 
@@ -267,7 +267,7 @@ class ProyectoController extends Controller
         $data = [
             'nombre' => $request->get('nombre'),
             'descripcion' => $request->get('descripcion'),
-            'objetivo' => $request->get('objetivo'), 
+            'objetivo' => $request->get('objetivo'),
             'programa_academico_id' => $request->get('programa_academico_id')
         ];
 
@@ -347,14 +347,14 @@ class ProyectoController extends Controller
 
         ProyectoPrograma::where(['proyecto_id' => $id])->delete();
         Actividad::where(['proyecto_id' => $id])->delete();
-        
+
         if ($proyecto->delete())
             return response()->json([
                 'message' => 'proyecto eliminado',
                 'data' => [],
                 'status' => 'ok'
             ], 200);
-            
+
         return response()->json([
             'message' => 'Ocurrió un error',
             'data' => [],
@@ -419,14 +419,14 @@ class ProyectoController extends Controller
             }
 
             $model = new Actividad([
-                'proyecto_id' => $request->get('proyecto_id'), 
-                'indicador_id' => $actividad['indicador_id'], 
-                'nombre' => $actividad['nombre'], 
-                'descripcion' => $actividad['descripcion'], 
-                'fecha_inicio' => $actividad['fecha_inicio'], 
-                'fecha_fin' => $actividad['fecha_fin'], 
-                'costo' => $actividad['costo'], 
-                'unidad_medida' => $actividad['unidad_medida'], 
+                'proyecto_id' => $request->get('proyecto_id'),
+                'indicador_id' => $actividad['indicador_id'],
+                'nombre' => $actividad['nombre'],
+                'descripcion' => $actividad['descripcion'],
+                'fecha_inicio' => $actividad['fecha_inicio'],
+                'fecha_fin' => $actividad['fecha_fin'],
+                'costo' => $actividad['costo'],
+                'unidad_medida' => $actividad['unidad_medida'],
                 'peso' => $actividad['peso']
             ]);
 
@@ -446,9 +446,9 @@ class ProyectoController extends Controller
                         'data' => [],
                         'status' => 'error'
                     ], 200);
-                
+
                 $actividadRecurso = new ActividadRecurso([
-                    'actividad_id' => $model->id, 
+                    'actividad_id' => $model->id,
                     'recursos_id' => $recurso
                 ]);
 
@@ -529,19 +529,28 @@ class ProyectoController extends Controller
     public function showProyectosByUsuario($usuario_id)
     {
         $usuario = Usuario::where(['id' => $usuario_id]);
-        
+
         if(!$usuario->exists())
             return response()->json([
                 'message' => 'No existen registro de este usuario',
                 'data' => [],
                 'status' => 'error'
             ], 200);
-        
-        $usuario = $usuario->get()->toarray()[0];
-        $plan = Plan::where(['programa_academico_id' => $usuario['programa_academico_id'], 
+
+        $usuario = $usuario->get()->toArray()[0];
+        $plan = Plan::where(['programa_academico_id' => $usuario['programa_academico_id'],
             'fecha_cierre' => null])->where('periodo_fin', '>=', intval(date('Y')))
-            ->where('periodo_inicio', '<=', intval(date('Y')))->get()->toArray()[0];
-        
+            ->where('periodo_inicio', '<=', intval(date('Y')));
+
+        if(!$plan->exists())
+            return response()->json([
+                'message' => 'No existe un plan vigente para el año actual',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        $plan = $plan->get()->toArray()[0];
+
         $proyectos = ProyectosUsuario::where(['usuario_id' => $usuario_id])
             ->with([
                 'proyecto.actividades.planActividad.plan',
@@ -553,36 +562,36 @@ class ProyectoController extends Controller
         $data['plan'] = $plan;
         $data['proyectos'] = [];
 
-        for ($i=0; $i < count($proyectos); $i++) { 
+        for ($i=0; $i < count($proyectos); $i++) {
             $proyecto = $proyectos[$i];
             $data_proyecto = [
-                'id' => $proyecto['proyecto']['id'], 
-                'nombre' => $proyecto['proyecto']['nombre'], 
-                'objetivo' => $proyecto['proyecto']['objetivo'], 
+                'id' => $proyecto['proyecto']['id'],
+                'nombre' => $proyecto['proyecto']['nombre'],
+                'objetivo' => $proyecto['proyecto']['objetivo'],
                 'descripcion' => $proyecto['proyecto']['descripcion'],
                 'actividades' => []
             ];
 
             $guardar = false;
 
-            for ($j=0; $j < count($proyecto['proyecto']['actividades']); $j++) { 
+            for ($j=0; $j < count($proyecto['proyecto']['actividades']); $j++) {
                 $actividad = $proyecto['proyecto']['actividades'][$j];
 
-                for ($k=0; $k < count($actividad['plan_actividad']); $k++) { 
+                for ($k=0; $k < count($actividad['plan_actividad']); $k++) {
                     $planActividad = $actividad['plan_actividad'][$k];
 
                     if($planActividad['plan_id'] == $plan['id']){
                         $data_actividad = [
-                            'nombre' => $planActividad['actividad']['nombre'], 
-                            'descripcion' => $planActividad['actividad']['descripcion'], 
-                            'unidad_medida' => $planActividad['actividad']['unidad_medida'], 
-                            'fecha_inicio' => $planActividad['fecha_inicio'], 
-                            'fecha_fin' => $planActividad['fecha_fin'], 
-                            'costo' => $planActividad['costo'], 
-                            'peso' => $planActividad['peso'], 
-                            'estado' => $planActividad['estado'], 
-                            'id' => $planActividad['id'], 
-                            'indicador' => $planActividad['actividad']['indicador'], 
+                            'nombre' => $planActividad['actividad']['nombre'],
+                            'descripcion' => $planActividad['actividad']['descripcion'],
+                            'unidad_medida' => $planActividad['actividad']['unidad_medida'],
+                            'fecha_inicio' => $planActividad['fecha_inicio'],
+                            'fecha_fin' => $planActividad['fecha_fin'],
+                            'costo' => $planActividad['costo'],
+                            'peso' => $planActividad['peso'],
+                            'estado' => $planActividad['estado'],
+                            'id' => $planActividad['id'],
+                            'indicador' => $planActividad['actividad']['indicador'],
                         ];
 
                         $guardar = true;
@@ -605,7 +614,7 @@ class ProyectoController extends Controller
 
         return response()->json([
             'message' => 'No existen registros',
-            'data' => [],
+            'data' => $plan,
             'status' => 'error'
         ], 200);
     }
@@ -619,7 +628,7 @@ class ProyectoController extends Controller
     public function destroyActividad($id)
     {
         $actividad = Actividad::where(['id' => $id]);
-        
+
         if (!$actividad->exists())
             return response()->json([
                 'message' => 'No existen registros de la actividad',
@@ -629,9 +638,9 @@ class ProyectoController extends Controller
 
         $planesActividades = $actividad->with(['planActividad.seguimientos'])->get()->toArray()[0];
 
-        for ($i=0; $i < count($planesActividades['plan_actividad']); $i++) { 
+        for ($i=0; $i < count($planesActividades['plan_actividad']); $i++) {
             $seguimientos = $planesActividades['plan_actividad'][$i]['seguimientos'];
-            
+
             if(count($seguimientos) > 0)
                 return response()->json([
                     'message' => 'No es posible eliminar la actividad ya que tiene seguimientos iniciados',
@@ -646,7 +655,7 @@ class ProyectoController extends Controller
                 'data' => [],
                 'status' => 'ok'
             ], 200);
-            
+
         return response()->json([
             'message' => 'Ocurrió un error',
             'data' => [],
@@ -680,9 +689,9 @@ class ProyectoController extends Controller
             ], 200);
 
         $update = $planActividad->update([
-            'peso' => $request->get('peso'), 
-            'estado' => $request->get('estado'), 
-            'costo' => $request->get('costo'), 
+            'peso' => $request->get('peso'),
+            'estado' => $request->get('estado'),
+            'costo' => $request->get('costo'),
         ]);
 
         if(!$update)
