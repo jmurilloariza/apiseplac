@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Mpdf\Mpdf;
 
 /**
- * @author jmurilloariza - jefersonmanuelma@ufps.edu.co 
+ * @author jmurilloariza - jefersonmanuelma@ufps.edu.co
  * @version 1.0
  */
 
