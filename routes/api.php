@@ -107,7 +107,7 @@ Route::group(['prefix' => 'proyecto'], function () {
     Route::group(['prefix' => 'responsable'], function () {
         Route::delete('{id}', 'ProyectoController@eliminarResponsableProyecto');
         Route::post('', 'ProyectoController@agregarUsuarioResponsable');
-        Route::get('{usaurio_id}', 'ProyectoController@showProyectosByUsuario');
+        Route::get('{usuario_id}', 'ProyectoController@showProyectosByUsuario');
     });
 
     Route::group(['prefix' => 'actividad'], function () {

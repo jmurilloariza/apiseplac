@@ -69,7 +69,17 @@ class PlanController extends Controller
         if (!$programaAcademico->exists())
             return response()->json([
                 'message' => 'No existen registros del programa academico',
-                'data' => [ProgramaAcademico::where(['id' => $request->get('programa_academico_id')])->get()->toArray()],
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+
+        $planes = Plan::where(['programa_academico_id' => $request->get('programa_academico_id')])
+            ->where(['fecha_cierre' => null]);
+
+        if($planes->exists())
+            return response()->json([
+                'message' => 'No es posible crear el plan, existe un plan abierto y vigente',
+                'data' => [],
                 'status' => 'error'
             ], 200);
 
@@ -213,7 +223,8 @@ class PlanController extends Controller
                 'status' => 'error'
             ], 200);
 
-        if (!$request->has('periodo_inicio') or !$request->has('periodo_fin') or !$request->has('programa_academico_id') or !$request->has('nombre'))
+        if (!$request->has('periodo_inicio') or !$request->has('periodo_fin') or 
+            !$request->has('programa_academico_id') or !$request->has('nombre') or !$request->has('fecha_cierre') )
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
@@ -224,7 +235,8 @@ class PlanController extends Controller
             'periodo_inicio' => $request->get('periodo_inicio'),
             'periodo_fin' => $request->get('periodo_fin'),
             'programa_academico_id' => $request->get('programa_academico_id'),
-            'nombre' => $request->get('nombre')
+            'nombre' => $request->get('nombre'), 
+            'fecha_cierre' => $request->get('fecha_cierre')
         ];
 
         if ($request->hasFile('documento')) {

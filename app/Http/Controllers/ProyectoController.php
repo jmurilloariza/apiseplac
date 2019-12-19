@@ -7,6 +7,7 @@ use App\Models\Actividad;
 use App\Models\ActividadRecurso;
 use App\Models\Indicador;
 use App\Models\Observacion;
+use App\Models\Plan;
 use App\Models\PlanActividad;
 use App\Models\Programa;
 use App\Models\ProgramaAcademico;
@@ -527,22 +528,78 @@ class ProyectoController extends Controller
      */
     public function showProyectosByUsuario($usuario_id)
     {
+        $usuario = Usuario::where(['id' => $usuario_id]);
+        
+        if(!$usuario->exists())
+            return response()->json([
+                'message' => 'No existen registro de este usuario',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
+        
+        $usuario = $usuario->get()->toarray()[0];
+        $plan = Plan::where(['programa_academico_id' => $usuario['programa_academico_id'], 
+            'fecha_cierre' => null])->where('periodo_fin', '>=', intval(date('Y')))
+            ->where('periodo_inicio', '<=', intval(date('Y')))->get()->toArray()[0];
+        
         $proyectos = ProyectosUsuario::where(['usuario_id' => $usuario_id])
-            ->with(['proyecto.actividades.actividadesRecursos.recurso', 'proyecto.actividades.planActividad.plan'])
-            ->get()->toArray();
+            ->with([
+                'proyecto.actividades.planActividad.plan',
+                'proyecto.actividades.planActividad.actividad.indicador',
+                'proyecto.actividades.planActividad.actividad.actividadesRecursos.recurso'
+            ])->get()->toArray();
 
         $data = [];
+        $data['plan'] = $plan;
+        $data['proyectos'] = [];
 
-        foreach ($proyectos as $proyecto) {
-            foreach ($proyecto['actividades'] as $actividad) {
-                
+        for ($i=0; $i < count($proyectos); $i++) { 
+            $proyecto = $proyectos[$i];
+            $data_proyecto = [
+                'id' => $proyecto['proyecto']['id'], 
+                'nombre' => $proyecto['proyecto']['nombre'], 
+                'objetivo' => $proyecto['proyecto']['objetivo'], 
+                'descripcion' => $proyecto['proyecto']['descripcion'],
+                'actividades' => []
+            ];
+
+            $guardar = false;
+
+            for ($j=0; $j < count($proyecto['proyecto']['actividades']); $j++) { 
+                $actividad = $proyecto['proyecto']['actividades'][$j];
+
+                for ($k=0; $k < count($actividad['plan_actividad']); $k++) { 
+                    $planActividad = $actividad['plan_actividad'][$k];
+
+                    if($planActividad['plan_id'] == $plan['id']){
+                        $data_actividad = [
+                            'nombre' => $planActividad['actividad']['nombre'], 
+                            'descripcion' => $planActividad['actividad']['descripcion'], 
+                            'unidad_medida' => $planActividad['actividad']['unidad_medida'], 
+                            'fecha_inicio' => $planActividad['fecha_inicio'], 
+                            'fecha_fin' => $planActividad['fecha_fin'], 
+                            'costo' => $planActividad['costo'], 
+                            'peso' => $planActividad['peso'], 
+                            'estado' => $planActividad['estado'], 
+                            'id' => $planActividad['id'], 
+                            'indicador' => $planActividad['actividad']['indicador'], 
+                        ];
+
+                        $guardar = true;
+                        array_push($data_proyecto['actividades'], $data_actividad);
+                        break;
+                    }
+                }
             }
+
+            if($guardar)
+                array_push($data['proyectos'], $data_proyecto);
         }
 
-        if (count($proyectos) > 0)
+        if (count($data) > 0)
             return response()->json([
                 'message' => 'Consulta exitosa',
-                'data' => $proyectos,
+                'data' => [$data],
                 'status' => 'ok'
             ], 200);
 
@@ -550,7 +607,7 @@ class ProyectoController extends Controller
             'message' => 'No existen registros',
             'data' => [],
             'status' => 'error'
-        ], 404);
+        ], 200);
     }
 
     /**
