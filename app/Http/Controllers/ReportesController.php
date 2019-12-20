@@ -253,7 +253,7 @@ class ReportesController extends Controller
 
         $data = [];
         $data['plan'] = [];
-        $data['plan']['porcentaje'] = $procentaje / count($proyectos);
+        $data['plan']['porcentaje'] = count($proyectos)>0 ? $procentaje / count($proyectos): 0;
         $data['plan']['programa_academico'] = $reporte['plan']['programa_academico'];
         $data['plan']['director'] = $reporte['plan']['director'];
         $data['plan']['nombre'] = $reporte['plan']['nombre'];
