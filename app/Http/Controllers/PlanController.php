@@ -343,8 +343,7 @@ class PlanController extends Controller
                     'fecha_fin' => $actividades[$i]['fecha_fin'],
                     'costo' => $actividades[$i]['costo'],
                     'peso' => $actividades[$i]['peso'],
-                    'estado' => 'ACTIVO', 
-                    'avance' => 1
+                    'estado' => 'ACTIVO'
                 ]);
 
                 if (!$proyecto->save())
@@ -361,8 +360,9 @@ class PlanController extends Controller
                         'fecha_seguimiento' => null,
                         'valoracion' => 0,
                         'situacion_actual' => 'Bajo',
-                        'estado' => 'ACTIVO'
-                        ]);
+                        'estado' => 'ACTIVO', 
+                        'avance' => 1
+                    ]);
 
                     $seguimiento->save();
                 }
