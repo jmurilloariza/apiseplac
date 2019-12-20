@@ -362,7 +362,7 @@ class PlanController extends Controller
                         'valoracion' => 0,
                         'situacion_actual' => 'Bajo',
                         'estado' => 'ACTIVO', 
-                        'avance' => 1
+                        'avance' => '0'
                     ]);
 
                     $seguimiento->save();

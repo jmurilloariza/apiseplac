@@ -98,12 +98,12 @@ class ReportesController extends Controller
                 }
             }
 
-            $data_proyecto['procentaje_avance'] = $data_proyecto['procentaje_avance'] / 100;
+            $data_proyecto['procentaje_avance'] = $data_proyecto['procentaje_avance'];
             array_push($data['plan']['proyectos'], $data_proyecto);
         }
 
         if (!$render) return $data;
-
+        
         $html = view('reports.resumenPlan')->with(['plan' => $data['plan']]);
         $mpdf = new Mpdf([
             'mode' => 'utf-8',
