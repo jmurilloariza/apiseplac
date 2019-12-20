@@ -14,6 +14,9 @@ class PlanActividad extends Model
 {
     use SoftDeletes;
 
+    use \Askedio\SoftCascade\Traits\SoftCascadeTrait;
+    protected $softCascade = ['seguimientos'];
+
     /**
      * The table associated with the model.
      * 

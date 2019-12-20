@@ -36,7 +36,7 @@ class Actividad extends Model
     use SoftDeletes;
 
     use \Askedio\SoftCascade\Traits\SoftCascadeTrait;
-    protected $softCascade = ['actividadesRecursos', 'proyectos'];
+    protected $softCascade = ['actividadesRecursos'];
 
     /**
      * The table associated with the model.

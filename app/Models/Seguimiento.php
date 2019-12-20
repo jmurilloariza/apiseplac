@@ -14,6 +14,9 @@ class Seguimiento extends Model
 {
     use SoftDeletes;
 
+    use \Askedio\SoftCascade\Traits\SoftCascadeTrait;
+    protected $softCascade = ['comentarios'];
+
     /**
      * The table associated with the model.
      *

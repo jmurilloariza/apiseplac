@@ -377,42 +377,30 @@ class PlanController extends Controller
         ], 201);
     }
 
-    public function desasignarProyectosPlan($plan_proyecto){
-        // $planProyecto = PlanProyecto::where(['id' => $plan_proyecto])
-        //     ->with(['proyecto.actividades.seguimientos']);
+    public function desasignarProyectosPlan($plan_id, $proyecto_id){
+        $proyecto = Proyecto::where(['id' => $proyecto_id]);
 
-        // if(!$planProyecto->exists())
-        //     return response()->json([
-        //         'message' => 'Uno existe el proyecto relacionado al plan',
-        //         'data' => [],
-        //         'status' => 'error'
-        //     ], 200);
+        if(!$proyecto->exists())
+            return response()->json([
+                'message' => 'Uno existe el proyecto relacionado al plan',
+                'data' => [],
+                'status' => 'error'
+            ], 200);
 
-        // $actividades = $planProyecto->get()->toArray()[0]['proyecto']['actividades'];
+        $proyecto = $proyecto->with(['actividades'])->get()->toArray()[0];
+        $actividades = $proyecto['actividades'];
 
-        // if(count($actividades) > 0){
-        //     foreach($actividades as $actividad){
-        //         if(count($actividad['seguimientos']) > 0)
-        //             return response()->json([
-        //                 'message' => 'No es posible eliminar el proyecto ya que tiene actividades en seguimiento',
-        //                 'data' => [],
-        //                 'status' => 'error'
-        //             ], 200);
-        //     }
-        // }
+        foreach ($actividades as $actividad) {
+            $planActividad = PlanActividad::where(['plan_id' => $plan_id, 'actividad_id' => $actividad['id']])
+                ->with(['seguimientos.comentarios.evidencias'])->delete();
+        }
 
-        // if ($planProyecto->delete())
-        //     return response()->json([
-        //         'message' => 'Proyecto eliminado',
-        //         'data' => [],
-        //         'status' => 'ok'
-        //     ], 200);
+        return response()->json([
+            'message' => 'Proyecto desasignado',
+            'data' => [],
+            'status' => 'ok'
+        ], 200);
 
-        // return response()->json([
-        //     'message' => 'Ocurrió un error',
-        //     'data' => [],
-        //     'status' => 'error'
-        // ], 200);
     }
 
 }
