@@ -132,14 +132,16 @@ class SeguimientoController extends Controller
                 'status' => 'error'
             ], 200);
 
-        $dataSeguimiento = 
+        $dataSeguimiento = $seguimiento->get()->toArray()[0];
+        $valoracion = intval($request->get('valoracion'));
+        $peso = intval($dataSeguimiento['plan_actividad']['peso']);
 
         $values = [
             'periodo_evaluado' => $request->get('periodo_evaluado'),
             'fecha_seguimiento' => $request->get('fecha_seguimiento'),
-            'valoracion' => intval($request->get('valoracion')),
+            'valoracion' => $valoracion,
             'situacion_actual' => $request->get('situacion_actual'), 
-            'avance'
+            'avance' => ($valoracion*$peso).''
         ];
 
         if ($seguimiento->update($values))

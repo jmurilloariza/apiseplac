@@ -344,7 +344,7 @@ class PlanController extends Controller
                     'costo' => $actividades[$i]['costo'],
                     'peso' => $actividades[$i]['peso'],
                     'estado' => 'ACTIVO', 
-                    'avance' => 0
+                    'avance' => 1
                 ]);
 
                 if (!$proyecto->save())

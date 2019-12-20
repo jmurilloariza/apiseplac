@@ -92,7 +92,7 @@ class ReportesController extends Controller
 
                 foreach ($seguimientos as $seguimiento) {
                     if ($seguimiento['periodo_evaluado'] == $periodo && $seguimiento['estado'] == 'ACTIVO') {
-                        $data_proyecto['procentaje_avance'] += intval($actividad['peso']) * intval($seguimiento['valoracion']);
+                        $data_proyecto['procentaje_avance'] += $seguimiento['avance'];
                         break;
                     }
                 }
