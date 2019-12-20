@@ -123,7 +123,7 @@ class SeguimientoController extends Controller
                 'status' => 'error'
             ], 200);
 
-        $seguimiento = Seguimiento::where(['id' => $id]);
+        $seguimiento = Seguimiento::where(['id' => $id])->with(['planActividad']);
 
         if (!$seguimiento->exists())
             return response()->json([
@@ -132,11 +132,14 @@ class SeguimientoController extends Controller
                 'status' => 'error'
             ], 200);
 
+        $dataSeguimiento = 
+
         $values = [
             'periodo_evaluado' => $request->get('periodo_evaluado'),
             'fecha_seguimiento' => $request->get('fecha_seguimiento'),
             'valoracion' => intval($request->get('valoracion')),
-            'situacion_actual' => $request->get('situacion_actual')
+            'situacion_actual' => $request->get('situacion_actual'), 
+            'avance'
         ];
 
         if ($seguimiento->update($values))

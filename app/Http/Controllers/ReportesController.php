@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Plan;
-use App\Models\PlanProyecto;
 use App\Models\PlanActividad;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
@@ -38,21 +37,6 @@ class ReportesController extends Controller
             'data' => $data,
             'status' => 'ok'
         ], 200);
-    }
-
-    private function unique_multidim_array($array, $key) {
-        $temp_array = array();
-        $i = 0;
-        $key_array = array();
-       
-        foreach($array as $val) {
-            if (!in_array($val[$key], $key_array)) {
-                $key_array[$i] = $val[$key];
-                $temp_array[$i] = $val;
-            }
-            $i++;
-        }
-        return $temp_array;
     }
 
     public function resumenPlanPeriodoProgramaRender($plan_id, $periodo, $render = true)
@@ -233,4 +217,20 @@ class ReportesController extends Controller
         $mpdf->WriteHTML($html);
         $mpdf->Output();
     }
+
+    private function unique_multidim_array($array, $key) {
+        $temp_array = array();
+        $i = 0;
+        $key_array = array();
+       
+        foreach($array as $val) {
+            if (!in_array($val[$key], $key_array)) {
+                $key_array[$i] = $val[$key];
+                $temp_array[$i] = $val;
+            }
+            $i++;
+        }
+        return $temp_array;
+    }
+
 }

@@ -26,6 +26,7 @@ class CreateSeguimientoTable extends Migration
             $table->integer('valoracion')->nullable();
             $table->string('situacion_actual', 45)->nullable();
             $table->string('estado', 45)->nullable();
+            $table->integer('avance')->nullable();
 
             $table->timestamps();
             $table->softDeletes();

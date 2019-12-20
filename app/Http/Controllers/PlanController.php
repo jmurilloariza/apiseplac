@@ -34,6 +34,7 @@ class PlanController extends Controller
             'message' => 'Consulta exitosa',
             'data' => Plan::with([
                 'programaAcademico',
+                'planesActividades' => function($query) {$query->where(['estado' => 'ACTIVO']);},
                 'planesActividades.actividad.proyecto.programas.programa.linea.eje',
                 'planesActividades.actividad.proyecto.actividades'
                 ])->get()->toArray(),
@@ -342,7 +343,8 @@ class PlanController extends Controller
                     'fecha_fin' => $actividades[$i]['fecha_fin'],
                     'costo' => $actividades[$i]['costo'],
                     'peso' => $actividades[$i]['peso'],
-                    'estado' => 'ACTIVO'
+                    'estado' => 'ACTIVO', 
+                    'avance' => 0
                 ]);
 
                 if (!$proyecto->save())

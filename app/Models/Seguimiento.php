@@ -25,7 +25,7 @@ class Seguimiento extends Model
      * @var array
      */
     protected $fillable = ['id', 'plan_actividad_id', 'periodo_evaluado', 'fecha_seguimiento', 
-        'valoracion', 'situacion_actual', 'estado', 'deleted_at', 'created_at', 'updated_at'];
+        'valoracion', 'situacion_actual', 'estado', 'avance', 'deleted_at', 'created_at', 'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
