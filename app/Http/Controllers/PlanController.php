@@ -93,7 +93,8 @@ class PlanController extends Controller
             'periodo_fin' => $request->get('periodo_fin'),
             'programa_academico_id' => $request->get('programa_academico_id'),
             'url_documento' => 'storage/' . $time . '-' . $file->getClientOriginalName(),
-            'nombre' => $request->get('nombre')
+            'nombre' => $request->get('nombre'), 
+            'fecha_cierre' => null
         ]);
 
         if (!$plan->save())
