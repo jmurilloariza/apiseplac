@@ -144,4 +144,7 @@ Route::group(['prefix' => 'reportes'], function () {
 
     Route::post('cargarResumenGeneralProyecto', 'ReportesController@cargarResumenGeneralProyecto');
     Route::get('cargarResumenGeneralProyecto/{plan_id}/{proyecto_id}', 'ReportesController@cargarResumenGeneralProyectoRender');
+    
+    Route::post('cargarReportePeriodoEje', 'ReportesController@cargarReportePeriodoEje');
+    Route::get('cargarReportePeriodoEje/{plan_id}/{eje_id}/{periodo}', 'ReportesController@cargarReportePeriodoEjeRender');
 });

@@ -71,7 +71,7 @@ class ReportesController extends Controller
         foreach ($proyectos as $proyecto) {
             $data_proyecto = [
                 'nombre' => $proyecto['nombre'],
-                'descripcion' => $proyecto['descripcion'],
+                'descripcion' => $proyecto['descripcion']
             ];
 
             $data_proyecto['programas'] = [];
@@ -81,6 +81,7 @@ class ReportesController extends Controller
                 $programa = $p['programa'];
                 array_push($data_proyecto['programas'], $programa['nombre']);
                 $data_proyecto['eje'] = $programa['linea']['eje']['nombre'];
+                $data_proyecto['eje_id'] = $programa['linea']['eje']['id'];
                 $data_proyecto['linea'] = $programa['linea']['nombre'];
             }
 
@@ -98,7 +99,6 @@ class ReportesController extends Controller
             }
 
             $data_proyecto['procentaje_avance'] = $data_proyecto['procentaje_avance'] / 100;
-
             array_push($data['plan']['proyectos'], $data_proyecto);
         }
 
@@ -212,6 +212,63 @@ class ReportesController extends Controller
             'mode' => 'utf-8',
             'format' => 'LEGAL',
             'orientation' => 'L'
+        ]);
+
+        $mpdf->WriteHTML($html);
+        $mpdf->Output();
+    }
+
+    public function cargarReportePeriodoEje(Request $request){
+        if (!$request->has('plan_id') or !$request->has('eje_id') or !$request->get('periodo'))
+            return response()->json([
+                'message' => 'Faltan datos',
+                'data' => $request->toArray(),
+                'status' => 'error'
+            ], 200);
+
+        $plan_id = $request->get('plan_id');
+        $eje_id = $request->get('eje_id');
+        $periodo = $request->get('periodo');
+
+        $data = $this->cargarReportePeriodoEjeRender($plan_id, $eje_id, $periodo, false);
+
+        return response()->json([
+            'message' => 'Reporte',
+            'data' => $data,
+            'status' => 'ok'
+        ], 200);
+    }
+
+    public function cargarReportePeriodoEjeRender($plan_id, $eje_id, $periodo, $render = true){
+        $reporte = $this->resumenPlanPeriodoProgramaRender($plan_id, $periodo, false);
+        $proyectos = [];
+        $procentaje = 0;
+
+        foreach ($reporte['plan']['proyectos'] as $proyecto) {
+            if($proyecto['eje_id'] == $eje_id) {
+                array_push($proyectos, $proyecto);
+                $procentaje += $proyecto['procentaje_avance'];
+            }
+        }
+
+        $data = [];
+        $data['plan'] = [];
+        $data['plan']['porcentaje'] = $procentaje / count($proyectos);
+        $data['plan']['programa_academico'] = $reporte['plan']['programa_academico'];
+        $data['plan']['director'] = $reporte['plan']['director'];
+        $data['plan']['nombre'] = $reporte['plan']['nombre'];
+        $data['plan']['vigencia'] = $reporte['plan']['vigencia'];
+        $data['plan']['periodo_evaluado'] = $reporte['plan']['periodo_evaluado'];
+        $data['plan']['periodo_evaluado'] = $reporte['plan']['periodo_evaluado'];
+        $data['plan']['proyectos'] = $proyectos;
+
+        if (!$render) return $data;
+
+        $html = view('reports.planEje')->with(['plan' => $data['plan']]);
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'LETTER',
+            'orientation' => 'P'
         ]);
 
         $mpdf->WriteHTML($html);
