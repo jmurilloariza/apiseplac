@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Plan;
 use App\Models\PlanProyecto;
+use App\Models\PlanActividad;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Mpdf\Mpdf;
@@ -39,13 +40,35 @@ class ReportesController extends Controller
         ], 200);
     }
 
-    public function resumenPlanPeriodoProgramaRender($id, $periodo, $render = true)
+    private function unique_multidim_array($array, $key) {
+        $temp_array = array();
+        $i = 0;
+        $key_array = array();
+       
+        foreach($array as $val) {
+            if (!in_array($val[$key], $key_array)) {
+                $key_array[$i] = $val[$key];
+                $temp_array[$i] = $val;
+            }
+            $i++;
+        }
+        return $temp_array;
+    }
+
+    public function resumenPlanPeriodoProgramaRender($plan_id, $periodo, $render = true)
     {
-        $plan = Plan::where(['id' => $id])->with([
-            'programaAcademico',
-            'planesProyectos.proyecto.actividades.seguimientos',
-            'planesProyectos.proyecto.programas.programa.linea.eje',
-        ])->get()->toArray()[0];
+        $actividadesPlan = PlanActividad::where(['plan_id' => $plan_id])
+            ->with(['plan.programaAcademico', 'actividad.proyecto.programas.programa.linea.eje', 'seguimientos']);
+
+        $actividadesPlan = $actividadesPlan->get()->toArray();
+        $plan = $actividadesPlan[0]['plan'];
+        $proyectos = [];
+
+        foreach ($actividadesPlan as $planActividad) {
+            array_push($proyectos, $planActividad['actividad']['proyecto']);
+        }
+
+        $proyectos = $this->unique_multidim_array($proyectos, 'id');
 
         $data = [];
         $director = Usuario::where(['programa_academico_id' => $plan['programa_academico']['id'], 'rol_id' => 4])->get()->toArray()[0];
@@ -61,10 +84,7 @@ class ReportesController extends Controller
 
         $data['plan']['proyectos'] = [];
 
-        $planesProyectos = $plan['planes_proyectos'];
-
-        foreach ($planesProyectos as $planProyecto) {
-            $proyecto = $planProyecto['proyecto'];
+        foreach ($proyectos as $proyecto) {
             $data_proyecto = [
                 'nombre' => $proyecto['nombre'],
                 'descripcion' => $proyecto['descripcion'],
@@ -80,14 +100,13 @@ class ReportesController extends Controller
                 $data_proyecto['linea'] = $programa['linea']['nombre'];
             }
 
-            $actividades = $proyecto['actividades'];
             $data_proyecto['procentaje_avance'] = 0;
 
-            foreach ($actividades as $actividad) {
+            foreach ($actividadesPlan as $actividad) {
                 $seguimientos = $actividad['seguimientos'];
 
                 foreach ($seguimientos as $seguimiento) {
-                    if ($seguimiento['periodo_evaluado'] == $periodo) {
+                    if ($seguimiento['periodo_evaluado'] == $periodo && $seguimiento['estado'] == 'ACTIVO') {
                         $data_proyecto['procentaje_avance'] += intval($actividad['peso']) * intval($seguimiento['valoracion']);
                         break;
                     }
@@ -114,14 +133,14 @@ class ReportesController extends Controller
 
     public function cargarResumenGeneralProyecto(Request $request)
     {
-        if (!$request->has('proyecto_plan_id'))
+        if (!$request->has('plan_id') or !$request->has('proyecto_id'))
             return response()->json([
                 'message' => 'Faltan datos',
                 'data' => $request->toArray(),
                 'status' => 'error'
             ], 200);
 
-        $data = $this->cargarResumenGeneralProyectoRender($request->get('proyecto_plan_id'), false);
+        $data = $this->cargarResumenGeneralProyectoRender($request->get('plan_id'), $request->get('proyecto_id'), false);
 
         return response()->json([
             'message' => 'Reporte',
@@ -130,22 +149,23 @@ class ReportesController extends Controller
         ], 200);
     }
 
-    public function cargarResumenGeneralProyectoRender($proyecto_plan_id, $render = true)
+    public function cargarResumenGeneralProyectoRender($plan_id, $proyecto_id, $render = true)
     {
-        $proyecto_plan = PlanProyecto::where(['id' => $proyecto_plan_id])
-            ->with(['proyecto.programas.programa.linea.eje', 'proyecto.actividades.seguimientos', 'plan']);
 
-        if (!$proyecto_plan->exists())
-            return response()->json([
-                'message' => 'No existe el proyecto',
-                'data' => [],
-                'status' => 'error'
-            ], 200);
+        $actividadesPlan = PlanActividad::where(['plan_id' => $plan_id])
+            ->with(['actividad.proyecto.programas.programa.linea.eje' => function($query) use ($proyecto_id) {
+                $query->where(['id' => $proyecto_id]);
+            }, 'seguimientos'])->get()->toArray();
 
-        $proyecto_plan = $proyecto_plan->get()->toArray()[0];
+        $actividades = [];
 
-        $proyecto = $proyecto_plan['proyecto'];
-        $plan = $proyecto_plan['plan'];
+        foreach ($actividadesPlan as $actividadPlan) {
+            if($actividadPlan['actividad']['proyecto'] != null)
+                array_push($actividades, $actividadPlan);
+        }
+
+        $proyecto = $actividades[0]['actividad']['proyecto'];
+        $plan = Plan::where(['id' => $plan_id])->get()->toArray()[0];
 
         $data = [
             'nombre' => $proyecto['nombre'],
@@ -168,11 +188,9 @@ class ReportesController extends Controller
 
         $data['actividades'] = [];
 
-        $actividades = $proyecto['actividades'];
-
         foreach ($actividades as $actividad) {
             $data_actividad = [
-                'nombre' => $actividad['nombre'],
+                'nombre' => $actividad['actividad']['nombre'],
                 'peso' => $actividad['peso']
             ];
 
