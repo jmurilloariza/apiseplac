@@ -239,7 +239,7 @@ class PlanController extends Controller
             'periodo_fin' => $request->get('periodo_fin'),
             'programa_academico_id' => $request->get('programa_academico_id'),
             'nombre' => $request->get('nombre'),
-            'fecha_cierre' => $request->get('fecha_cierre')
+            'fecha_cierre' => $request->get('fecha_cierre') == 'null' ? null: $request->get('fecha_cierre')
         ];
 
         if ($request->hasFile('documento')) {
